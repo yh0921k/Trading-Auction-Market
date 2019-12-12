@@ -9,6 +9,14 @@
 ## 실습 소스 및 결과
 
 자바 애플리케이션 프로젝트 폴더를 준비한다.
+```
+루트 디렉토리 구성
+SimpleWebProject/   -- docs/ 디렉토리, .git 파일과 .gitignore 파일 존재
+      GuidePorject/ -- 참조할 가이드 프로젝트(학사 관리)
+      MyProject/    -- 본인 프로젝트(경매 마켓 시스템)
+```
+
+---------------------------------------------------------------------------
 
 ```
 src/
@@ -32,22 +40,22 @@ gradlew.bat
 로컬 Git 저장소에 자바 프로젝트 폴더를 생성한다.
 
 ```
-[~/git/eomcs-study]$ mkdir java-project
-[~/git/eomcs-study]$ cd eomcs-java-project
+[~/git/SimpleWebProject]$ mkdir MyProject
+[~/git/SimpleWebProject]$ cd MyProject
 ```
 
 프로젝트 폴더를 자바 애플리케이션 프로젝트로 초기화시킨다.
 ```
-[~/git/eomcs-study/eomcs-java-project]$ gradle init
+[~/git/SimpleWebProject/MyProject]$ gradle init
 ```
 
 자바 소스 파일 외의 기타 파일을 보관할 디렉토리 생성
 
 ```
-[~/git/eomcs-study/eomcs-java-project]$ cd src/main
-[~/git/eomcs-study/eomcs-java-project/src/main]$ mkdir resources
-[~/git/eomcs-study/eomcs-java-project/src/main]$ cd ../test
-[~/git/eomcs-study/eomcs-java-project/src/test]$ mkdir resources
+[~/git/SimpleWebProject/MyProject]$ cd src/main
+[~/git/SimpleWebProject/MyProject/src/main]$ mkdir resources
+[~/git/SimpleWebProject/MyProject/src/main]$ cd ../test
+[~/git/SimpleWebProject/MyProject/src/test]$ mkdir resources
 ```
 
 ### 작업2) '그레이들'의 빌드 스크립트 파일을 편집하라.
@@ -55,21 +63,49 @@ gradlew.bat
 build.gradle 파일에 다음 설정을 추가한다.
 
 ```
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-    sourceCompatibility = '1.8'
-    targetCompatibility = '1.8'
+tasks.withType(JavaCompile) {   
+    options.encoding = 'UTF-8'  -- gradle에 프로젝트의 소스파일 인코딩을 알린다.
+    sourceCompatibility = '1.8' -- 소스파일을 작성할 때 사용할 자바 버전(지정하면 이후 버전은 사용 불가, gradle에러)
+    targetCompatibility = '1.8' -- 자바 클래스를 실행시킬 JVM의 최ㅗ 버전 지정(class 파일안에 JVM의 최소 버전 정보를 전달할 수 있음)
+                                -- 1.8로 해놓고 1.7에서 실행하면 에러, 통상적으로 위 두 가지의 버전은 동일하게 지정
 }
 ```
 
 ### 작업3) 프로젝트를 빌드하라.
 
 ```
-[~/git/eomcs-study/eomcs-java-project]$ gradle build
+[~/git/SimpleWebProject/MyProject]$ gradle build
 ```
 
 ### 작업4) 프로젝트를 실행하라.
 
 ```
-[~/git/eomcs-study/eomcs-java-project]$ gradle run
+[~/git/SimpleWebProject/MyProject]$ gradle run
 ```
+
+```
+gradle init
+gradle build        -- build 폴더는 깃허브에 올리지 않는다.
+gradle run          -- build 명령과의 차이는?
+gradle tasks --all  -- gradle에서 사용가능한 커맨드 확인
+gradle clean        -- build 폴더 삭제됨, github 업로드가 불필요한 이유
+gradle compile.java -- clean 이후 실행하면 build 폴더 다시 생성
+```
+
+추가사항 - 빈 폴더는 깃허브에 업로드되지 않으므로 아래의 경로에 간단한 README.md 파일을 생성한다.
+```
+src/main/resources -- 어플리케이션이 사용할 설정파일이나 기타파일을 보관하는 디렉토리
+src/test/resources -- 단위테스트를 실행하는 동안 사용할 설정파일이나 기타파일을 보관하는 디렉토리
+src/test/java      -- 단위 테스트를 위한 자바 코드를 두는 디렉토리, 본 실습에서는 com 이하 경로 삭제
+```
+
+추가사항 - 터미널에서 자바 코드 사용할 때 클래스 패스, 패키지 사용
+```
+package com.kyh.market;              -- 코드 내부에서 패키지 사용
+
+javac -d bin/main App.java           -- 컴파일을 하는데 class 파일을 생성할 위치 지정
+java -cp bin/main com.kyh.market.App -- class의 경로를 지정하고 패키지 경로로 실행
+```
+
+## vXX 폴더 구성
+단계별로 프로젝트를 백업해두는 폴더, src/ 와 build.gradle, README.md를 보관한다.
