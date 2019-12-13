@@ -19,12 +19,11 @@ App.java 실행 결과
 
 ```
 번호: 1
-수업명: 자바 프로젝트 실습
-설명: 자바 프로젝트를 통한 자바 언어 활용법 익히기
-시작일: 2019-01-02
-종료일: 2019-05-28
-총수업시간: 1000 시간
-일수업시간: 8 시간
+물품명: Mac Pro 2016
+판매자 : kyh
+분류 : labtop
+설명: 버전 혹은 수명 등의 상태
+가격 : 2,000,000
 ```
 
 ### 작업2) 한 명의 회원 정보를 출력하라.
@@ -33,11 +32,12 @@ App2.java 실행 결과
 
 ```
 번호: 1
-이름: 홍길동
-이메일: hong@test.com
-암호: 1111
+이름: kyh
+이메일: kyh@gmail.com
+주소 : 대한민국
+암호: 1234
 사진: hong.png
-전화: 1111-2222
+전화: 010-1111-1111
 가입일: 2019-01-01
 ```
 
@@ -55,5 +55,9 @@ App3.java 실행 결과
 ### 작업4) AppTest 클래스를 삭제하라.
 
 ```
-src/test/java/com/eomcs/lms/AppTest.java 삭제
+src/test/java/com/kyh/market/AppTest.java 삭제
 ```
+
+## 추가사항
+gradle에 eclipse 연동 이후 이클립스에서 작업할 때, 
+코드는 기존의 src/ 가 아니라 package explorer 상단의 src/main/java 또는 src/test/java에서 확인
