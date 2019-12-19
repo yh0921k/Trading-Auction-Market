@@ -4,6 +4,7 @@
 package com.kyh.market;
 
 import org.junit.Test;
+import kyh.tam.App;
 import static org.junit.Assert.*;
 
 public class AppTest {

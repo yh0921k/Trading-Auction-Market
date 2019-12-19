@@ -1,4 +1,4 @@
-package com.kyh.market;
+package kyh.tam;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -7,28 +7,32 @@ import java.util.Date;
 
 public class App3 {
   public static void main(String[] args) throws Exception {
-    // 변수 선언부
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));    
-    final int arraySize = 100;
-    int index = 0; 
+    final int SIZE = 100;
+    int tmpCnt = 0;
     
-    int[] postNum    = new int[arraySize];
-    String[] detail  = new String[arraySize];
-    Date[] writeDate = new Date[arraySize];
-    int[] viewCount  = new int[arraySize];
-    
+    class Board {
+      int postNum;
+      String detail;
+      Date writeDate;
+      int viewCount;
+    }
+    Board[] boards = new Board[SIZE];
  // 입력부
-    while(true) { 
+    for(int i = 0; i < SIZE; i++) {
+      Board b = new Board();
+      tmpCnt++;
+      
       System.out.printf("-----------------------------------------------------------------------------\n");
       System.out.printf("번호 : ");
-      postNum[index] = Integer.parseInt(br.readLine());
+      b.postNum = Integer.parseInt(br.readLine());
       System.out.printf("내용 : ");
-      detail[index] = br.readLine();
-      writeDate[index] = new Date();
-      viewCount[index] = 0;
+      b.detail = br.readLine();
+      b.writeDate = new Date();
+      b.viewCount = 0;
+      boards[i] = b;
 
       System.out.printf("계속 입력하시겠습니까? (Y/n) : ");
-      index++; 
       String tmp = br.readLine();
       if(tmp.equalsIgnoreCase("y"))
         continue;
@@ -42,9 +46,9 @@ public class App3 {
     
     // 출력부    
     System.out.printf("-----------------------------------------------------------------------------\n");
-    for(int j=0; j<index; j++) { 
-      String tmp = new SimpleDateFormat("yyyy-MM-dd").format(writeDate[j]);
-      System.out.printf("%s, %s, %s, %s\n", postNum[j], detail[j], tmp, viewCount[j]);
+    for(int i=0; i<tmpCnt; i++) { 
+      String wDate = new SimpleDateFormat("yyyy-MM-dd").format(boards[i].writeDate);
+      System.out.printf("%s, %s, %s, %s\n", boards[i].postNum, boards[i].detail, wDate, boards[i].viewCount);
     }
     System.out.printf("-----------------------------------------------------------------------------\n");
   }
