@@ -1,4 +1,4 @@
-package kyh.tam;
+package kyh.tam.handler;
 
 import java.io.BufferedReader;
 import java.text.SimpleDateFormat;
@@ -19,9 +19,9 @@ public class MemberHandler {
   static final int MEMBER_SIZE = 100;
   static int memberCnt = 0;      
   static Member[] members = new Member[MEMBER_SIZE]; 
-  static BufferedReader br;
+  public static BufferedReader br;
   
-  static void addMember() throws Exception {
+  public static void addMember() throws Exception {
     Member m = new Member();
     System.out.printf("-----------------------------------------------------------------------------\n");
     System.out.printf("번호 : ");
@@ -41,7 +41,7 @@ public class MemberHandler {
     m.registeredDate = new Date();
     members[memberCnt++] = m;
   }
-  static void printMemberList() {
+  public static void printMemberList() {
     System.out.printf("-----------------------------------------------------------------------------\n");
     for(int i=0; i<memberCnt; i++)      
       System.out.printf("%s, %s, %s, %s, %s\n", 

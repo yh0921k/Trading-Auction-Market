@@ -1,4 +1,4 @@
-package kyh.tam;
+package kyh.tam.handler;
 
 import java.io.BufferedReader;
 
@@ -15,9 +15,9 @@ public class StuffHandler {
   static final int STUFF_SIZE  = 100;
   static int stuffCnt  = 0;
   static Stuff[]  stuffs  = new Stuff[STUFF_SIZE];
-  static BufferedReader br;
+  public static BufferedReader br;
   
-  static void addStuff() throws Exception {
+  public static void addStuff() throws Exception {
     Stuff s = new Stuff();
     System.out.printf("-----------------------------------------------------------------------------\n");
     System.out.printf("번호 : ");
@@ -34,7 +34,7 @@ public class StuffHandler {
     s.price = Integer.parseInt(br.readLine());            
     stuffs[stuffCnt++] = s;
   }
-  static void printStuffList() {
+  public static void printStuffList() {
     System.out.printf("-----------------------------------------------------------------------------\n");
     for(int i=0; i<stuffCnt; i++)      
       System.out.printf("%s, %s, %s, %s, %s\n", 

@@ -1,4 +1,4 @@
-package kyh.tam;
+package kyh.tam.handler;
 
 import java.io.BufferedReader;
 import java.text.SimpleDateFormat;
@@ -15,9 +15,9 @@ public class BoardHandler {
   static final int BOARD_SIZE  = 100;
   static int boardCnt  = 0;      
   static Board[]  boards  = new Board[BOARD_SIZE];
-  static BufferedReader br;
+  public static BufferedReader br;
   
-  static void addBoard() throws Exception {
+  public static void addBoard() throws Exception {
     Board b = new Board();
     System.out.printf("-----------------------------------------------------------------------------\n");
     System.out.printf("번호 : ");
@@ -28,7 +28,7 @@ public class BoardHandler {
     b.viewCount = 0;
     boards[boardCnt++] = b;
   }
-  static void printBoardList() {
+  public static void printBoardList() {
     System.out.printf("-----------------------------------------------------------------------------\n");
     for(int i=0; i<boardCnt; i++) { 
       String wDate = new SimpleDateFormat("yyyy-MM-dd").format(boards[i].writeDate);
