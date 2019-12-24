@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import kyh.tam.domain.Board;
 
-public class BoardHandler {    
+public class BoardHandler3 {    
   static final int BOARD_SIZE  = 100;
   static int boardCnt  = 0;      
   static Board[]  boards  = new Board[BOARD_SIZE];
