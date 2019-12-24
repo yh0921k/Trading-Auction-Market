@@ -1,17 +1,9 @@
 package kyh.tam.handler;
 
 import java.io.BufferedReader;
+import kyh.tam.domain.Stuff;
 
 public class StuffHandler {
-  static class Stuff {
-    int stuffNum;
-    String stuffName;
-    String stuffContents;
-    String seller;
-    String category;
-    int price;
-  }
-  
   static final int STUFF_SIZE  = 100;
   static int stuffCnt  = 0;
   static Stuff[]  stuffs  = new Stuff[STUFF_SIZE];

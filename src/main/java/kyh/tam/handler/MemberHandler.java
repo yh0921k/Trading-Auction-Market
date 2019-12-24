@@ -3,19 +3,9 @@ package kyh.tam.handler;
 import java.io.BufferedReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import kyh.tam.domain.Member;
 
-public class MemberHandler {
-  static class Member {
-    int personNum;
-    String personName;
-    String email;
-    String address;
-    String password;
-    String picture;
-    String phoneNum;
-    Date registeredDate;
-  }
-  
+public class MemberHandler {  
   static final int MEMBER_SIZE = 100;
   static int memberCnt = 0;      
   static Member[] members = new Member[MEMBER_SIZE]; 
