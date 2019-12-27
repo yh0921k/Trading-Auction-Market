@@ -7,11 +7,22 @@ import kyh.tam.domain.Board;
 
 public class BoardHandler {    
   int boardCnt  = 0;      
-  Board[]  boards  = new Board[BOARD_SIZE];
+  Board[]  boards;
+  private BufferedReader br;
 
   static final int BOARD_SIZE  = 100;
-  public static BufferedReader br;
-
+  
+  public BoardHandler(BufferedReader br) {
+    this.br = br;
+    this.boards = new Board[BOARD_SIZE];
+  }
+  public BoardHandler(BufferedReader br, int capacity) {
+    this.br = br;
+    if(capacity < BOARD_SIZE || capacity > 10000)    
+      this.boards = new Board[BOARD_SIZE];
+    else
+      this.boards = new Board[capacity];
+  }
   public void addBoard() throws Exception {
     Board b = new Board();
     System.out.printf("-----------------------------------------------------------------------------\n");

@@ -7,11 +7,15 @@ import kyh.tam.domain.Member;
 
 public class MemberHandler {  
   int memberCnt = 0;      
-  Member[] members = new Member[MEMBER_SIZE]; 
+  Member[] members;
+  private BufferedReader br;
   
   static final int MEMBER_SIZE = 100;
-  public static BufferedReader br;
   
+  public MemberHandler(BufferedReader br) {
+    this.br = br;
+    this.members = new Member[MEMBER_SIZE];
+  }
   public void addMember() throws Exception {
     Member m = new Member();
     System.out.printf("-----------------------------------------------------------------------------\n");

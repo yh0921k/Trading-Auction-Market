@@ -9,18 +9,15 @@ import kyh.tam.handler.StuffHandler;
 public class App { 
   public static void main(String[] args) throws Exception {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    StuffHandler.br = br;
-    MemberHandler.br = br;
-    BoardHandler.br = br;
     
-    StuffHandler stuffHandler = new StuffHandler();
-    MemberHandler memberHandler = new MemberHandler();
-    BoardHandler boardHandler1 = new BoardHandler();
-    BoardHandler boardHandler2 = new BoardHandler();
-    BoardHandler boardHandler3 = new BoardHandler();
-    BoardHandler boardHandler4 = new BoardHandler();
-    BoardHandler boardHandler5 = new BoardHandler();
-    BoardHandler boardHandler6 = new BoardHandler();
+    StuffHandler stuffHandler = new StuffHandler(br);
+    MemberHandler memberHandler = new MemberHandler(br);
+    BoardHandler boardHandler1 = new BoardHandler(br, 200);
+    BoardHandler boardHandler2 = new BoardHandler(br, 300);
+    BoardHandler boardHandler3 = new BoardHandler(br, 400);
+    BoardHandler boardHandler4 = new BoardHandler(br, 500);
+    BoardHandler boardHandler5 = new BoardHandler(br, 600);
+    BoardHandler boardHandler6 = new BoardHandler(br, 700);
     String command;
     do {
       System.out.printf("-----------------------------------------------------------------------------\n");

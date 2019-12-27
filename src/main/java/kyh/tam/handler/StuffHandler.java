@@ -5,11 +5,15 @@ import kyh.tam.domain.Stuff;
 
 public class StuffHandler {
   int stuffCnt  = 0;
-  Stuff[]  stuffs  = new Stuff[STUFF_SIZE];
+  Stuff[]  stuffs;
+  private BufferedReader br;
   
   static final int STUFF_SIZE  = 100;
-  public static BufferedReader br;
   
+  public StuffHandler(BufferedReader br) {
+    this.br = br;
+    this.stuffs  = new Stuff[STUFF_SIZE];
+  }
   public void addStuff() throws Exception {
     Stuff s = new Stuff();
     System.out.printf("-----------------------------------------------------------------------------\n");
