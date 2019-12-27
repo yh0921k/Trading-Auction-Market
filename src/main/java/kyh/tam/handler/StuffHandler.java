@@ -4,12 +4,13 @@ import java.io.BufferedReader;
 import kyh.tam.domain.Stuff;
 
 public class StuffHandler {
+  int stuffCnt  = 0;
+  Stuff[]  stuffs  = new Stuff[STUFF_SIZE];
+  
   static final int STUFF_SIZE  = 100;
-  static int stuffCnt  = 0;
-  static Stuff[]  stuffs  = new Stuff[STUFF_SIZE];
   public static BufferedReader br;
   
-  public static void addStuff() throws Exception {
+  public void addStuff() throws Exception {
     Stuff s = new Stuff();
     System.out.printf("-----------------------------------------------------------------------------\n");
     System.out.printf("번호 : ");
@@ -24,12 +25,13 @@ public class StuffHandler {
     s.stuffContents = br.readLine();
     System.out.printf("가격 : ");
     s.price = Integer.parseInt(br.readLine());            
-    stuffs[stuffCnt++] = s;
+    this.stuffs[this.stuffCnt++] = s;
   }
-  public static void printStuffList() {
+  public void printStuffList() {
     System.out.printf("-----------------------------------------------------------------------------\n");
-    for(int i=0; i<stuffCnt; i++)      
+    for(int i=0; i<this.stuffCnt; i++)      
       System.out.printf("%s, %s, %s, %s, %s\n", 
-          stuffs[i].stuffNum, stuffs[i].stuffName, stuffs[i].category, stuffs[i].seller, stuffs[i].price);
+          this.stuffs[i].stuffNum, this.stuffs[i].stuffName, this.stuffs[i].category, 
+          this.stuffs[i].seller, this.stuffs[i].price);
   }
 }

@@ -3,11 +3,6 @@ package kyh.tam;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import kyh.tam.handler.BoardHandler;
-import kyh.tam.handler.BoardHandler2;
-import kyh.tam.handler.BoardHandler3;
-import kyh.tam.handler.BoardHandler4;
-import kyh.tam.handler.BoardHandler5;
-import kyh.tam.handler.BoardHandler6;
 import kyh.tam.handler.MemberHandler;
 import kyh.tam.handler.StuffHandler;
 
@@ -17,11 +12,15 @@ public class App {
     StuffHandler.br = br;
     MemberHandler.br = br;
     BoardHandler.br = br;
-    BoardHandler2.br = br;
-    BoardHandler3.br = br;
-    BoardHandler4.br = br;
-    BoardHandler5.br = br;
-    BoardHandler6.br = br;
+    
+    StuffHandler stuffHandler = new StuffHandler();
+    MemberHandler memberHandler = new MemberHandler();
+    BoardHandler boardHandler1 = new BoardHandler();
+    BoardHandler boardHandler2 = new BoardHandler();
+    BoardHandler boardHandler3 = new BoardHandler();
+    BoardHandler boardHandler4 = new BoardHandler();
+    BoardHandler boardHandler5 = new BoardHandler();
+    BoardHandler boardHandler6 = new BoardHandler();
     String command;
     do {
       System.out.printf("-----------------------------------------------------------------------------\n");
@@ -30,70 +29,70 @@ public class App {
 
       switch (command) {
         case "/stuff/add":
-          StuffHandler.addStuff();
+          stuffHandler.addStuff();
           break;
         case "/stuff/list":
-          StuffHandler.printStuffList();
+          stuffHandler.printStuffList();
           break;
         case "/member/add":
-          MemberHandler.addMember();
+          memberHandler.addMember();
           break;
         case "/member/list":
-          MemberHandler.printMemberList();
+          memberHandler.printMemberList();
           break;
         case "/board/add":
-          BoardHandler.addBoard();
+          boardHandler1.addBoard();
           break;
         case "/board/list":
-          BoardHandler.printBoardList();
+          boardHandler1.printBoardList();
           break;
         case "/board/detail":
-          BoardHandler.printDetailBoard();
+          boardHandler1.printDetailBoard();
           break;
         case "/board2/add":
-          BoardHandler2.addBoard();
+          boardHandler2.addBoard();
           break;
         case "/board2/list":
-          BoardHandler2.printBoardList();
+          boardHandler2.printBoardList();
           break;
         case "/board2/detail":
-          BoardHandler2.printDetailBoard();
+          boardHandler2.printDetailBoard();
           break;
         case "/board3/add":
-          BoardHandler3.addBoard();
+          boardHandler3.addBoard();
           break;
         case "/board3/list":
-          BoardHandler3.printBoardList();
+          boardHandler3.printBoardList();
           break;
         case "/board3/detail":
-          BoardHandler3.printDetailBoard();
+          boardHandler3.printDetailBoard();
           break;
         case "/board4/add":
-          BoardHandler4.addBoard();
+          boardHandler4.addBoard();
           break;
         case "/board4/list":
-          BoardHandler4.printBoardList();
+          boardHandler4.printBoardList();
           break;
         case "/board4/detail":
-          BoardHandler4.printDetailBoard();
+          boardHandler4.printDetailBoard();
           break;
         case "/board5/add":
-          BoardHandler5.addBoard();
+          boardHandler5.addBoard();
           break;
         case "/board5/list":
-          BoardHandler5.printBoardList();
+          boardHandler5.printBoardList();
           break;
         case "/board5/detail":
-          BoardHandler5.printDetailBoard();
+          boardHandler5.printDetailBoard();
           break;
         case "/board6/add":
-          BoardHandler6.addBoard();
+          boardHandler6.addBoard();
           break;
         case "/board6/list":
-          BoardHandler6.printBoardList();
+          boardHandler6.printBoardList();
           break;
         case "/board6/detail":
-          BoardHandler6.printDetailBoard();
+          boardHandler6.printDetailBoard();
           break;
         default:
           if (!command.equalsIgnoreCase("quit"))

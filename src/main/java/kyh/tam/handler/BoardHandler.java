@@ -6,12 +6,13 @@ import java.util.Date;
 import kyh.tam.domain.Board;
 
 public class BoardHandler {    
+  int boardCnt  = 0;      
+  Board[]  boards  = new Board[BOARD_SIZE];
+
   static final int BOARD_SIZE  = 100;
-  static int boardCnt  = 0;      
-  static Board[]  boards  = new Board[BOARD_SIZE];
   public static BufferedReader br;
-  
-  public static void addBoard() throws Exception {
+
+  public void addBoard() throws Exception {
     Board b = new Board();
     System.out.printf("-----------------------------------------------------------------------------\n");
     System.out.printf("번호 : ");
@@ -20,38 +21,38 @@ public class BoardHandler {
     b.detail = br.readLine();
     b.writeDate = new Date();
     b.viewCount = 0;
-    boards[boardCnt++] = b;
+    this.boards[this.boardCnt++] = b;
   }
-  public static void printBoardList() {
+  public void printBoardList() {
     System.out.printf("-----------------------------------------------------------------------------\n");
-    for(int i=0; i<boardCnt; i++) { 
-      String wDate = new SimpleDateFormat("yyyy-MM-dd").format(boards[i].writeDate);
-      System.out.printf("%s, %s, %s, %s\n", boards[i].postNum, boards[i].detail, wDate, boards[i].viewCount);
+    for(int i=0; i<this.boardCnt; i++) { 
+      String wDate = new SimpleDateFormat("yyyy-MM-dd").format(this.boards[i].writeDate);
+      System.out.printf("%s, %s, %s, %s\n", this.boards[i].postNum, 
+          this.boards[i].detail, wDate, this.boards[i].viewCount);
     }
   }
-  public static void printDetailBoard() throws Exception {
+  public void printDetailBoard() throws Exception {
     System.out.printf("번호 : ");
     int boardNum = Integer.parseInt(br.readLine());
-    
+
     Board b = null;
-    for(int i = 0; i < boardCnt; i++) {
-      if(boards[i].postNum == boardNum) {
-        b = boards[i];
+    for(int i = 0; i < this.boardCnt; i++) {
+      if(this.boards[i].postNum == boardNum) {
+        b = this.boards[i];
         break;
       }
     }
-    
+
     if(b == null) {
       System.out.println("Board Number does not exists.");
       return;
     }
-    
+
     System.out.printf("-----------------------------------------------------------------------------\n");
     System.out.printf("%4s%36s%4s%26s%25s%12s%6s\n", "번호", " ", "내용", " ", "작성일", " ", "조회수");
-    for(int i=0; i<boardCnt; i++) { 
-      System.out.printf("%4d%4s%20s%10s%9s%8s\n", 
-          boards[i].postNum, " ", boards[i].detail, " ", 
-          new SimpleDateFormat("yyyy-MM-dd").format(boards[i].writeDate), boards[i].viewCount);
-    }
+    System.out.printf("%4d%4s%20s%10s%9s%8s\n", 
+        b.postNum, " ", b.detail, " ", 
+        new SimpleDateFormat("yyyy-MM-dd").format(b.writeDate), b.viewCount);
+
   }
 }
