@@ -27,19 +27,19 @@ public class BoardHandler {
     Board b = new Board();
     System.out.printf("-----------------------------------------------------------------------------\n");
     System.out.printf("번호 : ");
-    b.postNum = Integer.parseInt(br.readLine());
+    b.setPostNum(Integer.parseInt(br.readLine()));
     System.out.printf("내용 : ");
-    b.detail = br.readLine();
-    b.writeDate = new Date();
-    b.viewCount = 0;
+    b.setDetail(br.readLine());
+    b.setWriteDate(new Date());
+    b.setViewCount(0);
     this.boards[this.boardCnt++] = b;
   }
   public void printBoardList() {
     System.out.printf("-----------------------------------------------------------------------------\n");
     for(int i=0; i<this.boardCnt; i++) { 
-      String wDate = new SimpleDateFormat("yyyy-MM-dd").format(this.boards[i].writeDate);
-      System.out.printf("%s, %s, %s, %s\n", this.boards[i].postNum, 
-          this.boards[i].detail, wDate, this.boards[i].viewCount);
+      String wDate = new SimpleDateFormat("yyyy-MM-dd").format(this.boards[i].getWriteDate());
+      System.out.printf("%s, %s, %s, %s\n", this.boards[i].getPostNum(), 
+          this.boards[i].getDetail(), wDate, this.boards[i].getViewCount());
     }
   }
   public void printDetailBoard() throws Exception {
@@ -48,7 +48,7 @@ public class BoardHandler {
 
     Board b = null;
     for(int i = 0; i < this.boardCnt; i++) {
-      if(this.boards[i].postNum == boardNum) {
+      if(this.boards[i].getPostNum() == boardNum) {
         b = this.boards[i];
         break;
       }
@@ -62,8 +62,8 @@ public class BoardHandler {
     System.out.printf("-----------------------------------------------------------------------------\n");
     System.out.printf("%4s%36s%4s%26s%25s%12s%6s\n", "번호", " ", "내용", " ", "작성일", " ", "조회수");
     System.out.printf("%4d%4s%20s%10s%9s%8s\n", 
-        b.postNum, " ", b.detail, " ", 
-        new SimpleDateFormat("yyyy-MM-dd").format(b.writeDate), b.viewCount);
+        b.getPostNum(), " ", b.getDetail(), " ", 
+        new SimpleDateFormat("yyyy-MM-dd").format(b.getWriteDate()), b.getViewCount());
 
   }
 }

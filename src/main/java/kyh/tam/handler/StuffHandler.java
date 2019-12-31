@@ -18,24 +18,24 @@ public class StuffHandler {
     Stuff s = new Stuff();
     System.out.printf("-----------------------------------------------------------------------------\n");
     System.out.printf("번호 : ");
-    s.stuffNum = Integer.parseInt(br.readLine());
+    s.setStuffNum(Integer.parseInt(br.readLine()));
     System.out.printf("물품명 : ");
-    s.stuffName = br.readLine();
+    s.setStuffName(br.readLine());
     System.out.printf("판매자 : ");
-    s.seller = br.readLine();
+    s.setSeller(br.readLine());
     System.out.printf("분류 : ");
-    s.category = br.readLine();
+    s.setCategory(br.readLine());
     System.out.printf("설명 : ");
-    s.stuffContents = br.readLine();
+    s.setStuffContents(br.readLine());
     System.out.printf("가격 : ");
-    s.price = Integer.parseInt(br.readLine());            
+    s.setPrice(Integer.parseInt(br.readLine()));            
     this.stuffs[this.stuffCnt++] = s;
   }
   public void printStuffList() {
     System.out.printf("-----------------------------------------------------------------------------\n");
     for(int i=0; i<this.stuffCnt; i++)      
       System.out.printf("%s, %s, %s, %s, %s\n", 
-          this.stuffs[i].stuffNum, this.stuffs[i].stuffName, this.stuffs[i].category, 
-          this.stuffs[i].seller, this.stuffs[i].price);
+          this.stuffs[i].getStuffNum(), this.stuffs[i].getStuffName(), this.stuffs[i].getCategory(), 
+          this.stuffs[i].getSeller(), this.stuffs[i].getPrice());
   }
 }
