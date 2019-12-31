@@ -4,16 +4,19 @@ import java.io.BufferedReader;
 import kyh.tam.domain.Stuff;
 
 public class StuffHandler {
-  int stuffCnt  = 0;
-  Stuff[]  stuffs;
   private BufferedReader br;
-  
-  static final int STUFF_SIZE  = 100;
+  private StuffList stuffList;
   
   public StuffHandler(BufferedReader br) {
     this.br = br;
-    this.stuffs  = new Stuff[STUFF_SIZE];
+    this.stuffList = new StuffList();
   }
+  
+  public StuffHandler(BufferedReader br, int capacity) {
+    this.br = br;
+    this.stuffList = new StuffList(capacity);
+  }
+  
   public void addStuff() throws Exception {
     Stuff s = new Stuff();
     System.out.printf("-----------------------------------------------------------------------------\n");
@@ -29,13 +32,14 @@ public class StuffHandler {
     s.setStuffContents(br.readLine());
     System.out.printf("가격 : ");
     s.setPrice(Integer.parseInt(br.readLine()));            
-    this.stuffs[this.stuffCnt++] = s;
+    stuffList.add(s);
   }
   public void printStuffList() {
+    Stuff[] stuffs = stuffList.toArray();
     System.out.printf("-----------------------------------------------------------------------------\n");
-    for(int i=0; i<this.stuffCnt; i++)      
+    for(Stuff stuff : stuffs)      
       System.out.printf("%s, %s, %s, %s, %s\n", 
-          this.stuffs[i].getStuffNum(), this.stuffs[i].getStuffName(), this.stuffs[i].getCategory(), 
-          this.stuffs[i].getSeller(), this.stuffs[i].getPrice());
+          stuff.getStuffNum(), stuff.getStuffName(), stuff.getCategory(), 
+          stuff.getSeller(), stuff.getPrice());
   }
 }

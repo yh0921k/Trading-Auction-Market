@@ -6,16 +6,19 @@ import java.util.Date;
 import kyh.tam.domain.Member;
 
 public class MemberHandler {  
-  int memberCnt = 0;      
-  Member[] members;
   private BufferedReader br;
-  
-  static final int MEMBER_SIZE = 100;
+  private MemberList memberList;
   
   public MemberHandler(BufferedReader br) {
     this.br = br;
-    this.members = new Member[MEMBER_SIZE];
+    this.memberList = new MemberList();
   }
+  
+  public MemberHandler(BufferedReader br, int capacity) {
+    this.br = br;
+    this.memberList = new MemberList(capacity);
+  }
+  
   public void addMember() throws Exception {
     Member m = new Member();
     System.out.printf("-----------------------------------------------------------------------------\n");
@@ -34,14 +37,15 @@ public class MemberHandler {
     System.out.printf("전화 : ");
     m.setPhoneNum(br.readLine());
     m.setRegisteredDate(new Date());
-    this.members[this.memberCnt++] = m;
+    memberList.add(m);
   }
   public void printMemberList() {
+    Member[] members = memberList.toArray();
     System.out.printf("-----------------------------------------------------------------------------\n");
-    for(int i=0; i<this.memberCnt; i++)      
+    for(Member member : members)      
       System.out.printf("%s, %s, %s, %s, %s\n", 
-          this.members[i].getPersonNum(), this.members[i].getPersonName(), 
-          this.members[i].getAddress(), this.members[i].getPhoneNum(),
-          new SimpleDateFormat("yyyy-MM-dd").format(this.members[i].getRegisteredDate()));
+          member.getPersonNum(), member.getPersonName(), 
+          member.getAddress(), member.getPhoneNum(),
+          new SimpleDateFormat("yyyy-MM-dd").format(member.getRegisteredDate()));
   }
 }

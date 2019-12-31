@@ -6,23 +6,19 @@ import java.util.Date;
 import kyh.tam.domain.Board;
 
 public class BoardHandler {    
-  int boardCnt  = 0;      
-  Board[]  boards;
   private BufferedReader br;
-
-  static final int BOARD_SIZE  = 100;
+  private BoardList boardList;
   
   public BoardHandler(BufferedReader br) {
     this.br = br;
-    this.boards = new Board[BOARD_SIZE];
+    boardList = new BoardList();
   }
+  
   public BoardHandler(BufferedReader br, int capacity) {
     this.br = br;
-    if(capacity < BOARD_SIZE || capacity > 10000)    
-      this.boards = new Board[BOARD_SIZE];
-    else
-      this.boards = new Board[capacity];
-  }
+    boardList = new BoardList(capacity);
+  }  
+
   public void addBoard() throws Exception {
     Board b = new Board();
     System.out.printf("-----------------------------------------------------------------------------\n");
@@ -32,29 +28,23 @@ public class BoardHandler {
     b.setDetail(br.readLine());
     b.setWriteDate(new Date());
     b.setViewCount(0);
-    this.boards[this.boardCnt++] = b;
+    boardList.add(b);
   }
   public void printBoardList() {
+    Board[] boards = boardList.toArray();
     System.out.printf("-----------------------------------------------------------------------------\n");
-    for(int i=0; i<this.boardCnt; i++) { 
-      String wDate = new SimpleDateFormat("yyyy-MM-dd").format(this.boards[i].getWriteDate());
-      System.out.printf("%s, %s, %s, %s\n", this.boards[i].getPostNum(), 
-          this.boards[i].getDetail(), wDate, this.boards[i].getViewCount());
+    for(Board board : boards) { 
+      String wDate = new SimpleDateFormat("yyyy-MM-dd").format(board.getWriteDate());
+      System.out.printf("%s, %s, %s, %s\n", board.getPostNum(), 
+          board.getDetail(), wDate, board.getViewCount());
     }
   }
   public void printDetailBoard() throws Exception {
     System.out.printf("번호 : ");
     int boardNum = Integer.parseInt(br.readLine());
 
-    Board b = null;
-    for(int i = 0; i < this.boardCnt; i++) {
-      if(this.boards[i].getPostNum() == boardNum) {
-        b = this.boards[i];
-        break;
-      }
-    }
-
-    if(b == null) {
+    Board board = boardList.get(boardNum);
+    if(board == null) {
       System.out.println("Board Number does not exists.");
       return;
     }
@@ -62,8 +52,8 @@ public class BoardHandler {
     System.out.printf("-----------------------------------------------------------------------------\n");
     System.out.printf("%4s%36s%4s%26s%25s%12s%6s\n", "번호", " ", "내용", " ", "작성일", " ", "조회수");
     System.out.printf("%4d%4s%20s%10s%9s%8s\n", 
-        b.getPostNum(), " ", b.getDetail(), " ", 
-        new SimpleDateFormat("yyyy-MM-dd").format(b.getWriteDate()), b.getViewCount());
+        board.getPostNum(), " ", board.getDetail(), " ", 
+        new SimpleDateFormat("yyyy-MM-dd").format(board.getWriteDate()), board.getViewCount());
 
   }
 }
