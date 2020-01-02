@@ -7,16 +7,16 @@ import kyh.tam.domain.Board;
 
 public class BoardHandler {    
   private BufferedReader br;
-  private BoardList boardList;
+  private ArrayList boardList;
   
   public BoardHandler(BufferedReader br) {
     this.br = br;
-    boardList = new BoardList();
+    boardList = new ArrayList();
   }
   
   public BoardHandler(BufferedReader br, int capacity) {
     this.br = br;
-    boardList = new BoardList(capacity);
+    boardList = new ArrayList(capacity);
   }  
 
   public void addBoard() throws Exception {
@@ -31,9 +31,10 @@ public class BoardHandler {
     boardList.add(b);
   }
   public void printBoardList() {
-    Board[] boards = boardList.toArray();
+    Object[] boards = boardList.toArray();
     System.out.printf("-----------------------------------------------------------------------------\n");
-    for(Board board : boards) { 
+    for(Object obj : boards) { 
+      Board board = (Board)obj;
       String wDate = new SimpleDateFormat("yyyy-MM-dd").format(board.getWriteDate());
       System.out.printf("%s, %s, %s, %s\n", board.getPostNum(), 
           board.getDetail(), wDate, board.getViewCount());
@@ -43,7 +44,7 @@ public class BoardHandler {
     System.out.printf("번호 : ");
     int boardNum = Integer.parseInt(br.readLine());
 
-    Board board = boardList.get(boardNum);
+    Board board = (Board)boardList.get(boardNum);
     if(board == null) {
       System.out.println("Board Number does not exists.");
       return;

@@ -7,16 +7,16 @@ import kyh.tam.domain.Member;
 
 public class MemberHandler {  
   private BufferedReader br;
-  private MemberList memberList;
+  private ArrayList memberList;
   
   public MemberHandler(BufferedReader br) {
     this.br = br;
-    this.memberList = new MemberList();
+    this.memberList = new ArrayList();
   }
   
   public MemberHandler(BufferedReader br, int capacity) {
     this.br = br;
-    this.memberList = new MemberList(capacity);
+    this.memberList = new ArrayList(capacity);
   }
   
   public void addMember() throws Exception {
@@ -40,12 +40,14 @@ public class MemberHandler {
     memberList.add(m);
   }
   public void printMemberList() {
-    Member[] members = memberList.toArray();
+    Object[] members = memberList.toArray();
     System.out.printf("-----------------------------------------------------------------------------\n");
-    for(Member member : members)      
+    for(Object obj : members) {
+      Member member = (Member)obj;
       System.out.printf("%s, %s, %s, %s, %s\n", 
           member.getPersonNum(), member.getPersonName(), 
           member.getAddress(), member.getPhoneNum(),
           new SimpleDateFormat("yyyy-MM-dd").format(member.getRegisteredDate()));
+    }
   }
 }

@@ -5,16 +5,16 @@ import kyh.tam.domain.Stuff;
 
 public class StuffHandler {
   private BufferedReader br;
-  private StuffList stuffList;
+  private ArrayList stuffList;
   
   public StuffHandler(BufferedReader br) {
     this.br = br;
-    this.stuffList = new StuffList();
+    this.stuffList = new ArrayList();
   }
   
   public StuffHandler(BufferedReader br, int capacity) {
     this.br = br;
-    this.stuffList = new StuffList(capacity);
+    this.stuffList = new ArrayList(capacity);
   }
   
   public void addStuff() throws Exception {
@@ -35,11 +35,13 @@ public class StuffHandler {
     stuffList.add(s);
   }
   public void printStuffList() {
-    Stuff[] stuffs = stuffList.toArray();
+    Object[] stuffs = stuffList.toArray();
     System.out.printf("-----------------------------------------------------------------------------\n");
-    for(Stuff stuff : stuffs)      
+    for(Object obj : stuffs) {
+      Stuff stuff = (Stuff)obj;
       System.out.printf("%s, %s, %s, %s, %s\n", 
           stuff.getStuffNum(), stuff.getStuffName(), stuff.getCategory(), 
           stuff.getSeller(), stuff.getPrice());
+    }
   }
 }
