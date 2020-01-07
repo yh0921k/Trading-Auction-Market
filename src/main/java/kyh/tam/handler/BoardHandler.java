@@ -32,7 +32,7 @@ public class BoardHandler {
     boardList.add(b);
   }
   public void printBoardList() {
-    Board[] boards = boardList.toArray(Board[].class);
+    Board[] boards = boardList.toArray(new Board[boardList.size()]);
     System.out.printf("-----------------------------------------------------------------------------\n");
     for(Board board : boards) { 
       String wDate = new SimpleDateFormat("yyyy-MM-dd").format(board.getWriteDate());

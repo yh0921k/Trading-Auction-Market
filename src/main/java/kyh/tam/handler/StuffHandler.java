@@ -36,7 +36,7 @@ public class StuffHandler {
     stuffList.add(s);
   }
   public void printStuffList() {
-    Stuff[] stuffs = stuffList.toArray(Stuff[].class);
+    Stuff[] stuffs = stuffList.toArray(new Stuff[stuffList.size()]);
     System.out.printf("-----------------------------------------------------------------------------\n");
     for(Stuff stuff : stuffs) {
       System.out.printf("%s, %s, %s, %s, %s\n", 

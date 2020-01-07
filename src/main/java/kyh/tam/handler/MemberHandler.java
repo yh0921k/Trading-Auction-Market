@@ -41,7 +41,7 @@ public class MemberHandler {
     memberList.add(m);
   }
   public void printMemberList() {
-    Member[] members = memberList.toArray(Member[].class);
+    Member[] members = memberList.toArray(new Member[memberList.size()]);
     System.out.printf("-----------------------------------------------------------------------------\n");
     for(Member member : members) {
       System.out.printf("%s, %s, %s, %s, %s\n", 
