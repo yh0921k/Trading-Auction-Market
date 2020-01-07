@@ -4,19 +4,20 @@ import java.io.BufferedReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import kyh.tam.domain.Board;
+import kyh.util.ArrayList;
 
 public class BoardHandler {    
   private BufferedReader br;
-  private ArrayList boardList;
+  private ArrayList<Board> boardList;
   
   public BoardHandler(BufferedReader br) {
     this.br = br;
-    boardList = new ArrayList();
+    boardList = new ArrayList<>();
   }
   
   public BoardHandler(BufferedReader br, int capacity) {
     this.br = br;
-    boardList = new ArrayList(capacity);
+    boardList = new ArrayList<>(capacity);
   }  
 
   public void addBoard() throws Exception {
@@ -31,10 +32,9 @@ public class BoardHandler {
     boardList.add(b);
   }
   public void printBoardList() {
-    Object[] boards = boardList.toArray();
+    Board[] boards = boardList.toArray(Board[].class);
     System.out.printf("-----------------------------------------------------------------------------\n");
-    for(Object obj : boards) { 
-      Board board = (Board)obj;
+    for(Board board : boards) { 
       String wDate = new SimpleDateFormat("yyyy-MM-dd").format(board.getWriteDate());
       System.out.printf("%s, %s, %s, %s\n", board.getPostNum(), 
           board.getDetail(), wDate, board.getViewCount());
@@ -44,7 +44,7 @@ public class BoardHandler {
     System.out.printf("번호 : ");
     int boardNum = Integer.parseInt(br.readLine());
 
-    Board board = (Board)boardList.get(boardNum);
+    Board board = boardList.get(boardNum);
     if(board == null) {
       System.out.println("Board Number does not exists.");
       return;

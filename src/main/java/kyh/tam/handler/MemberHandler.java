@@ -4,19 +4,20 @@ import java.io.BufferedReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import kyh.tam.domain.Member;
+import kyh.util.ArrayList;
 
 public class MemberHandler {  
   private BufferedReader br;
-  private ArrayList memberList;
+  private ArrayList<Member> memberList;
   
   public MemberHandler(BufferedReader br) {
     this.br = br;
-    this.memberList = new ArrayList();
+    this.memberList = new ArrayList<>();
   }
   
   public MemberHandler(BufferedReader br, int capacity) {
     this.br = br;
-    this.memberList = new ArrayList(capacity);
+    this.memberList = new ArrayList<>(capacity);
   }
   
   public void addMember() throws Exception {
@@ -40,10 +41,9 @@ public class MemberHandler {
     memberList.add(m);
   }
   public void printMemberList() {
-    Object[] members = memberList.toArray();
+    Member[] members = memberList.toArray(Member[].class);
     System.out.printf("-----------------------------------------------------------------------------\n");
-    for(Object obj : members) {
-      Member member = (Member)obj;
+    for(Member member : members) {
       System.out.printf("%s, %s, %s, %s, %s\n", 
           member.getPersonNum(), member.getPersonName(), 
           member.getAddress(), member.getPhoneNum(),

@@ -2,19 +2,20 @@ package kyh.tam.handler;
 
 import java.io.BufferedReader;
 import kyh.tam.domain.Stuff;
+import kyh.util.ArrayList;
 
 public class StuffHandler {
   private BufferedReader br;
-  private ArrayList stuffList;
+  private ArrayList<Stuff> stuffList;
   
   public StuffHandler(BufferedReader br) {
     this.br = br;
-    this.stuffList = new ArrayList();
+    this.stuffList = new ArrayList<>();
   }
   
   public StuffHandler(BufferedReader br, int capacity) {
     this.br = br;
-    this.stuffList = new ArrayList(capacity);
+    this.stuffList = new ArrayList<>(capacity);
   }
   
   public void addStuff() throws Exception {
@@ -35,10 +36,9 @@ public class StuffHandler {
     stuffList.add(s);
   }
   public void printStuffList() {
-    Object[] stuffs = stuffList.toArray();
+    Stuff[] stuffs = stuffList.toArray(Stuff[].class);
     System.out.printf("-----------------------------------------------------------------------------\n");
-    for(Object obj : stuffs) {
-      Stuff stuff = (Stuff)obj;
+    for(Stuff stuff : stuffs) {
       System.out.printf("%s, %s, %s, %s, %s\n", 
           stuff.getStuffNum(), stuff.getStuffName(), stuff.getCategory(), 
           stuff.getSeller(), stuff.getPrice());

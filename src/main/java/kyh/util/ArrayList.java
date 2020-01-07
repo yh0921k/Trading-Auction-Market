@@ -1,8 +1,8 @@
-package kyh.tam.handler;
+package kyh.util;
 
 import java.util.Arrays;
 
-public class ArrayList {
+public class ArrayList<T> {
   private static final int DEFAULT_CAPACITY = 100;
   private Object[] list;
   private int size;      
@@ -18,7 +18,7 @@ public class ArrayList {
       this.list = new Object[DEFAULT_CAPACITY];
   }
   
-  public void add(Object obj) {
+  public void add(T obj) {
     if(this.size == this.list.length) {
       Object[] arr = new Object[this.list.length + (this.list.length >> 1)];
       System.arraycopy(this.list, 0, arr, 0, list.length);
@@ -27,14 +27,16 @@ public class ArrayList {
     this.list[this.size++] = obj;
   }
   
-  public Object get(int idx) {
+  @SuppressWarnings("unchecked")
+  public T get(int idx) {
     for(int i = 0; i < this.size; i++)
       if(idx >= 0 && idx <= this.size && idx == i)
-        return this.list[i];
+        return (T)this.list[i];
     return null;
   }
   
-  public Object[] toArray() {
-    return Arrays.copyOf(this.list, this.size);
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  public T[] toArray(Class arrayType) {
+    return (T[])Arrays.copyOf(this.list, this.size, arrayType);
   }
 }
