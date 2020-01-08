@@ -25,23 +25,41 @@ public class App {
           stuffHandler.addStuff();
           break;
         case "/stuff/list":
-          stuffHandler.printStuffList();
+          stuffHandler.listStuff();
+          break;
+        case "/stuff/update":
+          stuffHandler.updateStuff();
+          break;
+        case "/stuff/delete":
+          stuffHandler.deleteStuff();
           break;
         case "/member/add":
           memberHandler.addMember();
           break;
         case "/member/list":
-          memberHandler.printMemberList();
+          memberHandler.listMember();
+          break;
+        case "/member/update":
+          memberHandler.updateMember();
+          break;
+        case "/member/delete":
+          memberHandler.deleteMember();
           break;
         case "/board/add":
           boardHandler.addBoard();
           break;
         case "/board/list":
-          boardHandler.printBoardList();
+          boardHandler.listBoard();
           break;
         case "/board/detail":
-          boardHandler.printDetailBoard();
-          break;        
+          boardHandler.detailBoard();
+          break;  
+        case "/board/update":
+          boardHandler.updateBoard();
+          break;
+        case "/board/delete":
+          boardHandler.deleteBoard();
+          break;  
         default:
           if (!command.equalsIgnoreCase("quit"))
             System.out.printf("Incorrect Command\n");

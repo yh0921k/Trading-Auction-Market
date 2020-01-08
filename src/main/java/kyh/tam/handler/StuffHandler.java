@@ -35,7 +35,7 @@ public class StuffHandler {
     s.setPrice(Integer.parseInt(br.readLine()));            
     stuffList.add(s);
   }
-  public void printStuffList() {
+  public void listStuff() {
     Stuff[] stuffs = stuffList.toArray(new Stuff[stuffList.size()]);
     System.out.printf("-----------------------------------------------------------------------------\n");
     for(Stuff stuff : stuffs) {
@@ -43,5 +43,54 @@ public class StuffHandler {
           stuff.getStuffNum(), stuff.getStuffName(), stuff.getCategory(), 
           stuff.getSeller(), stuff.getPrice());
     }
+  }
+  
+  public void updateStuff() throws Exception {
+    System.out.printf("-----------------------------------------------------------------------------\n");
+    System.out.printf("Index : ");
+    int index = Integer.parseInt(br.readLine());
+    
+    Stuff oldStuff = stuffList.get(index);
+    if(oldStuff == null) {
+      System.out.println("Stuff does not exists.");
+      return;
+    }
+    
+    Stuff newStuff = new Stuff();
+    newStuff.setStuffNum(oldStuff.getStuffNum());
+    System.out.printf("물품명(%s) : ", oldStuff.getStuffName());
+    String tmp = br.readLine();
+    if(tmp.length() != 0) {
+      newStuff.setStuffName(tmp);
+    } else {
+      newStuff.setStuffName(oldStuff.getStuffName());
+    }
+        
+    System.out.printf("판매자 : ");
+    newStuff.setSeller(br.readLine());
+    System.out.printf("분류 : ");
+    newStuff.setCategory(br.readLine());
+    System.out.printf("설명 : ");
+    newStuff.setStuffContents(br.readLine());
+    System.out.printf("가격 : ");
+    newStuff.setPrice(Integer.parseInt(br.readLine()));   
+    
+
+    this.stuffList.set(index, newStuff);
+    System.out.println("\nStuff Update Complete.");
+  }
+  
+  public void deleteStuff() throws Exception {
+    System.out.printf("Index : ");
+    int index = Integer.parseInt(br.readLine());
+
+    
+    Stuff member = stuffList.get(index);
+    if(member == null) {
+      System.out.println("Stuff does not exists.");
+      return;
+    }
+    this.stuffList.remove(index);
+    System.out.println("Delete Complete.");
   }
 }

@@ -40,7 +40,7 @@ public class MemberHandler {
     m.setRegisteredDate(new Date());
     memberList.add(m);
   }
-  public void printMemberList() {
+  public void listMember() {
     Member[] members = memberList.toArray(new Member[memberList.size()]);
     System.out.printf("-----------------------------------------------------------------------------\n");
     for(Member member : members) {
@@ -50,4 +50,56 @@ public class MemberHandler {
           new SimpleDateFormat("yyyy-MM-dd").format(member.getRegisteredDate()));
     }
   }
+  
+  public void updateMember() throws Exception {
+    System.out.printf("-----------------------------------------------------------------------------\n");
+    System.out.printf("Index : ");
+    int index = Integer.parseInt(br.readLine());
+    
+    Member oldMember = memberList.get(index);
+    if(oldMember == null) {
+      System.out.println("Member Number does not exists.");
+      return;
+    }
+    
+    Member newMember = new Member();
+    newMember.setPersonNum(oldMember.getPersonNum());
+    System.out.printf("이름(%s) : ", oldMember.getPersonName());
+    String tmp = br.readLine();
+    if(tmp.length() != 0) {
+      newMember.setPersonName(tmp);
+    } else {
+      newMember.setPersonName(oldMember.getPersonName());
+    }
+        
+    System.out.printf("Email : ");
+    newMember.setEmail(br.readLine());
+    System.out.printf("주소 : ");
+    newMember.setAddress(br.readLine());
+    System.out.printf("비밀번호 : ");
+    newMember.setPassword(br.readLine());
+    System.out.printf("사진 : ");
+    newMember.setPicture(br.readLine());
+    System.out.printf("연락처 : ");
+    newMember.setPhoneNum(br.readLine());
+    newMember.setRegisteredDate(oldMember.getRegisteredDate());
+
+    this.memberList.set(index, newMember);
+    System.out.println("\nMember Update Complete.");
+  }
+  
+  public void deleteMember() throws Exception {
+    System.out.printf("Index : ");
+    int index = Integer.parseInt(br.readLine());
+
+    
+    Member member = memberList.get(index);
+    if(member == null) {
+      System.out.println("Member does not exists.");
+      return;
+    }
+    this.memberList.remove(index);
+    System.out.println("Delete Complete.");
+  }
 }
+

@@ -44,6 +44,30 @@ public class ArrayList<T> {
     return arr;
   }
   
+  @SuppressWarnings("unchecked")
+  public T set(int index, T obj) {
+    if(index < 0 || index >= this.size)
+      return null;
+    
+    T oldValue = (T) this.list[index];
+    this.list[index] = obj;
+    return oldValue;
+  }
+  
+  @SuppressWarnings("unchecked")
+  public T remove(int index) {
+    if(index < 0 || index >= this.size)
+      return null;
+    
+    T oldValue = (T) this.list[index];
+    for(int i = index + 1; i < this.size; i++)
+      this.list[i-1] = this.list[i];
+    
+    this.size--;
+    this.list[this.size]= null; 
+    return oldValue;
+  }
+  
   public int size() {
     return this.size;
   }
