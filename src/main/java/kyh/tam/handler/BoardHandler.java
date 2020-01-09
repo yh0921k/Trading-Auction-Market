@@ -1,22 +1,22 @@
 package kyh.tam.handler;
 
-import java.io.BufferedReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import kyh.tam.domain.Board;
 import kyh.util.ArrayList;
+import kyh.util.Prompt;
 
 public class BoardHandler {    
   private ArrayList<Board> boardList;
-  private BufferedReader br;
+  private Prompt prompt;
   
-  public BoardHandler(BufferedReader br) {
-    this.br = br;
+  public BoardHandler(Prompt prompt) {
+    this.prompt = prompt;
     boardList = new ArrayList<>();
   }
   
-  public BoardHandler(BufferedReader br, int capacity) {
-    this.br = br;
+  public BoardHandler(Prompt prompt, int capacity) {
+    this.prompt = prompt;
     boardList = new ArrayList<>(capacity);
   }  
 
@@ -24,20 +24,15 @@ public class BoardHandler {
     System.out.printf("-----------------------------------------------------------------------------\n");
     
     Board board = new Board();
-    System.out.printf("번호 : ");
-    board.setNumber(Integer.parseInt(br.readLine()));
-    
-    System.out.printf("내용 : ");
-    board.setTitle(br.readLine());
-    
+    board.setNumber(prompt.inputInt("번호 : "));
+    board.setTitle(prompt.inputString("내용 : "));
     board.setWriteDate(new Date());
     board.setViewCount(0);
     
-    // 작성자 처리부
+    // 작성자 처리부(Writer)
     
     this.boardList.add(board);
     System.out.println("게시글 추가 완료");
-
   }
   
   public void listBoard() {
@@ -52,12 +47,9 @@ public class BoardHandler {
   }
   public void detailBoard() throws Exception {
     System.out.printf("-----------------------------------------------------------------------------\n");
-    System.out.printf("글번호 : ");
-    int number = Integer.parseInt(br.readLine());
-    
-    int index = indexOfBoard(number);
+    int index = indexOfBoard(prompt.inputInt("번호 : "));    
     if(index == -1) {
-      System.out.println("번호가 존재하지 않습니다.");
+      System.out.println("게시글이 존재하지 않습니다.");
       return;
     }
     
@@ -70,39 +62,36 @@ public class BoardHandler {
   
   public void updateBoard() throws Exception {
     System.out.printf("-----------------------------------------------------------------------------\n");
-    System.out.printf("글번호 : ");
-    int number = Integer.parseInt(br.readLine());
-    
-    int index = indexOfBoard(number);
+    int index = indexOfBoard(prompt.inputInt("번호 : "));
     if(index == -1) {
-      System.out.println("번호가 존재하지 않습니다.");
+      System.out.println("게시글이 존재하지 않습니다.");
       return;
     }
     
-    Board oldBoard = boardList.get(index);        
-    System.out.printf("게시글 제목(%s) : ", oldBoard.getTitle());
-    String tmp = br.readLine();
-    if(tmp.length() == 0) {
-      System.out.println("변경 취소");
-      return;
-    }
+    Board oldBoard = boardList.get(index);
+    Board newBoard = new Board();   
     
-    Board newBoard = new Board();    
     newBoard.setNumber(oldBoard.getNumber());
-    newBoard.setTitle(tmp);
-    newBoard.setWriteDate(new Date());
     newBoard.setViewCount(oldBoard.getViewCount());
+    newBoard.setWriteDate(new Date());
+    newBoard.setTitle(prompt.inputString(
+        String.format("제목(%s) : ", oldBoard.getTitle()), 
+        oldBoard.getTitle()));
+    
+    if (newBoard.equals(oldBoard)) {
+      System.out.println("게시글 변경 취소");
+      return;
+    }    
     this.boardList.set(index, newBoard);
     System.out.println("\n게시글 변경 완료");
   }
   
   public void deleteBoard() throws Exception {
-    System.out.printf("글번호 : ");
-    int number = Integer.parseInt(br.readLine());
+    System.out.printf("-----------------------------------------------------------------------------\n");
+    int index = indexOfBoard(prompt.inputInt("번호? "));
     
-    int index = indexOfBoard(number);
     if(index == -1) {
-      System.out.println("번호가 존재하지 않습니다.");
+      System.out.println("게시글이 존재하지 않습니다.");
       return;
     }
 

@@ -1,44 +1,41 @@
 package kyh.tam.handler;
 
-import java.io.BufferedReader;
 import kyh.tam.domain.Stuff;
 import kyh.util.ArrayList;
+import kyh.util.Prompt;
 
 public class StuffHandler {
   private ArrayList<Stuff> stuffList;
-  private BufferedReader br;
+  private Prompt prompt;
   
-  public StuffHandler(BufferedReader br) {
-    this.br = br;
+  public StuffHandler(Prompt prompt) {
+    this.prompt = prompt;
     this.stuffList = new ArrayList<>();
   }
   
-  public StuffHandler(BufferedReader br, int capacity) {
-    this.br = br;
+  public StuffHandler(Prompt prompt, int capacity) {
+    this.prompt = prompt;
     this.stuffList = new ArrayList<>(capacity);
   }
   
   public void addStuff() throws Exception {
     System.out.printf("-----------------------------------------------------------------------------\n");
     Stuff stuff = new Stuff();
-    System.out.printf("번호 : ");
-    stuff.setNumber(Integer.parseInt(br.readLine()));
-    System.out.printf("물품명 : ");
-    stuff.setName(br.readLine());
-    System.out.printf("분류 : ");
-    stuff.setCategory(br.readLine());
-    System.out.printf("상태 : ");
-    stuff.setState(br.readLine());
-    System.out.printf("가격 : ");
-    stuff.setPrice(Integer.parseInt(br.readLine()));            
-    System.out.printf("판매자 : ");
-    stuff.setSeller(br.readLine());
-    stuffList.add(stuff);
+    
+    stuff.setNumber(prompt.inputInt("번호 : "));
+    stuff.setName(prompt.inputString("물품명 : "));
+    stuff.setCategory(prompt.inputString("분류 : "));
+    stuff.setState(prompt.inputString("상태 : "));
+    stuff.setPrice(prompt.inputInt("가격 : "));
+    stuff.setSeller(prompt.inputString("판매자 : "));
+
+    this.stuffList.add(stuff);
     System.out.println("저장하였습니다.");
   }
+  
   public void listStuff() {
-    Stuff[] stuffs = stuffList.toArray(new Stuff[stuffList.size()]);
     System.out.printf("-----------------------------------------------------------------------------\n");
+    Stuff[] stuffs = stuffList.toArray(new Stuff[stuffList.size()]);
     for(Stuff stuff : stuffs) {
       System.out.printf("%s, %s, %s, %s, %s, %s\n", 
           stuff.getNumber(), stuff.getName(), stuff.getCategory(), 
@@ -48,12 +45,9 @@ public class StuffHandler {
   
   public void detailStuff() throws Exception {
     System.out.printf("-----------------------------------------------------------------------------\n");
-    System.out.printf("물품 번호 : ");
-    int number = Integer.parseInt(br.readLine());
-
-    int index = indexOfStuff(number);
+    int index = indexOfStuff(prompt.inputInt("번호 : "));
     if(index == -1) {
-      System.out.println("번호가 존재하지 않습니다");
+      System.out.println("물품이 존재하지 않습니다");
       return;
     }
     
@@ -68,81 +62,50 @@ public class StuffHandler {
   
   public void updateStuff() throws Exception {
     System.out.printf("-----------------------------------------------------------------------------\n");
-    System.out.printf("물품 인덱스 : ");
-    int number = Integer.parseInt(br.readLine());
-
-    int index = indexOfStuff(number);
+    int index = indexOfStuff(prompt.inputInt("번호 : "));
     if(index == -1) {
-      System.out.println("번호가 존재하지 않습니다");
+      System.out.println("물품이 존재하지 않습니다");
       return;
     }
     
     Stuff oldStuff = stuffList.get(index);    
     Stuff newStuff = new Stuff();
-    String tmp;
-    boolean changed = false;
     
     newStuff.setNumber(oldStuff.getNumber());
-    System.out.printf("물품명(%s) : ", oldStuff.getName());
-    tmp = br.readLine();
-    if(tmp.length() != 0)
-      newStuff.setName(tmp);
-    else {
-      newStuff.setName(oldStuff.getName());
-      changed = true;
-    }
-        
-    System.out.printf("분류(%s) : ", oldStuff.getCategory());
-    tmp = br.readLine();
-    if(tmp.length() == 0)
-      newStuff.setCategory(oldStuff.getCategory());
-    else {
-      newStuff.setCategory(tmp);
-      changed = true;
-    }
-
-    System.out.printf("상태(%s) : ", oldStuff.getState());
-    tmp = br.readLine();
-    if(tmp.length() == 0)
-      newStuff.setState(oldStuff.getState());
-    else {
-      newStuff.setState(tmp);
-      changed = true;
-    }
-
-    System.out.printf("가격(%d) : ", oldStuff.getPrice());
-    tmp = br.readLine();
-    if(tmp.length() == 0)
-      newStuff.setPrice(oldStuff.getPrice());
-    else {
-      newStuff.setPrice(Integer.parseInt(tmp));
-      changed = true;
-    }
-
-    System.out.printf("판매자(%s) : ", oldStuff.getSeller());
-    tmp = br.readLine();
-    if(tmp.length() == 0)
-      newStuff.setSeller(oldStuff.getSeller());
-    else {
-      newStuff.setSeller(tmp);
-      changed = true;
-    }
     
-    if(changed) {
-      this.stuffList.set(index, newStuff);
-      System.out.println("물품 변경 완료");      
-    }
-    else
+    newStuff.setName(prompt.inputString(
+        String.format("물품명(%s) : ", oldStuff.getName()),
+        oldStuff.getName()));
+    
+    newStuff.setCategory(prompt.inputString(
+        String.format("분류(%s) : ", oldStuff.getCategory()),
+        oldStuff.getCategory()));        
+    
+    newStuff.setState(prompt.inputString(
+        String.format("상태(%s) : ", oldStuff.getState()),
+        oldStuff.getState()));    
+    
+    newStuff.setPrice(prompt.inputInt(
+        String.format("가격(%d) : ", oldStuff.getPrice()),
+        oldStuff.getPrice()));    
+
+    newStuff.setSeller(prompt.inputString(
+        String.format("판매자(%s) : ", oldStuff.getSeller()),
+        oldStuff.getSeller()));  
+
+    if(newStuff.equals(oldStuff)) {
       System.out.println("물품 변경 취소");
+      return;
+    }
+    this.stuffList.set(index, newStuff);
+    System.out.println("물품 변경 완료");        
   }
   
   public void deleteStuff() throws Exception {
-    System.out.printf("물품 인덱스 : ");
-    int number = Integer.parseInt(br.readLine());
-
-    int index = indexOfStuff(number);
+    System.out.printf("-----------------------------------------------------------------------------\n");
+    int index = indexOfStuff(prompt.inputInt("번호 : "));
     if(index == -1) {
-      System.out.println("번호가 존재하지 않습니다");
+      System.out.println("물품이 존재하지 않습니다");
       return;
     }
     this.stuffList.remove(index);

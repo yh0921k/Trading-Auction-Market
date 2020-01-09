@@ -5,14 +5,17 @@ import java.io.InputStreamReader;
 import kyh.tam.handler.BoardHandler;
 import kyh.tam.handler.MemberHandler;
 import kyh.tam.handler.StuffHandler;
+import kyh.util.Prompt;
 
 public class App { 
+  
+  static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+  
   public static void main(String[] args) throws Exception {
-    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    
-    StuffHandler stuffHandler = new StuffHandler(br);
-    MemberHandler memberHandler = new MemberHandler(br);
-    BoardHandler boardHandler = new BoardHandler(br);
+    Prompt prompt = new Prompt(br);
+    StuffHandler stuffHandler = new StuffHandler(prompt);
+    MemberHandler memberHandler = new MemberHandler(prompt);
+    BoardHandler boardHandler = new BoardHandler(prompt);
     
     String command;
     do {

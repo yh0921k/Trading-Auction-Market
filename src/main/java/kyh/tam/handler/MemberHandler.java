@@ -1,44 +1,39 @@
 package kyh.tam.handler;
 
-import java.io.BufferedReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import kyh.tam.domain.Member;
 import kyh.util.ArrayList;
+import kyh.util.Prompt;
 
 public class MemberHandler {  
   private ArrayList<Member> memberList;
-  private BufferedReader br;
+  private Prompt prompt;
   
-  public MemberHandler(BufferedReader br) {
-    this.br = br;
+  public MemberHandler(Prompt prompt) {
+    this.prompt = prompt;
     this.memberList = new ArrayList<>();
   }
   
-  public MemberHandler(BufferedReader br, int capacity) {
-    this.br = br;
+  public MemberHandler(Prompt prompt, int capacity) {
+    this.prompt = prompt;
     this.memberList = new ArrayList<>(capacity);
   }
   
   public void addMember() throws Exception {
     System.out.printf("-----------------------------------------------------------------------------\n");
     Member member = new Member();
-    System.out.printf("번호 : ");
-    member.setNumber(Integer.parseInt(br.readLine()));
-    System.out.printf("이름 : ");
-    member.setName(br.readLine());
-    System.out.printf("Email : ");
-    member.setEmail(br.readLine());
-    System.out.printf("주소 : ");
-    member.setAddress(br.readLine());
-    System.out.printf("암호 : ");
-    member.setPassword(br.readLine());
-    System.out.printf("사진 : ");
-    member.setPhoto(br.readLine());
-    System.out.printf("전화 : ");
-    member.setTel(br.readLine());
+    
+    member.setNumber(prompt.inputInt("번호 : "));
+    member.setName(prompt.inputString("이름 : "));
+    member.setEmail(prompt.inputString("메일 : "));
+    member.setAddress(prompt.inputString("주소 : "));
+    member.setPassword(prompt.inputString("암호 : "));
+    member.setPhoto(prompt.inputString("사진 : "));
+    member.setTel(prompt.inputString("연락처 : "));
     member.setRegisteredDate(new Date());
-    memberList.add(member);
+    
+    this.memberList.add(member);
     System.out.println("저장하였습니다.");
   }
   public void listMember() {
@@ -54,12 +49,9 @@ public class MemberHandler {
   
   public void detailMember() throws Exception {
     System.out.printf("-----------------------------------------------------------------------------\n");
-    System.out.printf("회원 번호 : ");
-    int number = Integer.parseInt(br.readLine());
-
-    int index = indexOfMember(number);
+    int index = indexOfMember(prompt.inputInt("번호 : "));
     if(index == -1) {
-      System.out.println("번호가 존재하지 않습니다");
+      System.out.println("회원이 존재하지 않습니다");
       return;
     }
     
@@ -76,93 +68,55 @@ public class MemberHandler {
   
   public void updateMember() throws Exception {
     System.out.printf("-----------------------------------------------------------------------------\n");
-    System.out.printf("회원 번호 : ");
-    int number = Integer.parseInt(br.readLine());
-
-    int index = indexOfMember(number);
+    int index = indexOfMember(prompt.inputInt("번호 : "));
     if(index == -1) {
-      System.out.println("번호가 존재하지 않습니다");
+      System.out.println("회원이 존재하지 않습니다");
       return;
     }
     
     Member oldMember = memberList.get(index);
     Member newMember = new Member();
-    String tmp;;
-    boolean changed = false;
     
     newMember.setNumber(oldMember.getNumber());
-    System.out.printf("이름(%s) : ", oldMember.getName());
-    tmp = br.readLine();
-    if(tmp.length() != 0)
-      newMember.setName(tmp);
-    else {
-      newMember.setName(oldMember.getName());
-      changed = true;
-    }
-        
-    System.out.printf("Email(%s) : ", oldMember.getEmail());
-    tmp = br.readLine();
-    if(tmp.length() == 0)
-      newMember.setEmail(oldMember.getEmail());
-    else {
-      newMember.setEmail(tmp);
-      changed = true;
-    }    
+    newMember.setName(prompt.inputString(
+        String.format("이름(%s) : ", oldMember.getName()),
+        oldMember.getName()));
     
-    System.out.printf("주소(%s) : ", oldMember.getAddress());
-    tmp = br.readLine();
-    if(tmp.length() == 0)
-      newMember.setAddress(oldMember.getAddress());
-    else {
-      newMember.setAddress(tmp);
-      changed = true;
-    }    
+    newMember.setEmail(prompt.inputString(
+        String.format("메일(%s) : ", oldMember.getEmail()),
+        oldMember.getEmail()));
     
-    System.out.printf("비밀번호(%s) : ", oldMember.getPassword());
-    tmp = br.readLine();
-    if(tmp.length() == 0)
-      newMember.setPassword(oldMember.getPassword());
-    else {
-      newMember.setPassword(tmp);
-      changed = true;
-    }    
+    newMember.setAddress(prompt.inputString(
+        String.format("주소(%s) : ", oldMember.getAddress()),
+        oldMember.getAddress()));
     
-    System.out.printf("사진(%s) : ", oldMember.getPhoto());
-    tmp = br.readLine();
-    if(tmp.length() == 0)
-      newMember.setPhoto(oldMember.getPhoto());
-    else {
-      newMember.setPhoto(tmp);
-      changed = true;
-    }
+    newMember.setPassword(prompt.inputString(
+        String.format("암호(%s) : ", oldMember.getPassword()),
+        oldMember.getPassword()));
     
+    newMember.setPhoto(prompt.inputString(
+        String.format("사진(%s) : ", oldMember.getPhoto()),
+        oldMember.getPhoto()));
     
-    System.out.printf("연락처(%s) : ", oldMember.getTel());
-    tmp = br.readLine();
-    if(tmp.length() == 0)
-      newMember.setTel(oldMember.getTel());
-    else {
-      newMember.setTel(tmp);
-      changed = true;
-    }
+    newMember.setTel(prompt.inputString(
+        String.format("연락처(%s) : ", oldMember.getTel()),
+        oldMember.getTel()));
     
     newMember.setRegisteredDate(oldMember.getRegisteredDate());
 
-    if(changed) {
-      this.memberList.set(index, newMember);
-      System.out.println("회원 변경 완료");
-    } else {
+    if (oldMember.equals(newMember)) {
       System.out.println("회원 변경 취소");
+      return;
     }
+    this.memberList.set(index, newMember);
+    System.out.println("회원 변경 완료");
   }
   
   public void deleteMember() throws Exception {
-    System.out.printf("회원 번호 : ");
-    int number = Integer.parseInt(br.readLine());
-
-    int index = indexOfMember(number);
+    System.out.printf("-----------------------------------------------------------------------------\n");
+    int index = indexOfMember(prompt.inputInt("번호 : "));
     if(index == -1) {
-      System.out.println("번호가 존재하지 않습니다");
+      System.out.println("회원이 존재하지 않습니다");
       return;
     }    
     this.memberList.remove(index);
