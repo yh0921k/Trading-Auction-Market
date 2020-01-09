@@ -12,7 +12,7 @@ public class App {
     
     StuffHandler stuffHandler = new StuffHandler(br);
     MemberHandler memberHandler = new MemberHandler(br);
-    BoardHandler boardHandler = new BoardHandler(br, 200);
+    BoardHandler boardHandler = new BoardHandler(br);
     
     String command;
     do {
@@ -27,6 +27,9 @@ public class App {
         case "/stuff/list":
           stuffHandler.listStuff();
           break;
+        case "/stuff/detail":
+          stuffHandler.detailStuff();
+          break;  
         case "/stuff/update":
           stuffHandler.updateStuff();
           break;
@@ -39,6 +42,9 @@ public class App {
         case "/member/list":
           memberHandler.listMember();
           break;
+        case "/member/detail":
+          memberHandler.detailMember();
+          break;  
         case "/member/update":
           memberHandler.updateMember();
           break;
@@ -66,8 +72,6 @@ public class App {
       }
     } while (!command.equalsIgnoreCase("quit"));
     System.out.println("Bye");
+    br.close();
   }
-  
-  
-  
 }

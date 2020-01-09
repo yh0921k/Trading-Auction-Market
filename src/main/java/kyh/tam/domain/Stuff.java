@@ -1,30 +1,30 @@
 package kyh.tam.domain;
 
 public class Stuff {
-  private int stuffNum;
-  private String stuffName;
-  private String stuffContents;
+  private int    number;
+  private String name;
+  private String state;
   private String seller;
   private String category;
-  private int price;
+  private int    price;
   
-  public int getStuffNum() {
-    return stuffNum;
+  public int getNumber() {
+    return number;
   }
-  public void setStuffNum(int stuffNum) {
-    this.stuffNum = stuffNum;
+  public void setNumber(int number) {
+    this.number = number;
   }
-  public String getStuffName() {
-    return stuffName;
+  public String getName() {
+    return name;
   }
-  public void setStuffName(String stuffName) {
-    this.stuffName = stuffName;
+  public void setName(String name) {
+    this.name = name;
   }
-  public String getStuffContents() {
-    return stuffContents;
+  public String getState() {
+    return state;
   }
-  public void setStuffContents(String stuffContents) {
-    this.stuffContents = stuffContents;
+  public void setState(String state) {
+    this.state = state;
   }
   public String getSeller() {
     return seller;

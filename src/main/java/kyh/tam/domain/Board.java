@@ -3,22 +3,23 @@ package kyh.tam.domain;
 import java.util.Date;
 
 public class Board {
-  private int postNum;
-  private String detail;
-  private Date writeDate;
-  private int viewCount;
+  private int    number;
+  private String title;
+  private Date   writeDate;
+  private int    viewCount;
+  private String writer;
   
-  public int getPostNum() {
-    return postNum;
+  public int getNumber() {
+    return number;
   }
-  public void setPostNum(int postNum) {
-    this.postNum = postNum;
+  public void setNumber(int number) {
+    this.number = number;
   }
-  public String getDetail() {
-    return detail;
+  public String getTitle() {
+    return title;
   }
-  public void setDetail(String detail) {
-    this.detail = detail;
+  public void setTitle(String contents) {
+    this.title = contents;
   }
   public Date getWriteDate() {
     return writeDate;
@@ -31,5 +32,11 @@ public class Board {
   }
   public void setViewCount(int viewCount) {
     this.viewCount = viewCount;
+  }
+  public String getWriter() {
+    return writer;
+  }
+  public void setWriter(String writer) {
+    this.writer = writer;
   } 
 }

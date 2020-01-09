@@ -3,26 +3,26 @@ package kyh.tam.domain;
 import java.util.Date;
 
 public class Member {
-  private int personNum;
-  private String personName;
+  private int    number;
+  private String name;
   private String email;
   private String address;
   private String password;
-  private String picture;
-  private String phoneNum;
-  private Date registeredDate;
+  private String photo;
+  private String tel;
+  private Date   registeredDate;
   
-  public int getPersonNum() {
-    return personNum;
+  public int getNumber() {
+    return number;
   }
-  public void setPersonNum(int personNum) {
-    this.personNum = personNum;
+  public void setNumber(int number) {
+    this.number = number;
   }
-  public String getPersonName() {
-    return personName;
+  public String getName() {
+    return name;
   }
-  public void setPersonName(String personName) {
-    this.personName = personName;
+  public void setName(String name) {
+    this.name = name;
   }
   public String getEmail() {
     return email;
@@ -42,17 +42,17 @@ public class Member {
   public void setPassword(String password) {
     this.password = password;
   }
-  public String getPicture() {
-    return picture;
+  public String getPhoto() {
+    return photo;
   }
-  public void setPicture(String picture) {
-    this.picture = picture;
+  public void setPhoto(String photo) {
+    this.photo = photo;
   }
-  public String getPhoneNum() {
-    return phoneNum;
+  public String getTel() {
+    return tel;
   }
-  public void setPhoneNum(String phoneNum) {
-    this.phoneNum = phoneNum;
+  public void setTel(String tel) {
+    this.tel = tel;
   }
   public Date getRegisteredDate() {
     return registeredDate;
