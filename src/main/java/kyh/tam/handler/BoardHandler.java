@@ -52,14 +52,16 @@ public class BoardHandler {
   }
   public void detailBoard() throws Exception {
     System.out.printf("-----------------------------------------------------------------------------\n");
-    System.out.printf("게시글 인덱스 : ");
-    int index = Integer.parseInt(br.readLine());
-
-    Board board = this.boardList.get(index);
-    if(board == null) {
-      System.out.println("인덱스가 유효하지 않습니다.");
+    System.out.printf("글번호 : ");
+    int number = Integer.parseInt(br.readLine());
+    
+    int index = indexOfBoard(number);
+    if(index == -1) {
+      System.out.println("번호가 존재하지 않습니다.");
       return;
     }
+    
+    Board board = this.boardList.get(index);    
     System.out.printf("번호: %d\n", board.getNumber());
     System.out.printf("제목: %s\n", board.getTitle());
     System.out.printf("등록일: %s\n", new SimpleDateFormat("yyyy-MM-dd").format(board.getWriteDate()));
@@ -68,15 +70,16 @@ public class BoardHandler {
   
   public void updateBoard() throws Exception {
     System.out.printf("-----------------------------------------------------------------------------\n");
-    System.out.printf("게시글 인덱스 : ");
-    int index = Integer.parseInt(br.readLine());
+    System.out.printf("글번호 : ");
+    int number = Integer.parseInt(br.readLine());
     
-    Board oldBoard = boardList.get(index);    
-    if(oldBoard == null) {
-      System.out.println("인덱스가 유효하지 않습니다.");
+    int index = indexOfBoard(number);
+    if(index == -1) {
+      System.out.println("번호가 존재하지 않습니다.");
       return;
     }
     
+    Board oldBoard = boardList.get(index);        
     System.out.printf("게시글 제목(%s) : ", oldBoard.getTitle());
     String tmp = br.readLine();
     if(tmp.length() == 0) {
@@ -94,15 +97,23 @@ public class BoardHandler {
   }
   
   public void deleteBoard() throws Exception {
-    System.out.printf("게시글 인덱스 : ");
-    int index = Integer.parseInt(br.readLine());
+    System.out.printf("글번호 : ");
+    int number = Integer.parseInt(br.readLine());
     
-    Board board = boardList.get(index);
-    if(board == null) {
-      System.out.println("인덱스가 유효하지 않습니다.");
+    int index = indexOfBoard(number);
+    if(index == -1) {
+      System.out.println("번호가 존재하지 않습니다.");
       return;
     }
+
     this.boardList.remove(index);
     System.out.println("게시글 삭제 완료");
+  }
+  
+  private int indexOfBoard(int number) {
+    for(int i = 0; i < this.boardList.size(); i++)
+      if(this.boardList.get(i).getNumber() == number)
+        return i;
+    return -1;
   }
 }

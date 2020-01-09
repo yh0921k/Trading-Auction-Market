@@ -54,15 +54,16 @@ public class MemberHandler {
   
   public void detailMember() throws Exception {
     System.out.printf("-----------------------------------------------------------------------------\n");
-    System.out.printf("회원 인덱스 : ");
-    int index = Integer.parseInt(br.readLine());
+    System.out.printf("회원 번호 : ");
+    int number = Integer.parseInt(br.readLine());
 
-    Member member = this.memberList.get(index);
-    if(member == null) {
-      System.out.println("인덱스가 유효하지 않습니다.");
+    int index = indexOfMember(number);
+    if(index == -1) {
+      System.out.println("번호가 존재하지 않습니다");
       return;
     }
     
+    Member member = this.memberList.get(index);    
     System.out.printf("번호 : %d\n", member.getNumber());
     System.out.printf("이름 : %s\n", member.getName());
     System.out.printf("메일 : %s\n", member.getEmail());
@@ -75,15 +76,16 @@ public class MemberHandler {
   
   public void updateMember() throws Exception {
     System.out.printf("-----------------------------------------------------------------------------\n");
-    System.out.printf("회원 인덱스 : ");
-    int index = Integer.parseInt(br.readLine());
-    
-    Member oldMember = memberList.get(index);
-    if(oldMember == null) {
-      System.out.println("인덱스가 유효하지 않습니다.");
+    System.out.printf("회원 번호 : ");
+    int number = Integer.parseInt(br.readLine());
+
+    int index = indexOfMember(number);
+    if(index == -1) {
+      System.out.println("번호가 존재하지 않습니다");
       return;
     }
     
+    Member oldMember = memberList.get(index);
     Member newMember = new Member();
     String tmp;;
     boolean changed = false;
@@ -152,21 +154,26 @@ public class MemberHandler {
     } else {
       System.out.println("회원 변경 취소");
     }
-    
-    
   }
   
   public void deleteMember() throws Exception {
-    System.out.printf("회원 인덱스 : ");
-    int index = Integer.parseInt(br.readLine());
-    
-    Member member = memberList.get(index);
-    if(member == null) {
-      System.out.println("인덱스가 유효하지 않습니다.");
+    System.out.printf("회원 번호 : ");
+    int number = Integer.parseInt(br.readLine());
+
+    int index = indexOfMember(number);
+    if(index == -1) {
+      System.out.println("번호가 존재하지 않습니다");
       return;
-    }
+    }    
     this.memberList.remove(index);
     System.out.println("회원 삭제 완료");
+  }
+  
+  private int indexOfMember(int number) {
+    for(int i = 0; i < this.memberList.size(); i++)
+      if(this.memberList.get(i).getNumber() == number)
+        return i;
+    return -1;
   }
 }
 

@@ -48,15 +48,16 @@ public class StuffHandler {
   
   public void detailStuff() throws Exception {
     System.out.printf("-----------------------------------------------------------------------------\n");
-    System.out.printf("물품 인덱스 : ");
-    int index = Integer.parseInt(br.readLine());
-    
-    Stuff stuff = this.stuffList.get(index);
-    if(stuff == null) {
-      System.out.println("인덱스가 유효하지 않습니다.");
+    System.out.printf("물품 번호 : ");
+    int number = Integer.parseInt(br.readLine());
+
+    int index = indexOfStuff(number);
+    if(index == -1) {
+      System.out.println("번호가 존재하지 않습니다");
       return;
     }
     
+    Stuff stuff = this.stuffList.get(index);    
     System.out.printf("번호 : %s\n", stuff.getNumber());
     System.out.printf("물품명 : %s\n", stuff.getName());
     System.out.printf("분류 : %s\n", stuff.getCategory());
@@ -68,14 +69,15 @@ public class StuffHandler {
   public void updateStuff() throws Exception {
     System.out.printf("-----------------------------------------------------------------------------\n");
     System.out.printf("물품 인덱스 : ");
-    int index = Integer.parseInt(br.readLine());
-    
-    Stuff oldStuff = stuffList.get(index);
-    if(oldStuff == null) {
-      System.out.println("인덱스가 유효하지 않습니다.");
+    int number = Integer.parseInt(br.readLine());
+
+    int index = indexOfStuff(number);
+    if(index == -1) {
+      System.out.println("번호가 존재하지 않습니다");
       return;
     }
     
+    Stuff oldStuff = stuffList.get(index);    
     Stuff newStuff = new Stuff();
     String tmp;
     boolean changed = false;
@@ -136,15 +138,21 @@ public class StuffHandler {
   
   public void deleteStuff() throws Exception {
     System.out.printf("물품 인덱스 : ");
-    int index = Integer.parseInt(br.readLine());
+    int number = Integer.parseInt(br.readLine());
 
-    
-    Stuff stuff = stuffList.get(index);
-    if(stuff == null) {
-      System.out.println("인덱스가 유효하지 않습니다.");
+    int index = indexOfStuff(number);
+    if(index == -1) {
+      System.out.println("번호가 존재하지 않습니다");
       return;
     }
     this.stuffList.remove(index);
     System.out.println("물품 삭제 완료");
+  }
+  
+  private int indexOfStuff(int number) {
+    for(int i = 0; i < this.stuffList.size(); i++)
+      if(this.stuffList.get(i).getNumber() == number)
+        return i;
+    return -1;
   }
 }
