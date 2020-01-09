@@ -1,7 +1,6 @@
 package kyh.util;
 
 import java.io.BufferedReader;
-import java.sql.Date;
 
 public class Prompt {
   

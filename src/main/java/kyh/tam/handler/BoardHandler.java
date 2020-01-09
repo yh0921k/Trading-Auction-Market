@@ -4,21 +4,17 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import kyh.tam.domain.Board;
 import kyh.util.ArrayList;
+import kyh.util.LinkedList;
 import kyh.util.Prompt;
 
 public class BoardHandler {    
-  private ArrayList<Board> boardList;
+  private LinkedList<Board> boardList;
   private Prompt prompt;
   
   public BoardHandler(Prompt prompt) {
     this.prompt = prompt;
-    boardList = new ArrayList<>();
+    boardList = new LinkedList<>();
   }
-  
-  public BoardHandler(Prompt prompt, int capacity) {
-    this.prompt = prompt;
-    boardList = new ArrayList<>(capacity);
-  }  
 
   public void addBoard() throws Exception {
     System.out.printf("-----------------------------------------------------------------------------\n");

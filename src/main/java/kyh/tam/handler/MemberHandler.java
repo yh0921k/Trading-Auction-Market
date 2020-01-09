@@ -4,20 +4,16 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import kyh.tam.domain.Member;
 import kyh.util.ArrayList;
+import kyh.util.LinkedList;
 import kyh.util.Prompt;
 
 public class MemberHandler {  
-  private ArrayList<Member> memberList;
+  private LinkedList<Member> memberList;
   private Prompt prompt;
   
   public MemberHandler(Prompt prompt) {
     this.prompt = prompt;
-    this.memberList = new ArrayList<>();
-  }
-  
-  public MemberHandler(Prompt prompt, int capacity) {
-    this.prompt = prompt;
-    this.memberList = new ArrayList<>(capacity);
+    this.memberList = new LinkedList<>();
   }
   
   public void addMember() throws Exception {

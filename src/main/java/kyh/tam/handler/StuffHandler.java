@@ -2,20 +2,16 @@ package kyh.tam.handler;
 
 import kyh.tam.domain.Stuff;
 import kyh.util.ArrayList;
+import kyh.util.LinkedList;
 import kyh.util.Prompt;
 
 public class StuffHandler {
-  private ArrayList<Stuff> stuffList;
+  private LinkedList<Stuff> stuffList;
   private Prompt prompt;
   
   public StuffHandler(Prompt prompt) {
     this.prompt = prompt;
-    this.stuffList = new ArrayList<>();
-  }
-  
-  public StuffHandler(Prompt prompt, int capacity) {
-    this.prompt = prompt;
-    this.stuffList = new ArrayList<>(capacity);
+    this.stuffList = new LinkedList<>();
   }
   
   public void addStuff() throws Exception {
