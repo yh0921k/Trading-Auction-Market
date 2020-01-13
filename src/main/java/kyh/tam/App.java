@@ -6,10 +6,12 @@ import kyh.tam.handler.BoardHandler;
 import kyh.tam.handler.MemberHandler;
 import kyh.tam.handler.StuffHandler;
 import kyh.util.Prompt;
+import kyh.util.Stack;
 
 public class App { 
   
   static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+  static Stack<String> commandStack = new Stack<>();
   
   public static void main(String[] args) throws Exception {
     Prompt prompt = new Prompt(br);
@@ -22,7 +24,11 @@ public class App {
       System.out.printf("-----------------------------------------------------------------------------\n");
       System.out.printf("\n$ ");
       command = br.readLine();
-
+      if(command.length() == 0)
+        continue;
+      
+      commandStack.push(command);
+      
       switch (command) {
         case "/stuff/add":
           stuffHandler.addStuff();
@@ -69,6 +75,9 @@ public class App {
         case "/board/delete":
           boardHandler.deleteBoard();
           break;  
+        case "history":
+          printCommandHistory();
+          break;
         default:
           if (!command.equalsIgnoreCase("quit"))
             System.out.printf("Incorrect Command\n");
@@ -76,5 +85,20 @@ public class App {
     } while (!command.equalsIgnoreCase("quit"));
     System.out.println("Bye");
     br.close();
+  }
+  
+  private static void printCommandHistory() throws Exception {
+    Stack<String> historyStack = commandStack.clone();
+    int count = 0;
+    while(!historyStack.empty()) {
+      System.out.println(historyStack.pop());
+      count++;
+      if(count % 5 == 0) {
+        System.out.printf(": ");
+        if(br.readLine().equalsIgnoreCase("q"))
+          break;
+      }
+      
+    }
   }
 }
