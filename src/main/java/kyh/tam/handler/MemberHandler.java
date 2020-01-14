@@ -3,17 +3,16 @@ package kyh.tam.handler;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import kyh.tam.domain.Member;
-import kyh.util.ArrayList;
-import kyh.util.LinkedList;
+import kyh.util.List;
 import kyh.util.Prompt;
 
 public class MemberHandler {  
-  private LinkedList<Member> memberList;
+  private List<Member> memberList;
   private Prompt prompt;
   
-  public MemberHandler(Prompt prompt) {
+  public MemberHandler(Prompt prompt, List<Member> list) {
     this.prompt = prompt;
-    this.memberList = new LinkedList<>();
+    this.memberList = list;
   }
   
   public void addMember() throws Exception {

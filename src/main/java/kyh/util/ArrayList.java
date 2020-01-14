@@ -2,10 +2,9 @@ package kyh.util;
 
 import java.util.Arrays;
 
-public class ArrayList<E> {
+public class ArrayList<E> extends List<E> {
   private static final int DEFAULT_CAPACITY = 100;
   private Object[] elementData;
-  private int size;      
 
   public ArrayList() {
     this.elementData = new Object[DEFAULT_CAPACITY];
@@ -18,6 +17,7 @@ public class ArrayList<E> {
       this.elementData = new Object[initialCapacity];
   }
   
+  @Override
   public void add(E e) {    
     if (this.size == this.elementData.length) {
       grow();
@@ -25,6 +25,7 @@ public class ArrayList<E> {
     this.elementData[this.size++] = e;
   }
   
+  @Override
   public void add(int index, E value) {
     if (index < 0 || index >= this.size)
       return;
@@ -39,6 +40,7 @@ public class ArrayList<E> {
     this.size++;
   }
   
+  @Override
   @SuppressWarnings("unchecked")
   public E get(int index) {
     if(index < 0 || index >= this.size)
@@ -46,6 +48,7 @@ public class ArrayList<E> {
     return (E) this.elementData[index];
   }
   
+  @Override
   @SuppressWarnings("unchecked")
   public E set(int index, E e) {
     if(index < 0 || index >= this.size)
@@ -56,6 +59,7 @@ public class ArrayList<E> {
     return oldValue;
   }
   
+  @Override
   @SuppressWarnings("unchecked")
   public E remove(int index) {
     if(index < 0 || index >= this.size)
@@ -71,10 +75,12 @@ public class ArrayList<E> {
     return oldValue;
   }
   
+  @Override
   public Object[] toArray() {
     return Arrays.copyOf(this.elementData, this.size);
   }
   
+  @Override
   @SuppressWarnings("unchecked")
   public E[] toArray(E[] arr) {
     if (arr.length < this.size)
@@ -82,10 +88,6 @@ public class ArrayList<E> {
     
     System.arraycopy(this.elementData, 0, arr, 0, this.size);
     return arr;
-  }
-  
-  public int size() {
-    return this.size;
   }
   
   private Object[] grow() {

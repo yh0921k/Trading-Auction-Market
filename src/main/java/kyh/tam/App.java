@@ -2,9 +2,14 @@ package kyh.tam;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import kyh.tam.domain.Board;
+import kyh.tam.domain.Member;
+import kyh.tam.domain.Stuff;
 import kyh.tam.handler.BoardHandler;
 import kyh.tam.handler.MemberHandler;
 import kyh.tam.handler.StuffHandler;
+import kyh.util.ArrayList;
+import kyh.util.LinkedList;
 import kyh.util.Prompt;
 import kyh.util.Queue;
 import kyh.util.Stack;
@@ -17,10 +22,9 @@ public class App {
   
   public static void main(String[] args) throws Exception {
     Prompt prompt = new Prompt(br);
-    StuffHandler stuffHandler = new StuffHandler(prompt);
-    MemberHandler memberHandler = new MemberHandler(prompt);
-    BoardHandler boardHandler = new BoardHandler(prompt);
-    
+    StuffHandler stuffHandler = new StuffHandler(prompt, new ArrayList<Stuff>());
+    MemberHandler memberHandler = new MemberHandler(prompt, new ArrayList<Member>());
+    BoardHandler boardHandler = new BoardHandler(prompt, new LinkedList<Board>());
     String command;
     do {
       System.out.printf("-----------------------------------------------------------------------------\n");
