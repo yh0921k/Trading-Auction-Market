@@ -1,14 +1,14 @@
 package kyh.tam.handler;
 
 import kyh.tam.domain.Stuff;
-import kyh.util.List;
+import kyh.util.AbstractList;
 import kyh.util.Prompt;
 
 public class StuffHandler {
-  private List<Stuff> stuffList;
+  private AbstractList<Stuff> stuffList;
   private Prompt prompt;
   
-  public StuffHandler(Prompt prompt, List<Stuff> list) {
+  public StuffHandler(Prompt prompt, AbstractList<Stuff> list) {
     this.prompt = prompt;
     this.stuffList = list;
   }
