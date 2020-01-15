@@ -3,6 +3,7 @@ package kyh.tam.handler;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import kyh.tam.domain.Board;
+import kyh.util.Iterator;
 import kyh.util.List;
 import kyh.util.Prompt;
 
@@ -33,8 +34,9 @@ public class BoardHandler {
   public void listBoard() {
     System.out.printf("-----------------------------------------------------------------------------\n");
     
-    Board[] boards = boardList.toArray(new Board[boardList.size()]);
-    for(Board board : boards) { 
+    Iterator<Board> it = boardList.iterator();
+    while(it.hasNext()) { 
+      Board board = it.next();
       String wDate = new SimpleDateFormat("yyyy-MM-dd").format(board.getWriteDate());
       System.out.printf("%s, %s, %s, %s\n", board.getNumber(), 
           board.getTitle(), wDate, board.getViewCount());

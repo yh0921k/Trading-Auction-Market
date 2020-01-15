@@ -3,6 +3,7 @@ package kyh.tam.handler;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import kyh.tam.domain.Member;
+import kyh.util.Iterator;
 import kyh.util.List;
 import kyh.util.Prompt;
 
@@ -32,9 +33,10 @@ public class MemberHandler {
     System.out.println("저장하였습니다.");
   }
   public void listMember() {
-    Member[] members = memberList.toArray(new Member[memberList.size()]);
     System.out.printf("-----------------------------------------------------------------------------\n");
-    for(Member member : members) {
+    Iterator<Member> it = memberList.iterator();
+    while(it.hasNext()) {
+      Member member = it.next();
       System.out.printf("%s, %s, %s, %s, %s\n", 
           member.getNumber(), member.getName(), 
           member.getAddress(), member.getTel(),

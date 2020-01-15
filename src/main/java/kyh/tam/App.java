@@ -9,6 +9,7 @@ import kyh.tam.handler.BoardHandler;
 import kyh.tam.handler.MemberHandler;
 import kyh.tam.handler.StuffHandler;
 import kyh.util.ArrayList;
+import kyh.util.Iterator;
 import kyh.util.LinkedList;
 import kyh.util.Prompt;
 import kyh.util.Queue;
@@ -83,10 +84,10 @@ public class App {
           boardHandler.deleteBoard();
           break;  
         case "history":
-          printCommandHistory();
+          printCommandHistory(commandStack.iterator());
           break;
         case "history2":
-          printCommandHistory2();
+          printCommandHistory(commandQueue.iterator());
           break;
         default:
           if (!command.equalsIgnoreCase("quit"))
@@ -97,29 +98,15 @@ public class App {
     br.close();
   }
   
-  private static void printCommandHistory() throws Exception {
-    Stack<String> historyStack = commandStack.clone();
+  private static void printCommandHistory(Iterator<String> it) throws Exception {    
     int count = 0;
-    while(!historyStack.empty()) {
-      System.out.println(historyStack.pop());
+    while(it.hasNext()) {
+      System.out.println(it.next());
       if(++count % 5 == 0) {
         System.out.printf(": ");
         if(br.readLine().equalsIgnoreCase("q"))
           break;
       }      
-    }
-  }
-  private static void printCommandHistory2() throws Exception {
-    Queue<String> historyQueue = (Queue<String>)commandQueue.clone();
-    int count = 0;
-    while(historyQueue.size() > 0) {
-      System.out.println(historyQueue.poll());     
-      if(++count % 5 == 0) {
-        System.out.printf(": ");
-        
-        if(br.readLine().equalsIgnoreCase("q"))
-          break;
-      }
     }
   }
 }

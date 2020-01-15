@@ -9,4 +9,5 @@ public interface List<E> {
   public abstract Object[] toArray();
   public abstract E[] toArray(E[] arr);
   int size();
+  public abstract Iterator<E> iterator();
 }

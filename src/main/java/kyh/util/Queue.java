@@ -22,4 +22,8 @@ public class Queue<E> extends LinkedList<E> implements Cloneable {
       return null;
     }
   }
+  
+  public Iterator<E> iterator() {
+    return new QueueIterator<E>(this);
+  }
 }

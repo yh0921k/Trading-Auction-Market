@@ -1,6 +1,7 @@
 package kyh.tam.handler;
 
 import kyh.tam.domain.Stuff;
+import kyh.util.Iterator;
 import kyh.util.List;
 import kyh.util.Prompt;
 
@@ -30,8 +31,9 @@ public class StuffHandler {
   
   public void listStuff() {
     System.out.printf("-----------------------------------------------------------------------------\n");
-    Stuff[] stuffs = stuffList.toArray(new Stuff[stuffList.size()]);
-    for(Stuff stuff : stuffs) {
+    Iterator<Stuff> it = stuffList.iterator();
+    while(it.hasNext()) {
+      Stuff stuff = it.next();
       System.out.printf("%s, %s, %s, %s, %s, %s\n", 
           stuff.getNumber(), stuff.getName(), stuff.getCategory(), 
           stuff.getState(), stuff.getPrice(), stuff.getSeller());

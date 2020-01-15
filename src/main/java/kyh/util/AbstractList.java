@@ -6,4 +6,8 @@ public abstract class AbstractList<E> implements List<E> {
   public int size() {
     return size;
   }
+  
+  public Iterator<E> iterator() {
+    return new ListIterator<E>(this);
+  }
 }
