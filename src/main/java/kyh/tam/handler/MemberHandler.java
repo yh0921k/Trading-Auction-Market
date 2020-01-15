@@ -3,14 +3,14 @@ package kyh.tam.handler;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import kyh.tam.domain.Member;
-import kyh.util.AbstractList;
+import kyh.util.List;
 import kyh.util.Prompt;
 
 public class MemberHandler {  
-  private AbstractList<Member> memberList;
+  private List<Member> memberList;
   private Prompt prompt;
   
-  public MemberHandler(Prompt prompt, AbstractList<Member> list) {
+  public MemberHandler(Prompt prompt, List<Member> list) {
     this.prompt = prompt;
     this.memberList = list;
   }
