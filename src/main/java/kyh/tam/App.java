@@ -2,24 +2,25 @@ package kyh.tam;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
 import kyh.tam.domain.Board;
 import kyh.tam.domain.Member;
 import kyh.tam.domain.Stuff;
 import kyh.tam.handler.BoardHandler;
 import kyh.tam.handler.MemberHandler;
 import kyh.tam.handler.StuffHandler;
-import kyh.util.ArrayList;
-import kyh.util.Iterator;
-import kyh.util.LinkedList;
 import kyh.util.Prompt;
-import kyh.util.Queue;
-import kyh.util.Stack;
 
 public class App { 
   
   static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-  static Stack<String> commandStack = new Stack<>();
-  static Queue<String> commandQueue = new Queue<>();
+  static Deque<String> commandStack = new ArrayDeque<>();
+  static Queue<String> commandQueue = new LinkedList<>();
   
   public static void main(String[] args) throws Exception {
     Prompt prompt = new Prompt(br);

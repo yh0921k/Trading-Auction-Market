@@ -1,8 +1,8 @@
 package kyh.tam.handler;
 
+import java.util.Iterator;
+import java.util.List;
 import kyh.tam.domain.Stuff;
-import kyh.util.Iterator;
-import kyh.util.List;
 import kyh.util.Prompt;
 
 public class StuffHandler {
