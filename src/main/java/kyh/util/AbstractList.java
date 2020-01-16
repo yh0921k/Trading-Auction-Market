@@ -8,14 +8,12 @@ public abstract class AbstractList<E> implements List<E> {
   }
   
   public Iterator<E> iterator() {
-    
-    class ListIterator<T> implements Iterator<T> {
-      List<T> list;
+    return new Iterator<E>() {
+      List<E> list;
       int cursor;
       
-      @SuppressWarnings("unchecked")
-      public ListIterator() {
-        this.list = (List<T>)AbstractList.this;
+      {
+        this.list = (List<E>)AbstractList.this;
       }
       
       @Override
@@ -24,12 +22,10 @@ public abstract class AbstractList<E> implements List<E> {
       }
       
       @Override
-      public T next() {
+      public E next() {
         return list.get(cursor++);
       }
-    }
-    
-    return new ListIterator<E>();
+    };
   }
   
   
