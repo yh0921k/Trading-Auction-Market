@@ -1,50 +1,61 @@
 package kyh.tam.domain;
 
 public class Stuff {
-  private int    number;
+  private int number;
   private String name;
   private String state;
   private String seller;
   private String category;
-  private int    price;
-  
+  private int price;
+
   public int getNumber() {
     return number;
   }
+
   public void setNumber(int number) {
     this.number = number;
   }
+
   public String getName() {
     return name;
-  }  
+  }
+
   public void setName(String name) {
     this.name = name;
   }
+
   public String getState() {
     return state;
   }
+
   public void setState(String state) {
     this.state = state;
   }
+
   public String getSeller() {
     return seller;
   }
+
   public void setSeller(String seller) {
     this.seller = seller;
   }
+
   public String getCategory() {
     return category;
   }
+
   public void setCategory(String category) {
     this.category = category;
   }
+
   public int getPrice() {
     return price;
   }
+
   public void setPrice(int price) {
     this.price = price;
   }
-  
+
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -57,6 +68,7 @@ public class Stuff {
     result = prime * result + ((state == null) ? 0 : state.hashCode());
     return result;
   }
+
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -91,5 +103,22 @@ public class Stuff {
     } else if (!state.equals(other.state))
       return false;
     return true;
+  }
+
+  public static Stuff valueOf(String csv) {
+    String[] data = csv.split(",");
+    Stuff stuff = new Stuff();
+    stuff.setNumber(Integer.parseInt(data[0]));
+    stuff.setName(data[1]);
+    stuff.setState(data[2]);
+    stuff.setSeller(data[3]);
+    stuff.setCategory(data[4]);
+    stuff.setPrice(Integer.parseInt(data[5]));
+    return stuff;
+  }
+
+  public String toCsvString() {
+    return String.format("%d,%s,%s,%s,%s,%d", this.getNumber(), this.getName(), this.getState(),
+        this.getSeller(), this.getCategory(), this.getPrice());
   }
 }

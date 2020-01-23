@@ -1,6 +1,6 @@
 package kyh.tam.handler;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 import kyh.tam.domain.Board;
 import kyh.util.Prompt;
@@ -29,7 +29,7 @@ public class BoardUpdateCommand implements Command {
 
     newBoard.setNumber(oldBoard.getNumber());
     newBoard.setViewCount(oldBoard.getViewCount());
-    newBoard.setWriteDate(new Date());
+    newBoard.setWriteDate(new Date(System.currentTimeMillis()));
     newBoard.setTitle(
         prompt.inputString(String.format("제목(%s) : ", oldBoard.getTitle()), oldBoard.getTitle()));
 

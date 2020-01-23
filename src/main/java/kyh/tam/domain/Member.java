@@ -1,65 +1,81 @@
 package kyh.tam.domain;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class Member {
-  private int    number;
+  private int number;
   private String name;
   private String email;
   private String address;
   private String password;
   private String photo;
   private String tel;
-  private Date   registeredDate;
-  
+  private Date registeredDate;
+
   public int getNumber() {
     return number;
   }
+
   public void setNumber(int number) {
     this.number = number;
   }
+
   public String getName() {
     return name;
   }
+
   public void setName(String name) {
     this.name = name;
   }
+
   public String getEmail() {
     return email;
   }
+
   public void setEmail(String email) {
     this.email = email;
   }
+
   public String getAddress() {
     return address;
   }
+
   public void setAddress(String address) {
     this.address = address;
   }
+
   public String getPassword() {
     return password;
   }
+
   public void setPassword(String password) {
     this.password = password;
   }
+
   public String getPhoto() {
     return photo;
   }
+
   public void setPhoto(String photo) {
     this.photo = photo;
   }
+
   public String getTel() {
     return tel;
   }
+
   public void setTel(String tel) {
     this.tel = tel;
   }
+
   public Date getRegisteredDate() {
     return registeredDate;
   }
+
   public void setRegisteredDate(Date registeredDate) {
     this.registeredDate = registeredDate;
   }
+
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -74,6 +90,7 @@ public class Member {
     result = prime * result + ((tel == null) ? 0 : tel.hashCode());
     return result;
   }
+
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -121,5 +138,25 @@ public class Member {
     } else if (!tel.equals(other.tel))
       return false;
     return true;
-  }  
+  }
+
+  public static Member valueOf(String csv) {
+    String[] data = csv.split(",");
+    Member member = new Member();
+    member.setNumber(Integer.parseInt(data[0]));
+    member.setName(data[1]);
+    member.setEmail(data[2]);
+    member.setAddress(data[3]);
+    member.setPassword(data[4]);
+    member.setPhoto(data[5]);
+    member.setTel(data[6]);
+    member.setRegisteredDate(Date.valueOf(data[7]));
+    return member;
+  }
+
+  public String toCsvString() {
+    return String.format("%d,%s,%s,%s,%s,%s,%s,%s", this.getNumber(), this.getName(),
+        this.getEmail(), this.getAddress(), this.getPassword(), this.getPhoto(), this.getTel(),
+        this.getRegisteredDate());
+  }
 }
