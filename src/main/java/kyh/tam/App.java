@@ -9,11 +9,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
+import com.google.gson.Gson;
 import kyh.tam.domain.Board;
 import kyh.tam.domain.Member;
 import kyh.tam.domain.Stuff;
@@ -41,9 +44,9 @@ public class App {
   static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
   static Deque<String> commandStack = new ArrayDeque<>();
   static Queue<String> commandQueue = new LinkedList<>();
-  static LinkedList<Board> boardList = new LinkedList<>();
-  static LinkedList<Stuff> stuffList = new LinkedList<>();
-  static LinkedList<Member> memberList = new LinkedList<>();
+  static List<Board> boardList = new LinkedList<>();
+  static List<Stuff> stuffList = new LinkedList<>();
+  static List<Member> memberList = new LinkedList<>();
 
   public static void main(String[] args) throws Exception {
     loadStuffData();
@@ -129,113 +132,50 @@ public class App {
   }
 
   private static void loadStuffData() throws IOException {
-    BufferedReader in = null;
-    try {
-      in = new BufferedReader(new FileReader(new File("./stuff.csv")));
-
-      String line = "";
-      int count = 0;
-      while ((line = in.readLine()) != null) {
-        stuffList.add(Stuff.valueOf(line));
-        count++;
-      }
-      System.out.printf("%d 개의 물품 데이터를 로딩했습니다.\n", count);
+    try (BufferedReader in = new BufferedReader(new FileReader(new File("./stuff.json")))) {
+      stuffList.addAll(Arrays.asList(new Gson().fromJson(in, Stuff[].class)));
+      System.out.printf("%d 개의 물품 데이터를 로딩했습니다.\n", stuffList.size());
     } catch (FileNotFoundException e) {
       System.out.println("파일을 읽는 도중 문제가 발생했습니다 : " + e.getMessage());
-    } finally {
-      try {
-        in.close();
-      } catch (Exception e) {
-        // pass
-      }
     }
   }
 
   private static void saveStuffData() throws IOException {
-    BufferedWriter bw = null;
-    bw = new BufferedWriter(new FileWriter(new File("./stuff.csv")));
-
-    Iterator<Stuff> it = stuffList.iterator();
-    int count = 0;
-    while (it.hasNext()) {
-      bw.write(it.next().toCsvString() + "\n");
-      count++;
-    }
-    System.out.printf("%d 개의 물품 데이터를 저장했습니다.\n", count);
+    BufferedWriter bw = new BufferedWriter(new FileWriter(new File("./stuff.json")));
+    bw.write(new Gson().toJson(stuffList));
+    System.out.printf("%d 개의 물품 데이터를 저장했습니다.\n", stuffList.size());
     bw.close();
   }
 
   private static void loadMemberData() throws IOException {
-    BufferedReader in = null;
-    try {
-      in = new BufferedReader(new FileReader(new File("./member.csv")));
-
-      String line = "";
-      int count = 0;
-      while ((line = in.readLine()) != null) {
-        memberList.add(Member.valueOf(line));
-        count++;
-      }
-      System.out.printf("%d 개의 유저 데이터를 로딩했습니다.\n", count);
+    try (BufferedReader in = new BufferedReader(new FileReader(new File("./member.json")))) {
+      memberList.addAll(Arrays.asList(new Gson().fromJson(in, Member[].class)));
+      System.out.printf("%d 개의 유저 데이터를 로딩했습니다.\n", memberList.size());
     } catch (FileNotFoundException e) {
       System.out.println("파일을 읽는 도중 문제가 발생했습니다 : " + e.getMessage());
-    } finally {
-      try {
-        in.close();
-      } catch (Exception e) {
-        // pass
-      }
     }
   }
 
   private static void saveMemberData() throws IOException {
-    BufferedWriter bw = null;
-    bw = new BufferedWriter(new FileWriter(new File("./member.csv")));
-
-    Iterator<Member> it = memberList.iterator();
-    int count = 0;
-    while (it.hasNext()) {
-      bw.write(it.next().toCsvString() + "\n");
-      count++;
-    }
-    System.out.printf("%d 개의 유저 데이터를 저장했습니다.\n", count);
+    BufferedWriter bw = new BufferedWriter(new FileWriter(new File("./member.json")));
+    bw.write(new Gson().toJson(memberList));
+    System.out.printf("%d 개의 유저 데이터를 저장했습니다.\n", memberList.size());
     bw.close();
   }
 
   private static void loadBoardData() throws IOException {
-    BufferedReader in = null;
-    try {
-      in = new BufferedReader(new FileReader(new File("./board.csv")));
-
-      String line = "";
-      int count = 0;
-      while ((line = in.readLine()) != null) {
-        boardList.add(Board.valueOf(line));
-        count++;
-      }
-      System.out.printf("%d 개의 게시글 데이터를 로딩했습니다.\n", count);
+    try (BufferedReader in = new BufferedReader(new FileReader(new File("./board.json")))) {
+      boardList.addAll(Arrays.asList(new Gson().fromJson(in, Board[].class)));
+      System.out.printf("%d 개의 게시글 데이터를 로딩했습니다.\n", boardList.size());
     } catch (FileNotFoundException e) {
       System.out.println("파일을 읽는 도중 문제가 발생했습니다 : " + e.getMessage());
-    } finally {
-      try {
-        in.close();
-      } catch (Exception e) {
-        // pass
-      }
     }
   }
 
   private static void saveBoardData() throws IOException {
-    BufferedWriter bw = null;
-    bw = new BufferedWriter(new FileWriter(new File("./board.csv")));
-
-    Iterator<Board> it = boardList.iterator();
-    int count = 0;
-    while (it.hasNext()) {
-      bw.write(it.next().toCsvString() + "\n");
-      count++;
-    }
-    System.out.printf("%d 개의 게시글 데이터를 저장했습니다.\n", count);
+    BufferedWriter bw = new BufferedWriter(new FileWriter(new File("./board.json")));
+    bw.write(new Gson().toJson(boardList));
+    System.out.printf("%d 개의 게시글 데이터를 저장했습니다.\n", boardList.size());
     bw.close();
   }
 }
