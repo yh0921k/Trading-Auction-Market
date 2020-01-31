@@ -29,6 +29,7 @@ public class BoardDetailCommand implements Command {
     System.out.printf("제목: %s\n", board.getTitle());
     System.out.printf("등록일: %s\n", new SimpleDateFormat("yyyy-MM-dd").format(board.getWriteDate()));
     System.out.printf("조회수: %d\n", board.getViewCount());
+    System.out.printf("작성자 : %s\n", board.getWriter());
   }
 
   private int indexOfBoard(int number) {
