@@ -1,6 +1,9 @@
 package kyh.tam.domain;
 
-public class Stuff {
+import java.io.Serializable;
+
+public class Stuff implements Serializable {
+  private static final long serialVersionUID = 20200131L;
   private int number;
   private String name;
   private String state;

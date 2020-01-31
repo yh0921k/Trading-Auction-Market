@@ -132,11 +132,13 @@ public class App {
     }
   }
 
-  @SuppressWarnings("unchecked")
   private static void loadStuffData() throws Exception {
     try (ObjectInputStream in = new ObjectInputStream(
-        new BufferedInputStream(new FileInputStream(new File("./stuff.ser2"))))) {
-      stuffList = (List<Stuff>) in.readObject();
+        new BufferedInputStream(new FileInputStream(new File("./stuff.ser"))))) {
+      int size = in.readInt();
+      for (int i = 0; i < size; i++) {
+        stuffList.add((Stuff) in.readObject());
+      }
       System.out.printf("%d 개의 물품 데이터를 로딩했습니다.\n", stuffList.size());
     } catch (FileNotFoundException e) {
       System.out.println("파일을 읽는 도중 문제가 발생했습니다 : " + e.getMessage());
@@ -145,17 +147,22 @@ public class App {
 
   private static void saveStuffData() throws IOException {
     ObjectOutputStream out =
-        new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("./stuff.ser2")));
-    out.writeObject(stuffList);
+        new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("./stuff.ser")));
+    out.writeInt(stuffList.size());
+    for (Stuff stuff : stuffList) {
+      out.writeObject(stuff);
+    }
     System.out.printf("%d 개의 물품 데이터를 저장했습니다.\n", stuffList.size());
     out.close();
   }
 
-  @SuppressWarnings("unchecked")
   private static void loadMemberData() throws Exception {
     try (ObjectInputStream in = new ObjectInputStream(
-        new BufferedInputStream(new FileInputStream(new File("./member.ser2"))))) {
-      memberList = (List<Member>) in.readObject();
+        new BufferedInputStream(new FileInputStream(new File("./member.ser"))))) {
+      int size = in.readInt();
+      for (int i = 0; i < size; i++) {
+        memberList.add((Member) in.readObject());
+      }
       System.out.printf("%d 개의 유저 데이터를 로딩했습니다.\n", memberList.size());
     } catch (FileNotFoundException e) {
       System.out.println("파일을 읽는 도중 문제가 발생했습니다 : " + e.getMessage());
@@ -164,17 +171,22 @@ public class App {
 
   private static void saveMemberData() throws IOException {
     ObjectOutputStream out =
-        new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("./member.ser2")));
-    out.writeObject(memberList);
+        new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("./member.ser")));
+    out.writeInt(memberList.size());
+    for (Member member : memberList) {
+      out.writeObject(member);
+    }
     System.out.printf("%d 개의 유저 데이터를 저장했습니다.\n", memberList.size());
     out.close();
   }
 
-  @SuppressWarnings("unchecked")
   private static void loadBoardData() throws Exception {
     try (ObjectInputStream in = new ObjectInputStream(
-        new BufferedInputStream(new FileInputStream(new File("./board.ser2"))))) {
-      boardList = (List<Board>) in.readObject();
+        new BufferedInputStream(new FileInputStream(new File("./board.ser"))))) {
+      int size = in.readInt();
+      for (int i = 0; i < size; i++) {
+        boardList.add((Board) in.readObject());
+      }
       System.out.printf("%d 개의 게시글 데이터를 로딩했습니다.\n", boardList.size());
     } catch (FileNotFoundException e) {
       System.out.println("파일을 읽는 도중 문제가 발생했습니다 : " + e.getMessage());
@@ -183,8 +195,11 @@ public class App {
 
   private static void saveBoardData() throws IOException {
     ObjectOutputStream out =
-        new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("./board.ser2")));
-    out.writeObject(boardList);
+        new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("./board.ser")));
+    out.writeInt(boardList.size());
+    for (Board board : boardList) {
+      out.writeObject(board);
+    }
     System.out.printf("%d 개의 게시글 데이터를 저장했습니다.\n", boardList.size());
     out.close();
   }

@@ -1,8 +1,10 @@
 package kyh.tam.domain;
 
+import java.io.Serializable;
 import java.sql.Date;
 
-public class Board {
+public class Board implements Serializable {
+  private static final long serialVersionUID = 20200131L;
   private int number;
   private String title;
   private Date writeDate;
