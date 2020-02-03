@@ -135,7 +135,7 @@ public class App {
   @SuppressWarnings("unchecked")
   private static void loadStuffData() throws Exception {
     try (ObjectInputStream in = new ObjectInputStream(
-        new BufferedInputStream(new FileInputStream(new File("./stuff.ser2"))))) {
+        new BufferedInputStream(new FileInputStream(new File("./data/stuff.ser2"))))) {
       stuffList = (List<Stuff>) in.readObject();
       System.out.printf("%d 개의 물품 데이터를 로딩했습니다.\n", stuffList.size());
     } catch (FileNotFoundException e) {
@@ -145,7 +145,7 @@ public class App {
 
   private static void saveStuffData() throws IOException {
     ObjectOutputStream out =
-        new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("./stuff.ser2")));
+        new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("./data/stuff.ser2")));
     out.writeObject(stuffList);
     System.out.printf("%d 개의 물품 데이터를 저장했습니다.\n", stuffList.size());
     out.close();
@@ -154,7 +154,7 @@ public class App {
   @SuppressWarnings("unchecked")
   private static void loadMemberData() throws Exception {
     try (ObjectInputStream in = new ObjectInputStream(
-        new BufferedInputStream(new FileInputStream(new File("./member.ser2"))))) {
+        new BufferedInputStream(new FileInputStream(new File("./data/member.ser2"))))) {
       memberList = (List<Member>) in.readObject();
       System.out.printf("%d 개의 유저 데이터를 로딩했습니다.\n", memberList.size());
     } catch (FileNotFoundException e) {
@@ -163,8 +163,8 @@ public class App {
   }
 
   private static void saveMemberData() throws IOException {
-    ObjectOutputStream out =
-        new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("./member.ser2")));
+    ObjectOutputStream out = new ObjectOutputStream(
+        new BufferedOutputStream(new FileOutputStream("./data/member.ser2")));
     out.writeObject(memberList);
     System.out.printf("%d 개의 유저 데이터를 저장했습니다.\n", memberList.size());
     out.close();
@@ -173,7 +173,7 @@ public class App {
   @SuppressWarnings("unchecked")
   private static void loadBoardData() throws Exception {
     try (ObjectInputStream in = new ObjectInputStream(
-        new BufferedInputStream(new FileInputStream(new File("./board.ser2"))))) {
+        new BufferedInputStream(new FileInputStream(new File("./data/board.ser2"))))) {
       boardList = (List<Board>) in.readObject();
       System.out.printf("%d 개의 게시글 데이터를 로딩했습니다.\n", boardList.size());
     } catch (FileNotFoundException e) {
@@ -183,7 +183,7 @@ public class App {
 
   private static void saveBoardData() throws IOException {
     ObjectOutputStream out =
-        new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("./board.ser2")));
+        new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("./data/board.ser2")));
     out.writeObject(boardList);
     System.out.printf("%d 개의 게시글 데이터를 저장했습니다.\n", boardList.size());
     out.close();
