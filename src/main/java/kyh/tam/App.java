@@ -15,9 +15,12 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
+import kyh.tam.context.ApplicationContextListener;
 import kyh.tam.domain.Board;
 import kyh.tam.domain.Member;
 import kyh.tam.domain.Stuff;
@@ -42,14 +45,37 @@ import kyh.util.Prompt;
 
 public class App {
 
-  static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-  static Deque<String> commandStack = new ArrayDeque<>();
-  static Queue<String> commandQueue = new LinkedList<>();
-  static List<Board> boardList = new LinkedList<>();
-  static List<Stuff> stuffList = new LinkedList<>();
-  static List<Member> memberList = new LinkedList<>();
+  BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+  Deque<String> commandStack = new ArrayDeque<>();
+  Queue<String> commandQueue = new LinkedList<>();
+  List<Board> boardList = new LinkedList<>();
+  List<Stuff> stuffList = new LinkedList<>();
+  List<Member> memberList = new LinkedList<>();
 
-  public static void main(String[] args) throws Exception {
+  Set<ApplicationContextListener> listeners = new LinkedHashSet<>();
+
+  public void addApplicationContextListener(ApplicationContextListener listener) {
+    listeners.add(listener);
+  }
+
+  public void removeApplicationContextListener(ApplicationContextListener listener) {
+    listeners.add(listener);
+  }
+
+  private void notifyApplicationInitialized() {
+    for (ApplicationContextListener listener : listeners) {
+      listener.contextInitialized();
+    }
+  }
+
+  private void notifyApplicationDestroyed() {
+    for (ApplicationContextListener listener : listeners) {
+      listener.contextDestroyed();
+    }
+  }
+
+  public void service() throws Exception {
+    notifyApplicationInitialized();
     loadStuffData();
     loadMemberData();
     loadBoardData();
@@ -117,10 +143,11 @@ public class App {
     saveStuffData();
     saveMemberData();
     saveBoardData();
+    notifyApplicationDestroyed();
     System.out.println("Bye");
   }
 
-  private static void printCommandHistory(Iterator<String> it) throws Exception {
+  private void printCommandHistory(Iterator<String> it) throws Exception {
     int count = 0;
     while (it.hasNext()) {
       System.out.println(it.next());
@@ -133,7 +160,7 @@ public class App {
   }
 
   @SuppressWarnings("unchecked")
-  private static void loadStuffData() throws Exception {
+  private void loadStuffData() throws Exception {
     try (ObjectInputStream in = new ObjectInputStream(
         new BufferedInputStream(new FileInputStream(new File("./data/stuff.ser2"))))) {
       stuffList = (List<Stuff>) in.readObject();
@@ -143,7 +170,7 @@ public class App {
     }
   }
 
-  private static void saveStuffData() throws IOException {
+  private void saveStuffData() throws IOException {
     ObjectOutputStream out =
         new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("./data/stuff.ser2")));
     out.writeObject(stuffList);
@@ -152,7 +179,7 @@ public class App {
   }
 
   @SuppressWarnings("unchecked")
-  private static void loadMemberData() throws Exception {
+  private void loadMemberData() throws Exception {
     try (ObjectInputStream in = new ObjectInputStream(
         new BufferedInputStream(new FileInputStream(new File("./data/member.ser2"))))) {
       memberList = (List<Member>) in.readObject();
@@ -162,7 +189,7 @@ public class App {
     }
   }
 
-  private static void saveMemberData() throws IOException {
+  private void saveMemberData() throws IOException {
     ObjectOutputStream out = new ObjectOutputStream(
         new BufferedOutputStream(new FileOutputStream("./data/member.ser2")));
     out.writeObject(memberList);
@@ -171,7 +198,7 @@ public class App {
   }
 
   @SuppressWarnings("unchecked")
-  private static void loadBoardData() throws Exception {
+  private void loadBoardData() throws Exception {
     try (ObjectInputStream in = new ObjectInputStream(
         new BufferedInputStream(new FileInputStream(new File("./data/board.ser2"))))) {
       boardList = (List<Board>) in.readObject();
@@ -181,11 +208,16 @@ public class App {
     }
   }
 
-  private static void saveBoardData() throws IOException {
+  private void saveBoardData() throws IOException {
     ObjectOutputStream out =
         new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("./data/board.ser2")));
     out.writeObject(boardList);
     System.out.printf("%d 개의 게시글 데이터를 저장했습니다.\n", boardList.size());
     out.close();
+  }
+
+  public static void main(String[] args) throws Exception {
+    App app = new App();
+    app.service();
   }
 }
