@@ -1,7 +1,9 @@
 package kyh.tam.context;
 
-public interface ApplicationContextListener {
-  void contextInitialized();
+import java.util.Map;
 
-  void contextDestroyed();
+public interface ApplicationContextListener {
+  void contextInitialized(Map<String, Object> context) throws Exception;
+
+  void contextDestroyed(Map<String, Object> context) throws Exception;
 }

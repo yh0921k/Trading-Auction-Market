@@ -1,0 +1,17 @@
+package kyh.tam;
+
+import kyh.tam.context.ApplicationContextListener;
+
+public class DataLoaderListener implements ApplicationContextListener {
+
+  @Override
+  public void contextInitialized() {
+    System.out.println("data load complete");
+  }
+
+  @Override
+  public void contextDestroyed() {
+    System.out.println("data save complete");
+  }
+
+}

@@ -15,9 +15,12 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
+import kyh.tam.context.ApplicationContextListener;
 import kyh.tam.domain.Board;
 import kyh.tam.domain.Member;
 import kyh.tam.domain.Stuff;
@@ -49,7 +52,30 @@ public class App {
   List<Stuff> stuffList = new LinkedList<>();
   List<Member> memberList = new LinkedList<>();
 
+  Set<ApplicationContextListener> listeners = new LinkedHashSet<>();
+
+  public void addApplicationContextListener(ApplicationContextListener listener) {
+    listeners.add(listener);
+  }
+
+  public void removeApplicationContextListener(ApplicationContextListener listener) {
+    listeners.add(listener);
+  }
+
+  private void notifyApplicationInitialized() {
+    for (ApplicationContextListener listener : listeners) {
+      listener.contextInitialized();
+    }
+  }
+
+  private void notifyApplicationDestroyed() {
+    for (ApplicationContextListener listener : listeners) {
+      listener.contextDestroyed();
+    }
+  }
+
   public void service() throws Exception {
+    notifyApplicationInitialized();
     loadStuffData();
     loadMemberData();
     loadBoardData();
@@ -117,6 +143,7 @@ public class App {
     saveStuffData();
     saveMemberData();
     saveBoardData();
+    notifyApplicationDestroyed();
     System.out.println("Bye");
   }
 
@@ -191,6 +218,7 @@ public class App {
 
   public static void main(String[] args) throws Exception {
     App app = new App();
+    app.addApplicationContextListener(new DataLoaderListener());
     app.service();
   }
 }
