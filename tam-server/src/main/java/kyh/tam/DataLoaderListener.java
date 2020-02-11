@@ -33,6 +33,7 @@ public class DataLoaderListener implements ApplicationContextListener {
     context.put("boardList", boardList);
     context.put("stuffList", stuffList);
     context.put("memberList", memberList);
+    System.out.println("--------------------------------------------------");
   }
 
   @Override
