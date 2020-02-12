@@ -122,7 +122,7 @@ public class ClientApp {
         try {
           commandHandler.execute();
         } catch (Exception e) {
-          System.out.printf("[processCommand] : %s", "while commandHandler.execute()");
+          System.out.printf("[processCommand] : %s", "while commandHandler.execute()\n");
           System.out.println("--------------------------------------------------");
         }
       else {
