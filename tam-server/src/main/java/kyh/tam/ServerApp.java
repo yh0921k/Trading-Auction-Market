@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -14,11 +15,28 @@ import kyh.tam.context.ApplicationContextListener;
 import kyh.tam.domain.Board;
 import kyh.tam.domain.Member;
 import kyh.tam.domain.Stuff;
+import kyh.tam.servlet.BoardAddServlet;
+import kyh.tam.servlet.BoardDeleteServlet;
+import kyh.tam.servlet.BoardDetailServlet;
+import kyh.tam.servlet.BoardListServlet;
+import kyh.tam.servlet.BoardUpdateServlet;
+import kyh.tam.servlet.MemberAddServlet;
+import kyh.tam.servlet.MemberDeleteServlet;
+import kyh.tam.servlet.MemberDetailServlet;
+import kyh.tam.servlet.MemberListServlet;
+import kyh.tam.servlet.MemberUpdateServlet;
+import kyh.tam.servlet.Servlet;
+import kyh.tam.servlet.StuffAddServlet;
+import kyh.tam.servlet.StuffDeleteServlet;
+import kyh.tam.servlet.StuffDetailServlet;
+import kyh.tam.servlet.StuffListServlet;
+import kyh.tam.servlet.StuffUpdateServlet;
 
 public class ServerApp {
 
   Set<ApplicationContextListener> listeners = new LinkedHashSet<>();
   Map<String, Object> context = new LinkedHashMap<>();
+  Map<String, Servlet> servletMap = new HashMap<>();
 
   List<Board> boards;
   List<Member> members;
@@ -51,6 +69,24 @@ public class ServerApp {
     boards = (List<Board>) context.get("boardList");
     members = (List<Member>) context.get("memberList");
     stuffs = (List<Stuff>) context.get("stuffList");
+
+    servletMap.put("/board/list", new BoardListServlet(boards));
+    servletMap.put("/board/add", new BoardAddServlet(boards));
+    servletMap.put("/board/detail", new BoardDetailServlet(boards));
+    servletMap.put("/board/update", new BoardUpdateServlet(boards));
+    servletMap.put("/board/delete", new BoardDeleteServlet(boards));
+
+    servletMap.put("/stuff/list", new StuffListServlet(stuffs));
+    servletMap.put("/stuff/add", new StuffAddServlet(stuffs));
+    servletMap.put("/stuff/detail", new StuffDetailServlet(stuffs));
+    servletMap.put("/stuff/update", new StuffUpdateServlet(stuffs));
+    servletMap.put("/stuff/delete", new StuffDeleteServlet(stuffs));
+
+    servletMap.put("/member/list", new MemberListServlet(members));
+    servletMap.put("/member/add", new MemberAddServlet(members));
+    servletMap.put("/member/detail", new MemberDetailServlet(members));
+    servletMap.put("/member/update", new MemberUpdateServlet(members));
+    servletMap.put("/member/delete", new MemberDeleteServlet(members));
 
     try (ServerSocket serverSocket = new ServerSocket(12345)) {
       while (true) {
@@ -87,53 +123,21 @@ public class ServerApp {
           case "shutdown":
             quit(out);
             return 1;
-          case "/board/list":
-            listBoard(out, boards);
-            break;
-          case "/board/add":
-            addBoard(in, out, boards);
-            break;
-          case "/board/detail":
-            detailBoard(in, out, boards);
-            break;
-          case "/board/update":
-            updateBoard(in, out, boards);
-            break;
-          case "/board/delete":
-            deleteBoard(in, out, boards);
-            break;
-          case "/stuff/list":
-            listStuff(out, stuffs);
-            break;
-          case "/stuff/add":
-            addStuff(in, out, stuffs);
-            break;
-          case "/stuff/detail":
-            detailStuff(in, out, stuffs);
-            break;
-          case "/stuff/update":
-            updateStuff(in, out, stuffs);
-            break;
-          case "/stuff/delete":
-            deleteStuff(in, out, stuffs);
-            break;
-          case "/member/list":
-            listMember(out, members);
-            break;
-          case "/member/add":
-            addMember(in, out, members);
-            break;
-          case "/member/detail":
-            detailMember(in, out, members);
-            break;
-          case "/member/update":
-            updateMember(in, out, members);
-            break;
-          case "/member/delete":
-            deleteMember(in, out, members);
-            break;
-          default:
-            notfound(out);
+        }
+
+        Servlet servlet = servletMap.get(request);
+        if (servlet != null) {
+          try {
+            servlet.service(in, out);
+
+          } catch (Exception e) {
+            out.writeUTF("fail");
+            out.writeUTF(e.getMessage());
+            System.out.println("[servlet.service()] : " + e.getMessage());
+            e.printStackTrace();
+          }
+        } else {
+          notfound(out);
         }
         out.flush();
         System.out.println("Send complete");
@@ -154,363 +158,6 @@ public class ServerApp {
   private void notfound(ObjectOutputStream out) throws IOException {
     out.writeUTF("fail");
     out.writeUTF("요청한 명령을 처리할 수 없습니다.");
-  }
-
-  private void deleteMember(ObjectInputStream in, ObjectOutputStream out, List<Member> members)
-      throws IOException {
-    try {
-      int number = in.readInt();
-
-      int index = -1;
-      for (int i = 0; i < members.size(); i++) {
-        if (members.get(i).getNumber() == number) {
-          index = i;
-          break;
-        }
-      }
-
-      if (index != -1) {
-        members.remove(index);
-        out.writeUTF("ok");
-
-      } else {
-        out.writeUTF("fail");
-        out.writeUTF("해당 번호의 회원이 없습니다.");
-      }
-    } catch (Exception e) {
-      System.out.println("[/member/delete] : send \"fail\" to client");
-      out.writeUTF("fail");
-      out.writeUTF(e.getMessage());
-    }
-  }
-
-  private void updateMember(ObjectInputStream in, ObjectOutputStream out, List<Member> members)
-      throws IOException {
-    try {
-      Member member = (Member) in.readObject();
-
-      int index = -1;
-      for (int i = 0; i < members.size(); i++) {
-        if (members.get(i).getNumber() == member.getNumber()) {
-          index = i;
-          break;
-        }
-      }
-
-      if (index != -1) {
-        members.set(index, member);
-        out.writeUTF("ok");
-      } else {
-        out.writeUTF("fail");
-        out.writeUTF("해당 번호의 회원이 없습니다.");
-      }
-
-    } catch (Exception e) {
-      System.out.println("[/member/update] : send \"fail\" to client");
-      out.writeUTF("fail");
-      out.writeUTF(e.getMessage());
-    }
-  }
-
-  private void detailMember(ObjectInputStream in, ObjectOutputStream out, List<Member> members)
-      throws IOException {
-    try {
-      int number = in.readInt();
-
-      Member member = null;
-      for (Member m : members) {
-        if (m.getNumber() == number) {
-          member = m;
-          break;
-        }
-      }
-
-      if (member != null) {
-        out.writeUTF("ok");
-        out.writeObject(member);
-
-      } else {
-        out.writeUTF("fail");
-        out.writeUTF("해당 번호의 회원이 없습니다.");
-      }
-
-    } catch (Exception e) {
-      System.out.println("[/member/detail] : send \"fail\" to client");
-      out.writeUTF("fail");
-      out.writeUTF(e.getMessage());
-    }
-  }
-
-  private void addMember(ObjectInputStream in, ObjectOutputStream out, List<Member> members)
-      throws IOException {
-    try {
-      Member member = (Member) in.readObject();
-
-      int i = 0;
-      for (; i < members.size(); i++) {
-        if (members.get(i).getNumber() == member.getNumber()) {
-          break;
-        }
-      }
-
-      if (i == members.size()) {
-        members.add(member);
-        out.writeUTF("ok");
-
-      } else {
-        out.writeUTF("fail");
-        out.writeUTF("같은 번호의 회원이 있습니다.");
-      }
-
-    } catch (Exception e) {
-      System.out.println("[/member/add] : send \"fail\" to client");
-      out.writeUTF("fail");
-      out.writeUTF(e.getMessage());
-    }
-  }
-
-  private void listMember(ObjectOutputStream out, List<Member> members) throws IOException {
-    out.writeUTF("ok");
-    out.reset();
-    out.writeObject(members);
-  }
-
-  private void deleteStuff(ObjectInputStream in, ObjectOutputStream out, List<Stuff> stuffs)
-      throws IOException {
-    try {
-      int number = in.readInt();
-
-      int index = -1;
-      for (int i = 0; i < stuffs.size(); i++) {
-        if (stuffs.get(i).getNumber() == number) {
-          index = i;
-          break;
-        }
-      }
-
-      if (index != -1) {
-        stuffs.remove(index);
-        out.writeUTF("ok");
-
-      } else {
-        out.writeUTF("fail");
-        out.writeUTF("해당 번호의 물품이 없습니다.");
-      }
-    } catch (Exception e) {
-      System.out.println("[/stuff/delete] : send \"fail\" to client");
-      out.writeUTF("fail");
-      out.writeUTF(e.getMessage());
-    }
-  }
-
-  private void updateStuff(ObjectInputStream in, ObjectOutputStream out, List<Stuff> stuffs)
-      throws IOException {
-    try {
-      Stuff stuff = (Stuff) in.readObject();
-
-      int index = -1;
-      for (int i = 0; i < stuffs.size(); i++) {
-        if (stuffs.get(i).getNumber() == stuff.getNumber()) {
-          index = i;
-          break;
-        }
-      }
-
-      if (index != -1) {
-        stuffs.set(index, stuff);
-        out.writeUTF("ok");
-      } else {
-        out.writeUTF("fail");
-        out.writeUTF("해당 번호의 물품이 없습니다.");
-      }
-
-    } catch (Exception e) {
-      System.out.println("[/stuff/update] : send \"fail\" to client");
-      out.writeUTF("fail");
-      out.writeUTF(e.getMessage());
-    }
-  }
-
-  private void detailStuff(ObjectInputStream in, ObjectOutputStream out, List<Stuff> stuffs)
-      throws IOException {
-    try {
-      int number = in.readInt();
-
-      Stuff stuff = null;
-      for (Stuff l : stuffs) {
-        if (l.getNumber() == number) {
-          stuff = l;
-          break;
-        }
-      }
-
-      if (stuff != null) {
-        out.writeUTF("ok");
-        out.writeObject(stuff);
-
-      } else {
-        out.writeUTF("fail");
-        out.writeUTF("해당 번호의 물품이 없습니다.");
-      }
-
-    } catch (Exception e) {
-      System.out.println("[/stuff/detail] : send \"fail\" to client");
-      out.writeUTF("fail");
-      out.writeUTF(e.getMessage());
-    }
-  }
-
-  private void addStuff(ObjectInputStream in, ObjectOutputStream out, List<Stuff> stuffs)
-      throws IOException {
-    try {
-      Stuff stuff = (Stuff) in.readObject();
-
-      int i = 0;
-      for (; i < stuffs.size(); i++) {
-        if (stuffs.get(i).getNumber() == stuff.getNumber()) {
-          break;
-        }
-      }
-
-      if (i == stuffs.size()) {
-        stuffs.add(stuff);
-        out.writeUTF("ok");
-
-      } else {
-        out.writeUTF("fail");
-        out.writeUTF("같은 번호의 물품이 있습니다.");
-      }
-
-    } catch (Exception e) {
-      System.out.println("[/stuff/add] : send \"fail\" to client");
-      out.writeUTF("fail");
-      out.writeUTF(e.getMessage());
-    }
-  }
-
-  private void listStuff(ObjectOutputStream out, List<Stuff> stuffs) throws IOException {
-    out.writeUTF("ok");
-    out.reset();
-    out.writeObject(stuffs);
-  }
-
-  private void deleteBoard(ObjectInputStream in, ObjectOutputStream out, List<Board> boards)
-      throws IOException {
-    try {
-      int number = in.readInt();
-
-      int index = -1;
-      for (int i = 0; i < boards.size(); i++) {
-        if (boards.get(i).getNumber() == number) {
-          index = i;
-          break;
-        }
-      }
-
-      if (index != -1) {
-        boards.remove(index);
-        out.writeUTF("ok");
-
-      } else {
-        out.writeUTF("fail");
-        out.writeUTF("해당 번호의 게시물이 없습니다.");
-      }
-    } catch (Exception e) {
-      System.out.println("[/board/delete] : send \"fail\" to client");
-      out.writeUTF("fail");
-      out.writeUTF(e.getMessage());
-    }
-  }
-
-  private void updateBoard(ObjectInputStream in, ObjectOutputStream out, List<Board> boards)
-      throws IOException {
-    try {
-      Board board = (Board) in.readObject();
-
-      int index = -1;
-      for (int i = 0; i < boards.size(); i++) {
-        if (boards.get(i).getNumber() == board.getNumber()) {
-          index = i;
-          break;
-        }
-      }
-
-      if (index != -1) {
-        boards.set(index, board);
-        out.writeUTF("ok");
-      } else {
-        out.writeUTF("fail");
-        out.writeUTF("해당 번호의 게시물이 없습니다.");
-      }
-
-    } catch (Exception e) {
-      System.out.println("[/board/update] : send \"fail\" to client");
-      out.writeUTF("fail");
-      out.writeUTF(e.getMessage());
-    }
-  }
-
-  private void detailBoard(ObjectInputStream in, ObjectOutputStream out, List<Board> boards)
-      throws IOException {
-    try {
-      int number = in.readInt();
-
-      Board board = null;
-      for (Board b : boards) {
-        if (b.getNumber() == number) {
-          board = b;
-          break;
-        }
-      }
-
-      if (board != null) {
-        out.writeUTF("ok");
-        out.writeObject(board);
-
-      } else {
-        out.writeUTF("fail");
-        out.writeUTF("해당 번호의 게시물이 없습니다.");
-      }
-
-    } catch (Exception e) {
-      System.out.println("[/board/detail] : send \"fail\" to client");
-      out.writeUTF("fail");
-      out.writeUTF(e.getMessage());
-    }
-  }
-
-  private void addBoard(ObjectInputStream in, ObjectOutputStream out, List<Board> boards)
-      throws IOException {
-    try {
-      Board board = (Board) in.readObject();
-
-      int i = 0;
-      for (; i < boards.size(); i++) {
-        if (boards.get(i).getNumber() == board.getNumber()) {
-          break;
-        }
-      }
-
-      if (i == boards.size()) {
-        boards.add(board);
-        out.writeUTF("ok");
-
-      } else {
-        out.writeUTF("fail");
-        out.writeUTF("같은 번호의 게시물이 있습니다.");
-      }
-
-    } catch (Exception e) {
-      System.out.println("[/board/add] : send \"fail\" to client");
-      out.writeUTF("fail");
-      out.writeUTF(e.getMessage());
-    }
-  }
-
-  private void listBoard(ObjectOutputStream out, List<Board> boards) throws IOException {
-    out.writeUTF("ok");
-    out.reset();
-    out.writeObject(boards);
   }
 
   public static void main(String[] args) throws Exception {
