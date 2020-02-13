@@ -2,9 +2,9 @@ package kyh.tam;
 
 import java.util.Map;
 import kyh.tam.context.ApplicationContextListener;
-import kyh.tam.dao.BoardObjectFileDao;
-import kyh.tam.dao.MemberObjectFileDao;
-import kyh.tam.dao.StuffObjectFileDao;
+import kyh.tam.dao.json.BoardJsonFileDao;
+import kyh.tam.dao.json.MemberJsonFileDao;
+import kyh.tam.dao.json.StuffJsonFileDao;
 
 public class DataLoaderListener implements ApplicationContextListener {
 
@@ -12,9 +12,9 @@ public class DataLoaderListener implements ApplicationContextListener {
   public void contextInitialized(Map<String, Object> context) throws Exception {
     System.out.println("--------------------------------------------------");
 
-    BoardObjectFileDao boardDao = new BoardObjectFileDao("./data/board.ser2");
-    MemberObjectFileDao memberDao = new MemberObjectFileDao("./data/member.ser2");
-    StuffObjectFileDao stuffDao = new StuffObjectFileDao("./data/stuff.ser2");
+    BoardJsonFileDao boardDao = new BoardJsonFileDao("./data/board.json");
+    MemberJsonFileDao memberDao = new MemberJsonFileDao("./data/member.json");
+    StuffJsonFileDao stuffDao = new StuffJsonFileDao("./data/stuff.json");
 
     context.put("boardDao", boardDao);
     context.put("memberDao", memberDao);

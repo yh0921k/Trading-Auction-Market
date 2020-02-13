@@ -2,13 +2,13 @@ package kyh.tam.servlet;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import kyh.tam.dao.BoardObjectFileDao;
+import kyh.tam.dao.json.BoardJsonFileDao;
 import kyh.tam.domain.Board;
 
 public class BoardDetailServlet implements Servlet {
-  BoardObjectFileDao boardDao;
+  BoardJsonFileDao boardDao;
 
-  public BoardDetailServlet(BoardObjectFileDao boardDao) {
+  public BoardDetailServlet(BoardJsonFileDao boardDao) {
     this.boardDao = boardDao;
   }
 

@@ -2,13 +2,13 @@ package kyh.tam.servlet;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import kyh.tam.dao.StuffObjectFileDao;
+import kyh.tam.dao.json.StuffJsonFileDao;
 import kyh.tam.domain.Stuff;
 
 public class StuffAddServlet implements Servlet {
-  StuffObjectFileDao stuffDao;
+  StuffJsonFileDao stuffDao;
 
-  public StuffAddServlet(StuffObjectFileDao stuffDao) {
+  public StuffAddServlet(StuffJsonFileDao stuffDao) {
     this.stuffDao = stuffDao;
   }
 

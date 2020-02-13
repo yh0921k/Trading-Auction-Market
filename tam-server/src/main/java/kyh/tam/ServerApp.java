@@ -11,9 +11,9 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import kyh.tam.context.ApplicationContextListener;
-import kyh.tam.dao.BoardObjectFileDao;
-import kyh.tam.dao.MemberObjectFileDao;
-import kyh.tam.dao.StuffObjectFileDao;
+import kyh.tam.dao.json.BoardJsonFileDao;
+import kyh.tam.dao.json.MemberJsonFileDao;
+import kyh.tam.dao.json.StuffJsonFileDao;
 import kyh.tam.servlet.BoardAddServlet;
 import kyh.tam.servlet.BoardDeleteServlet;
 import kyh.tam.servlet.BoardDetailServlet;
@@ -60,9 +60,9 @@ public class ServerApp {
   public void service() throws Exception {
     notifyApplicationInitialized();
 
-    BoardObjectFileDao boardDao = (BoardObjectFileDao) context.get("boardDao");
-    MemberObjectFileDao memberDao = (MemberObjectFileDao) context.get("memberDao");
-    StuffObjectFileDao stuffDao = (StuffObjectFileDao) context.get("stuffDao");
+    BoardJsonFileDao boardDao = (BoardJsonFileDao) context.get("boardDao");
+    MemberJsonFileDao memberDao = (MemberJsonFileDao) context.get("memberDao");
+    StuffJsonFileDao stuffDao = (StuffJsonFileDao) context.get("stuffDao");
 
     servletMap.put("/board/list", new BoardListServlet(boardDao));
     servletMap.put("/board/add", new BoardAddServlet(boardDao));

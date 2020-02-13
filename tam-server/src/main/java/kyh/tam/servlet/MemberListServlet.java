@@ -2,12 +2,12 @@ package kyh.tam.servlet;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import kyh.tam.dao.MemberObjectFileDao;
+import kyh.tam.dao.json.MemberJsonFileDao;
 
 public class MemberListServlet implements Servlet {
-  MemberObjectFileDao memberDao;
+  MemberJsonFileDao memberDao;
 
-  public MemberListServlet(MemberObjectFileDao memberDao) {
+  public MemberListServlet(MemberJsonFileDao memberDao) {
     this.memberDao = memberDao;
   }
 

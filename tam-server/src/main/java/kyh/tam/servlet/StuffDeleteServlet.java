@@ -2,12 +2,12 @@ package kyh.tam.servlet;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import kyh.tam.dao.StuffObjectFileDao;
+import kyh.tam.dao.json.StuffJsonFileDao;
 
 public class StuffDeleteServlet implements Servlet {
-  StuffObjectFileDao stuffDao;
+  StuffJsonFileDao stuffDao;
 
-  public StuffDeleteServlet(StuffObjectFileDao stuffDao) {
+  public StuffDeleteServlet(StuffJsonFileDao stuffDao) {
     this.stuffDao = stuffDao;
   }
 
