@@ -1,45 +1,12 @@
 package kyh.tam.dao;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.List;
 import kyh.tam.domain.Board;
 
-public class BoardObjectFileDao {
-  String filename;
-  List<Board> list;
+public class BoardObjectFileDao extends AbstractObjectFileDao<Board> {
 
   public BoardObjectFileDao(String filename) throws Exception {
-    this.list = new ArrayList<>();
-    this.filename = filename;
-    loadData();
-  }
-
-  @SuppressWarnings({"unchecked"})
-  private void loadData() throws Exception {
-    try (ObjectInputStream in =
-        new ObjectInputStream(new BufferedInputStream(new FileInputStream(new File(filename))))) {
-      list = (List<Board>) in.readObject();
-      System.out.printf("%d 개의 게시글 데이터를 로딩했습니다.\n", list.size());
-    } catch (FileNotFoundException e) {
-      System.out.println("파일을 읽는 도중 문제가 발생했습니다 : " + e.getMessage());
-    }
-  }
-
-  private void saveData() throws IOException {
-    ObjectOutputStream out =
-        new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(new File(filename))));
-    out.writeObject(list);
-    System.out.printf("%d 개의 게시글 데이터를 저장했습니다.\n", list.size());
-    out.close();
+    super(filename);
   }
 
   public int insert(Board board) throws Exception {
@@ -81,9 +48,10 @@ public class BoardObjectFileDao {
     return 1;
   }
 
-  private int indexOf(int number) {
+  @Override
+  protected <K> int indexOf(K key) {
     for (int i = 0; i < list.size(); i++) {
-      if (list.get(i).getNumber() == number) {
+      if (list.get(i).getNumber() == (int) key) {
         return i;
       }
     }
