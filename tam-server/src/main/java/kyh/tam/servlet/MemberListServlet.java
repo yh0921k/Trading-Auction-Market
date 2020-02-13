@@ -2,20 +2,19 @@ package kyh.tam.servlet;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.List;
-import kyh.tam.domain.Member;
+import kyh.tam.dao.MemberObjectFileDao;
 
 public class MemberListServlet implements Servlet {
-  List<Member> members;
+  MemberObjectFileDao memberDao;
 
-  public MemberListServlet(List<Member> members) {
-    this.members = members;
+  public MemberListServlet(MemberObjectFileDao memberDao) {
+    this.memberDao = memberDao;
   }
 
   @Override
   public void service(ObjectInputStream in, ObjectOutputStream out) throws Exception {
     out.writeUTF("ok");
     out.reset();
-    out.writeObject(members);
+    out.writeObject(memberDao.findAll());
   }
 }

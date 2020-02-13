@@ -2,14 +2,14 @@ package kyh.tam.servlet;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.List;
+import kyh.tam.dao.MemberObjectFileDao;
 import kyh.tam.domain.Member;
 
 public class MemberUpdateServlet implements Servlet {
-  List<Member> members;
+  MemberObjectFileDao memberDao;
 
-  public MemberUpdateServlet(List<Member> members) {
-    this.members = members;
+  public MemberUpdateServlet(MemberObjectFileDao memberDao) {
+    this.memberDao = memberDao;
   }
 
   @Override
@@ -17,16 +17,7 @@ public class MemberUpdateServlet implements Servlet {
     try {
       Member member = (Member) in.readObject();
 
-      int index = -1;
-      for (int i = 0; i < members.size(); i++) {
-        if (members.get(i).getNumber() == member.getNumber()) {
-          index = i;
-          break;
-        }
-      }
-
-      if (index != -1) {
-        members.set(index, member);
+      if (memberDao.update(member) > 0) {
         out.writeUTF("ok");
       } else {
         out.writeUTF("fail");

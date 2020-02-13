@@ -8,13 +8,12 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import kyh.tam.context.ApplicationContextListener;
-import kyh.tam.domain.Board;
-import kyh.tam.domain.Member;
-import kyh.tam.domain.Stuff;
+import kyh.tam.dao.BoardObjectFileDao;
+import kyh.tam.dao.MemberObjectFileDao;
+import kyh.tam.dao.StuffObjectFileDao;
 import kyh.tam.servlet.BoardAddServlet;
 import kyh.tam.servlet.BoardDeleteServlet;
 import kyh.tam.servlet.BoardDetailServlet;
@@ -38,10 +37,6 @@ public class ServerApp {
   Map<String, Object> context = new LinkedHashMap<>();
   Map<String, Servlet> servletMap = new HashMap<>();
 
-  List<Board> boards;
-  List<Member> members;
-  List<Stuff> stuffs;
-
   public void addApplicationContextListener(ApplicationContextListener listener) {
     listeners.add(listener);
   }
@@ -62,31 +57,30 @@ public class ServerApp {
     }
   }
 
-  @SuppressWarnings("unchecked")
   public void service() throws Exception {
     notifyApplicationInitialized();
 
-    boards = (List<Board>) context.get("boardList");
-    members = (List<Member>) context.get("memberList");
-    stuffs = (List<Stuff>) context.get("stuffList");
+    BoardObjectFileDao boardDao = (BoardObjectFileDao) context.get("boardDao");
+    MemberObjectFileDao memberDao = (MemberObjectFileDao) context.get("memberDao");
+    StuffObjectFileDao stuffDao = (StuffObjectFileDao) context.get("stuffDao");
 
-    servletMap.put("/board/list", new BoardListServlet(boards));
-    servletMap.put("/board/add", new BoardAddServlet(boards));
-    servletMap.put("/board/detail", new BoardDetailServlet(boards));
-    servletMap.put("/board/update", new BoardUpdateServlet(boards));
-    servletMap.put("/board/delete", new BoardDeleteServlet(boards));
+    servletMap.put("/board/list", new BoardListServlet(boardDao));
+    servletMap.put("/board/add", new BoardAddServlet(boardDao));
+    servletMap.put("/board/detail", new BoardDetailServlet(boardDao));
+    servletMap.put("/board/update", new BoardUpdateServlet(boardDao));
+    servletMap.put("/board/delete", new BoardDeleteServlet(boardDao));
 
-    servletMap.put("/stuff/list", new StuffListServlet(stuffs));
-    servletMap.put("/stuff/add", new StuffAddServlet(stuffs));
-    servletMap.put("/stuff/detail", new StuffDetailServlet(stuffs));
-    servletMap.put("/stuff/update", new StuffUpdateServlet(stuffs));
-    servletMap.put("/stuff/delete", new StuffDeleteServlet(stuffs));
+    servletMap.put("/stuff/list", new StuffListServlet(stuffDao));
+    servletMap.put("/stuff/add", new StuffAddServlet(stuffDao));
+    servletMap.put("/stuff/detail", new StuffDetailServlet(stuffDao));
+    servletMap.put("/stuff/update", new StuffUpdateServlet(stuffDao));
+    servletMap.put("/stuff/delete", new StuffDeleteServlet(stuffDao));
 
-    servletMap.put("/member/list", new MemberListServlet(members));
-    servletMap.put("/member/add", new MemberAddServlet(members));
-    servletMap.put("/member/detail", new MemberDetailServlet(members));
-    servletMap.put("/member/update", new MemberUpdateServlet(members));
-    servletMap.put("/member/delete", new MemberDeleteServlet(members));
+    servletMap.put("/member/list", new MemberListServlet(memberDao));
+    servletMap.put("/member/add", new MemberAddServlet(memberDao));
+    servletMap.put("/member/detail", new MemberDetailServlet(memberDao));
+    servletMap.put("/member/update", new MemberUpdateServlet(memberDao));
+    servletMap.put("/member/delete", new MemberDeleteServlet(memberDao));
 
     try (ServerSocket serverSocket = new ServerSocket(12345)) {
       while (true) {

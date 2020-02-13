@@ -2,14 +2,13 @@ package kyh.tam.servlet;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.List;
-import kyh.tam.domain.Board;
+import kyh.tam.dao.BoardObjectFileDao;
 
 public class BoardDeleteServlet implements Servlet {
-  List<Board> boards;
+  BoardObjectFileDao boardDao;
 
-  public BoardDeleteServlet(List<Board> boards) {
-    this.boards = boards;
+  public BoardDeleteServlet(BoardObjectFileDao boardDao) {
+    this.boardDao = boardDao;
   }
 
   @Override
@@ -17,18 +16,8 @@ public class BoardDeleteServlet implements Servlet {
     try {
       int number = in.readInt();
 
-      int index = -1;
-      for (int i = 0; i < boards.size(); i++) {
-        if (boards.get(i).getNumber() == number) {
-          index = i;
-          break;
-        }
-      }
-
-      if (index != -1) {
-        boards.remove(index);
+      if (boardDao.delete(number) > 0) {
         out.writeUTF("ok");
-
       } else {
         out.writeUTF("fail");
         out.writeUTF("해당 번호의 게시물이 없습니다.");

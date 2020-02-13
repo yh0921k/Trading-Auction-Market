@@ -2,14 +2,14 @@ package kyh.tam.servlet;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.List;
+import kyh.tam.dao.StuffObjectFileDao;
 import kyh.tam.domain.Stuff;
 
 public class StuffAddServlet implements Servlet {
-  List<Stuff> stuffs;
+  StuffObjectFileDao stuffDao;
 
-  public StuffAddServlet(List<Stuff> stuffs) {
-    this.stuffs = stuffs;
+  public StuffAddServlet(StuffObjectFileDao stuffDao) {
+    this.stuffDao = stuffDao;
   }
 
   @Override
@@ -17,20 +17,11 @@ public class StuffAddServlet implements Servlet {
     try {
       Stuff stuff = (Stuff) in.readObject();
 
-      int i = 0;
-      for (; i < stuffs.size(); i++) {
-        if (stuffs.get(i).getNumber() == stuff.getNumber()) {
-          break;
-        }
-      }
-
-      if (i == stuffs.size()) {
-        stuffs.add(stuff);
+      if (stuffDao.insert(stuff) > 0) {
         out.writeUTF("ok");
-
       } else {
         out.writeUTF("fail");
-        out.writeUTF("같은 번호의 물품이 있습니다.");
+        out.writeUTF("같은 번호의 회원이 있습니다.");
       }
 
     } catch (Exception e) {

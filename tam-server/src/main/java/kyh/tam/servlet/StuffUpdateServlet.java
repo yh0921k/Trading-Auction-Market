@@ -2,14 +2,14 @@ package kyh.tam.servlet;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.List;
+import kyh.tam.dao.StuffObjectFileDao;
 import kyh.tam.domain.Stuff;
 
 public class StuffUpdateServlet implements Servlet {
-  List<Stuff> stuffs;
+  StuffObjectFileDao stuffDao;
 
-  public StuffUpdateServlet(List<Stuff> stuffs) {
-    this.stuffs = stuffs;
+  public StuffUpdateServlet(StuffObjectFileDao stuffDao) {
+    this.stuffDao = stuffDao;
   }
 
   @Override
@@ -17,16 +17,7 @@ public class StuffUpdateServlet implements Servlet {
     try {
       Stuff stuff = (Stuff) in.readObject();
 
-      int index = -1;
-      for (int i = 0; i < stuffs.size(); i++) {
-        if (stuffs.get(i).getNumber() == stuff.getNumber()) {
-          index = i;
-          break;
-        }
-      }
-
-      if (index != -1) {
-        stuffs.set(index, stuff);
+      if (stuffDao.update(stuff) > 0) {
         out.writeUTF("ok");
       } else {
         out.writeUTF("fail");

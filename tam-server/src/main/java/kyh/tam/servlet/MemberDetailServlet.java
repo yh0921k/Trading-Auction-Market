@@ -2,14 +2,14 @@ package kyh.tam.servlet;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.List;
+import kyh.tam.dao.MemberObjectFileDao;
 import kyh.tam.domain.Member;
 
 public class MemberDetailServlet implements Servlet {
-  List<Member> members;
+  MemberObjectFileDao memberDao;
 
-  public MemberDetailServlet(List<Member> members) {
-    this.members = members;
+  public MemberDetailServlet(MemberObjectFileDao memberDao) {
+    this.memberDao = memberDao;
   }
 
   @Override
@@ -17,18 +17,10 @@ public class MemberDetailServlet implements Servlet {
     try {
       int number = in.readInt();
 
-      Member member = null;
-      for (Member m : members) {
-        if (m.getNumber() == number) {
-          member = m;
-          break;
-        }
-      }
-
+      Member member = memberDao.findByNumber(number);
       if (member != null) {
         out.writeUTF("ok");
         out.writeObject(member);
-
       } else {
         out.writeUTF("fail");
         out.writeUTF("해당 번호의 회원이 없습니다.");

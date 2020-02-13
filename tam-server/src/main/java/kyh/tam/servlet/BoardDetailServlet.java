@@ -2,14 +2,14 @@ package kyh.tam.servlet;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.List;
+import kyh.tam.dao.BoardObjectFileDao;
 import kyh.tam.domain.Board;
 
 public class BoardDetailServlet implements Servlet {
-  List<Board> boards;
+  BoardObjectFileDao boardDao;
 
-  public BoardDetailServlet(List<Board> boards) {
-    this.boards = boards;
+  public BoardDetailServlet(BoardObjectFileDao boardDao) {
+    this.boardDao = boardDao;
   }
 
   @Override
@@ -17,18 +17,10 @@ public class BoardDetailServlet implements Servlet {
     try {
       int number = in.readInt();
 
-      Board board = null;
-      for (Board b : boards) {
-        if (b.getNumber() == number) {
-          board = b;
-          break;
-        }
-      }
-
+      Board board = boardDao.findByNumber(number);
       if (board != null) {
         out.writeUTF("ok");
         out.writeObject(board);
-
       } else {
         out.writeUTF("fail");
         out.writeUTF("해당 번호의 게시물이 없습니다.");
