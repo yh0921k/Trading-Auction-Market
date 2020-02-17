@@ -3,12 +3,13 @@ package kyh.tam.dao;
 import java.util.List;
 import kyh.tam.domain.Stuff;
 
-public class StuffObjectFileDao extends AbstractObjectFileDao<Stuff> {
+public class StuffObjectFileDao extends AbstractObjectFileDao<Stuff> implements StuffDao {
 
   public StuffObjectFileDao(String filename) throws Exception {
     super(filename);
   }
 
+  @Override
   public int insert(Stuff stuff) throws Exception {
     if (indexOf(stuff.getNumber()) > -1)
       return 0;
@@ -17,10 +18,12 @@ public class StuffObjectFileDao extends AbstractObjectFileDao<Stuff> {
     return 1;
   }
 
+  @Override
   public List<Stuff> findAll() throws Exception {
     return list;
   }
 
+  @Override
   public Stuff findByNumber(int number) throws Exception {
     int index = indexOf(number);
     if (index == -1)
@@ -28,6 +31,7 @@ public class StuffObjectFileDao extends AbstractObjectFileDao<Stuff> {
     return list.get(index);
   }
 
+  @Override
   public int update(Stuff stuff) throws Exception {
     int index = indexOf(stuff.getNumber());
     if (index == -1)
@@ -38,6 +42,7 @@ public class StuffObjectFileDao extends AbstractObjectFileDao<Stuff> {
     return 1;
   }
 
+  @Override
   public int delete(int number) throws Exception {
     int index = indexOf(number);
     if (index == -1)

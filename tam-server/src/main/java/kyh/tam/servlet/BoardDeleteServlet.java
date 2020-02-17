@@ -2,12 +2,12 @@ package kyh.tam.servlet;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import kyh.tam.dao.json.BoardJsonFileDao;
+import kyh.tam.dao.BoardDao;
 
 public class BoardDeleteServlet implements Servlet {
-  BoardJsonFileDao boardDao;
+  BoardDao boardDao;
 
-  public BoardDeleteServlet(BoardJsonFileDao boardDao) {
+  public BoardDeleteServlet(BoardDao boardDao) {
     this.boardDao = boardDao;
   }
 

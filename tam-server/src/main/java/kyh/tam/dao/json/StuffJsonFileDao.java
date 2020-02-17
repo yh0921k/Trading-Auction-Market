@@ -1,9 +1,10 @@
 package kyh.tam.dao.json;
 
 import java.util.List;
+import kyh.tam.dao.StuffDao;
 import kyh.tam.domain.Stuff;
 
-public class StuffJsonFileDao extends AbstractJsonFileDao<Stuff> {
+public class StuffJsonFileDao extends AbstractJsonFileDao<Stuff> implements StuffDao {
 
   public StuffJsonFileDao(String filename) throws Exception {
     super(filename);

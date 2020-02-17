@@ -11,6 +11,9 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import kyh.tam.context.ApplicationContextListener;
+import kyh.tam.dao.BoardDao;
+import kyh.tam.dao.MemberDao;
+import kyh.tam.dao.StuffDao;
 import kyh.tam.dao.json.BoardJsonFileDao;
 import kyh.tam.dao.json.MemberJsonFileDao;
 import kyh.tam.dao.json.StuffJsonFileDao;
@@ -60,9 +63,9 @@ public class ServerApp {
   public void service() throws Exception {
     notifyApplicationInitialized();
 
-    BoardJsonFileDao boardDao = (BoardJsonFileDao) context.get("boardDao");
-    MemberJsonFileDao memberDao = (MemberJsonFileDao) context.get("memberDao");
-    StuffJsonFileDao stuffDao = (StuffJsonFileDao) context.get("stuffDao");
+    BoardDao boardDao = (BoardJsonFileDao) context.get("boardDao");
+    MemberDao memberDao = (MemberJsonFileDao) context.get("memberDao");
+    StuffDao stuffDao = (StuffJsonFileDao) context.get("stuffDao");
 
     servletMap.put("/board/list", new BoardListServlet(boardDao));
     servletMap.put("/board/add", new BoardAddServlet(boardDao));
@@ -138,7 +141,7 @@ public class ServerApp {
         System.out.println("--------------------------------------------------");
       }
     } catch (Exception e) {
-      System.out.printf("[processRequest()] : %s\n" + e.getMessage());
+      System.out.printf("[processRequest()] : %s\n", e.getMessage());
       e.printStackTrace();
       return -1;
     }

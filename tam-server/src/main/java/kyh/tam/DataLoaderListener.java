@@ -12,13 +12,9 @@ public class DataLoaderListener implements ApplicationContextListener {
   public void contextInitialized(Map<String, Object> context) throws Exception {
     System.out.println("--------------------------------------------------");
 
-    BoardJsonFileDao boardDao = new BoardJsonFileDao("./data/board.json");
-    MemberJsonFileDao memberDao = new MemberJsonFileDao("./data/member.json");
-    StuffJsonFileDao stuffDao = new StuffJsonFileDao("./data/stuff.json");
-
-    context.put("boardDao", boardDao);
-    context.put("memberDao", memberDao);
-    context.put("stuffDao", stuffDao);
+    context.put("boardDao", new BoardJsonFileDao("./data/board.json"));
+    context.put("memberDao", new MemberJsonFileDao("./data/member.json"));
+    context.put("stuffDao", new StuffJsonFileDao("./data/stuff.json"));
     System.out.println("--------------------------------------------------");
   }
 

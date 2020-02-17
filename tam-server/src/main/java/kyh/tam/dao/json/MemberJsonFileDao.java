@@ -1,9 +1,10 @@
 package kyh.tam.dao.json;
 
 import java.util.List;
+import kyh.tam.dao.MemberDao;
 import kyh.tam.domain.Member;
 
-public class MemberJsonFileDao extends AbstractJsonFileDao<Member> {
+public class MemberJsonFileDao extends AbstractJsonFileDao<Member> implements MemberDao {
 
   public MemberJsonFileDao(String filename) throws Exception {
     super(filename);
