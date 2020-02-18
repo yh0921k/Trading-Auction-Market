@@ -1,18 +1,15 @@
 package kyh.tam.handler;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import kyh.tam.dao.StuffDao;
 import kyh.tam.domain.Stuff;
 import kyh.util.Prompt;
 
 public class StuffDetailCommand implements Command {
-  ObjectOutputStream out;
-  ObjectInputStream in;
+  StuffDao stuffDao;
   Prompt prompt;
 
-  public StuffDetailCommand(ObjectOutputStream out, ObjectInputStream in, Prompt prompt) {
-    this.out = out;
-    this.in = in;
+  public StuffDetailCommand(StuffDao stuffDao, Prompt prompt) {
+    this.stuffDao = stuffDao;
     this.prompt = prompt;
   }
 
@@ -21,16 +18,8 @@ public class StuffDetailCommand implements Command {
     System.out.println("--------------------------------------------------");
     try {
       int number = prompt.inputInt("번호 : ");
-      out.writeUTF("/stuff/detail");
-      out.writeInt(number);
-      out.flush();
-      String response = in.readUTF();
-      if (response.equals("fail")) {
-        System.out.println("Server(fail) : " + in.readUTF());
-        return;
-      }
 
-      Stuff stuff = (Stuff) in.readObject();
+      Stuff stuff = stuffDao.findByNumber(number);
       System.out.printf("번호 : %s\n", stuff.getNumber());
       System.out.printf("물품명 : %s\n", stuff.getName());
       System.out.printf("분류 : %s\n", stuff.getCategory());
@@ -39,7 +28,7 @@ public class StuffDetailCommand implements Command {
       System.out.printf("판매자 : %s\n", stuff.getSeller());
 
     } catch (Exception e) {
-      System.out.println("[/stuff/detail] : communication error");
+      System.out.println("[StuffDetailCommand.java] : Read failed");
     }
   }
 }

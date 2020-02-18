@@ -1,19 +1,16 @@
 package kyh.tam.handler;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
+import kyh.tam.dao.MemberDao;
 import kyh.tam.domain.Member;
 import kyh.util.Prompt;
 
 public class MemberDetailCommand implements Command {
-  ObjectOutputStream out;
-  ObjectInputStream in;
+  MemberDao memberDao;
   Prompt prompt;
 
-  public MemberDetailCommand(ObjectOutputStream out, ObjectInputStream in, Prompt prompt) {
-    this.out = out;
-    this.in = in;
+  public MemberDetailCommand(MemberDao memberDao, Prompt prompt) {
+    this.memberDao = memberDao;
     this.prompt = prompt;
   }
 
@@ -22,16 +19,8 @@ public class MemberDetailCommand implements Command {
     System.out.println("--------------------------------------------------");
     try {
       int number = prompt.inputInt("번호 : ");
-      out.writeUTF("/member/detail");
-      out.writeInt(number);
-      out.flush();
-      String response = in.readUTF();
-      if (response.equals("fail")) {
-        System.out.println("Server(fail) : " + in.readUTF());
-        return;
-      }
 
-      Member member = (Member) in.readObject();
+      Member member = memberDao.findByNumber(number);
       System.out.printf("번호 : %d\n", member.getNumber());
       System.out.printf("이름 : %s\n", member.getName());
       System.out.printf("메일 : %s\n", member.getEmail());
@@ -43,7 +32,7 @@ public class MemberDetailCommand implements Command {
           new SimpleDateFormat("yyyy-MM-dd").format(member.getRegisteredDate()));
 
     } catch (Exception e) {
-      System.out.println("[/member/detail] : communication error");
+      System.out.println("[MemberDetailCommand.java] : Read failed");
     }
   }
 }

@@ -1,17 +1,14 @@
 package kyh.tam.handler;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import kyh.tam.dao.MemberDao;
 import kyh.util.Prompt;
 
 public class MemberDeleteCommand implements Command {
-  ObjectOutputStream out;
-  ObjectInputStream in;
+  MemberDao memberDao;
   Prompt prompt;
 
-  public MemberDeleteCommand(ObjectOutputStream out, ObjectInputStream in, Prompt prompt) {
-    this.out = out;
-    this.in = in;
+  public MemberDeleteCommand(MemberDao memberDao, Prompt prompt) {
+    this.memberDao = memberDao;
     this.prompt = prompt;
   }
 
@@ -20,21 +17,11 @@ public class MemberDeleteCommand implements Command {
     System.out.println("--------------------------------------------------");
     try {
       int number = prompt.inputInt("번호 : ");
-
-      out.writeUTF("/member/delete");
-      out.writeInt(number);
-      out.flush();
-
-      String response = in.readUTF();
-
-      if (response.equals("fail")) {
-        System.out.println("Server(fail) : " + in.readUTF());
-        return;
-      }
+      memberDao.delete(number);
       System.out.println("Delete complete");
 
     } catch (Exception e) {
-      System.out.println("[/member/delete] : communication error");
+      System.out.println("[MemberDeleteCommand.java] : Delete failed");
     }
   }
 }

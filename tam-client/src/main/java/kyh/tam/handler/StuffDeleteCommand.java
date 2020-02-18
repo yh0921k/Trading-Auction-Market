@@ -1,17 +1,14 @@
 package kyh.tam.handler;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import kyh.tam.dao.StuffDao;
 import kyh.util.Prompt;
 
 public class StuffDeleteCommand implements Command {
-  ObjectOutputStream out;
-  ObjectInputStream in;
+  StuffDao stuffDao;
   Prompt prompt;
 
-  public StuffDeleteCommand(ObjectOutputStream out, ObjectInputStream in, Prompt prompt) {
-    this.out = out;
-    this.in = in;
+  public StuffDeleteCommand(StuffDao stuffDao, Prompt prompt) {
+    this.stuffDao = stuffDao;
     this.prompt = prompt;
   }
 
@@ -20,21 +17,11 @@ public class StuffDeleteCommand implements Command {
     System.out.println("--------------------------------------------------");
     try {
       int number = prompt.inputInt("번호 : ");
-
-      out.writeUTF("/stuff/delete");
-      out.writeInt(number);
-      out.flush();
-
-      String response = in.readUTF();
-
-      if (response.equals("fail")) {
-        System.out.println("Server(fail) : " + in.readUTF());
-        return;
-      }
+      stuffDao.delete(number);
       System.out.println("Delete complete");
 
     } catch (Exception e) {
-      System.out.println("[/stuff/delete] : communication error");
+      System.out.println("[StuffDeleteCommand.java] : Delete failed");
     }
   }
 }

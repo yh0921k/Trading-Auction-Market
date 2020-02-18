@@ -1,17 +1,14 @@
 package kyh.tam.handler;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import kyh.tam.dao.BoardDao;
 import kyh.util.Prompt;
 
 public class BoardDeleteCommand implements Command {
-  ObjectOutputStream out;
-  ObjectInputStream in;
+  BoardDao boardDao;
   Prompt prompt;
 
-  public BoardDeleteCommand(ObjectOutputStream out, ObjectInputStream in, Prompt prompt) {
-    this.out = out;
-    this.in = in;
+  public BoardDeleteCommand(BoardDao boardDao, Prompt prompt) {
+    this.boardDao = boardDao;
     this.prompt = prompt;
   }
 
@@ -20,21 +17,11 @@ public class BoardDeleteCommand implements Command {
     System.out.println("--------------------------------------------------");
     try {
       int number = prompt.inputInt("번호 : ");
-
-      out.writeUTF("/board/delete");
-      out.writeInt(number);
-      out.flush();
-
-      String response = in.readUTF();
-
-      if (response.equals("fail")) {
-        System.out.println("Server(fail) : " + in.readUTF());
-        return;
-      }
+      boardDao.delete(number);
       System.out.println("Delete complete");
 
     } catch (Exception e) {
-      System.out.println("[/board/delete] : communication error");
+      System.out.println("[BoardDeleteCommand.java] : Delete failed");
     }
   }
 }

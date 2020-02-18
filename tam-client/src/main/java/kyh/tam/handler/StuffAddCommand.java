@@ -1,18 +1,15 @@
 package kyh.tam.handler;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import kyh.tam.dao.StuffDao;
 import kyh.tam.domain.Stuff;
 import kyh.util.Prompt;
 
 public class StuffAddCommand implements Command {
-  ObjectOutputStream out;
-  ObjectInputStream in;
+  StuffDao stuffDao;
   Prompt prompt;
 
-  public StuffAddCommand(ObjectOutputStream out, ObjectInputStream in, Prompt prompt) {
-    this.out = out;
-    this.in = in;
+  public StuffAddCommand(StuffDao stuffDao, Prompt prompt) {
+    this.stuffDao = stuffDao;
     this.prompt = prompt;
   }
 
@@ -28,18 +25,11 @@ public class StuffAddCommand implements Command {
     stuff.setSeller(prompt.inputString("판매자 : "));
 
     try {
-      out.writeUTF("/stuff/add");
-      out.writeObject(stuff);
-      out.flush();
-      String response = in.readUTF();
-      if (response.equals("fail")) {
-        System.out.println("Server(fail) : " + in.readUTF());
-        return;
-      }
+      stuffDao.insert(stuff);
       System.out.println("Save complete");
 
     } catch (Exception e) {
-      System.out.println("[/stuff/add] : communication error");
+      System.out.println("[StuffAddCommand.java] : Save failed");
     }
   }
 }

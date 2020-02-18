@@ -1,19 +1,17 @@
 package kyh.tam.handler;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.sql.Date;
+import kyh.tam.dao.BoardDao;
 import kyh.tam.domain.Board;
 import kyh.util.Prompt;
 
 public class BoardAddCommand implements Command {
-  ObjectOutputStream out;
-  ObjectInputStream in;
+
+  BoardDao boardDao;
   Prompt prompt;
 
-  public BoardAddCommand(ObjectOutputStream out, ObjectInputStream in, Prompt prompt) {
-    this.out = out;
-    this.in = in;
+  public BoardAddCommand(BoardDao boardDao, Prompt prompt) {
+    this.boardDao = boardDao;
     this.prompt = prompt;
   }
 
@@ -28,18 +26,11 @@ public class BoardAddCommand implements Command {
     board.setViewCount(0);
 
     try {
-      out.writeUTF("/board/add");
-      out.writeObject(board);
-      out.flush();
-      String response = in.readUTF();
-      if (response.equals("fail")) {
-        System.out.println("Server(fail) : " + in.readUTF());
-        return;
-      }
+      boardDao.insert(board);
       System.out.println("Save complete");
 
     } catch (Exception e) {
-      System.out.println("[/board/add] : communication error");
+      System.out.println("[BoardAddCommand.java] : Save failed");
     }
   }
 }

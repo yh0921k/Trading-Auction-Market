@@ -1,18 +1,15 @@
 package kyh.tam.handler;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import kyh.tam.dao.MemberDao;
 import kyh.tam.domain.Member;
 import kyh.util.Prompt;
 
 public class MemberUpdateCommand implements Command {
-  ObjectOutputStream out;
-  ObjectInputStream in;
+  MemberDao memberDao;
   Prompt prompt;
 
-  public MemberUpdateCommand(ObjectOutputStream out, ObjectInputStream in, Prompt prompt) {
-    this.out = out;
-    this.in = in;
+  public MemberUpdateCommand(MemberDao memberDao, Prompt prompt) {
+    this.memberDao = memberDao;
     this.prompt = prompt;
   }
 
@@ -21,19 +18,16 @@ public class MemberUpdateCommand implements Command {
     System.out.println("--------------------------------------------------");
     try {
       int number = prompt.inputInt("번호 : ");
-      out.writeUTF("/member/detail");
-      out.writeInt(number);
-      out.flush();
 
-      String response = in.readUTF();
-      if (response.equals("fail")) {
-        System.out.println("Server(fail) : " + in.readUTF());
+      Member oldMember;
+      try {
+        oldMember = memberDao.findByNumber(number);
+      } catch (Exception e) {
+        System.out.println("해당 번호의 회원이 없습니다.");
         return;
       }
 
-      Member oldMember = (Member) in.readObject();
       Member newMember = new Member();
-
       newMember.setNumber(oldMember.getNumber());
       newMember.setName(
           prompt.inputString(String.format("이름(%s) : ", oldMember.getName()), oldMember.getName()));
@@ -55,24 +49,16 @@ public class MemberUpdateCommand implements Command {
 
       newMember.setRegisteredDate(oldMember.getRegisteredDate());
 
-      if (oldMember.equals(newMember)) {
+      if (oldMember.toString().equals(newMember.toString())) {
         System.out.println("Update cancel");
         return;
       }
 
-      out.writeUTF("/member/update");
-      out.writeObject(newMember);
-      out.flush();
-
-      response = in.readUTF();
-      if (response.equals("fail")) {
-        System.out.println("Server(fail) : " + in.readUTF());
-        return;
-      }
+      memberDao.update(newMember);
       System.out.println("Update complete");
 
     } catch (Exception e) {
-      System.out.println("[/member/update] : communication error");
+      System.out.println("[MemberUpdateCommand.java] : Update failed");
     }
   }
 }

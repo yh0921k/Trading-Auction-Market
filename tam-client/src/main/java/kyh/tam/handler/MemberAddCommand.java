@@ -1,19 +1,16 @@
 package kyh.tam.handler;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.sql.Date;
+import kyh.tam.dao.MemberDao;
 import kyh.tam.domain.Member;
 import kyh.util.Prompt;
 
 public class MemberAddCommand implements Command {
-  ObjectOutputStream out;
-  ObjectInputStream in;
+  MemberDao memberDao;
   Prompt prompt;
 
-  public MemberAddCommand(ObjectOutputStream out, ObjectInputStream in, Prompt prompt) {
-    this.out = out;
-    this.in = in;
+  public MemberAddCommand(MemberDao memberDao, Prompt prompt) {
+    this.memberDao = memberDao;
     this.prompt = prompt;
   }
 
@@ -31,18 +28,11 @@ public class MemberAddCommand implements Command {
     member.setRegisteredDate(new Date(System.currentTimeMillis()));
 
     try {
-      out.writeUTF("/member/add");
-      out.writeObject(member);
-      out.flush();
-      String response = in.readUTF();
-      if (response.equals("fail")) {
-        System.out.println("Server(fail) : " + in.readUTF());
-        return;
-      }
+      memberDao.insert(member);
       System.out.println("Save complete");
 
     } catch (Exception e) {
-      System.out.println("[/member/add] : communication error");
+      System.out.println("[MemberAddCommand.java] : Save failed");
     }
   }
 }

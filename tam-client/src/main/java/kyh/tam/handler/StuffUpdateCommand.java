@@ -1,18 +1,15 @@
 package kyh.tam.handler;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import kyh.tam.dao.StuffDao;
 import kyh.tam.domain.Stuff;
 import kyh.util.Prompt;
 
 public class StuffUpdateCommand implements Command {
-  ObjectOutputStream out;
-  ObjectInputStream in;
+  StuffDao stuffDao;
   Prompt prompt;
 
-  public StuffUpdateCommand(ObjectOutputStream out, ObjectInputStream in, Prompt prompt) {
-    this.out = out;
-    this.in = in;
+  public StuffUpdateCommand(StuffDao stuffDao, Prompt prompt) {
+    this.stuffDao = stuffDao;
     this.prompt = prompt;
   }
 
@@ -21,19 +18,16 @@ public class StuffUpdateCommand implements Command {
     System.out.println("--------------------------------------------------");
     try {
       int number = prompt.inputInt("번호 : ");
-      out.writeUTF("/stuff/detail");
-      out.writeInt(number);
-      out.flush();
 
-      String response = in.readUTF();
-      if (response.equals("fail")) {
-        System.out.println("Server(fail) : " + in.readUTF());
+      Stuff oldStuff;
+      try {
+        oldStuff = stuffDao.findByNumber(number);
+      } catch (Exception e) {
+        System.out.println("해당 번호의 물품이 없습니다.");
         return;
       }
 
-      Stuff oldStuff = (Stuff) in.readObject();
       Stuff newStuff = new Stuff();
-
       newStuff.setNumber(oldStuff.getNumber());
 
       newStuff.setName(
@@ -51,24 +45,16 @@ public class StuffUpdateCommand implements Command {
       newStuff.setSeller(prompt.inputString(String.format("판매자(%s) : ", oldStuff.getSeller()),
           oldStuff.getSeller()));
 
-      if (newStuff.equals(oldStuff)) {
+      if (newStuff.toString().equals(oldStuff.toString())) {
         System.out.println("Update cancel");
         return;
       }
 
-      out.writeUTF("/stuff/update");
-      out.writeObject(newStuff);
-      out.flush();
-
-      response = in.readUTF();
-      if (response.equals("fail")) {
-        System.out.println("Server(fail) : " + in.readUTF());
-        return;
-      }
+      stuffDao.update(newStuff);
       System.out.println("Update complete");
 
     } catch (Exception e) {
-      System.out.println("[/stuff/update] : communication error");
+      System.out.println("[StuffUpdateCommand.java] : Update failed");
     }
   }
 }
