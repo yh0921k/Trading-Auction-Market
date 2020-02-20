@@ -46,12 +46,11 @@ public class ClientApp {
   String host;
   int port;
 
+  HashMap<String, Command> commandMap = new HashMap<>();
+
   public ClientApp() {
     commandStack = new ArrayDeque<>();
     commandQueue = new LinkedList<>();
-  }
-
-  public void service() throws Exception {
 
     try {
       if ((host = prompt.inputString("Server IP(enter) : ")).equals("")) {
@@ -64,13 +63,46 @@ public class ClientApp {
       }
 
     } catch (Exception e) {
-      System.out.print("[User input] : ");
-      System.out.println("Invalid server address(IP) or port number");
-      e.printStackTrace();
-      br.close();
     }
 
+    BoardDao boardDao = new BoardDaoProxy(host, port);
+    MemberDao memberDao = new MemberDaoProxy(host, port);
+    StuffDao stuffDao = new StuffDaoProxy(host, port);
+
+    commandMap.put("/board/list", new BoardListCommand(boardDao));
+    commandMap.put("/board/add", new BoardAddCommand(boardDao, prompt));
+    commandMap.put("/board/detail", new BoardDetailCommand(boardDao, prompt));
+    commandMap.put("/board/update", new BoardUpdateCommand(boardDao, prompt));
+    commandMap.put("/board/delete", new BoardDeleteCommand(boardDao, prompt));
+    commandMap.put("/member/list", new MemberListCommand(memberDao));
+    commandMap.put("/member/add", new MemberAddCommand(memberDao, prompt));
+    commandMap.put("/member/detail", new MemberDetailCommand(memberDao, prompt));
+    commandMap.put("/member/update", new MemberUpdateCommand(memberDao, prompt));
+    commandMap.put("/member/delete", new MemberDeleteCommand(memberDao, prompt));
+    commandMap.put("/stuff/list", new StuffListCommand(stuffDao));
+    commandMap.put("/stuff/add", new StuffAddCommand(stuffDao, prompt));
+    commandMap.put("/stuff/detail", new StuffDetailCommand(stuffDao, prompt));
+    commandMap.put("/stuff/update", new StuffUpdateCommand(stuffDao, prompt));
+    commandMap.put("/stuff/delete", new StuffDeleteCommand(stuffDao, prompt));
+
+    commandMap.put("shutdown", () -> {
+
+      try (Socket socket = new Socket(host, port);
+          ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+          ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+
+        out.writeUTF("shutdown");
+        out.flush();
+        System.out.println("Server : " + in.readUTF());
+      } catch (Exception e) {
+      }
+    });
+  }
+
+  public void service() throws Exception {
+
     String command;
+
     while (true) {
       System.out.println("--------------------------------------------------");
       command = prompt.inputString("\n$ ");
@@ -92,60 +124,18 @@ public class ClientApp {
 
       processCommand(command);
     }
+    System.out.println("--------------------------------------------------");
     br.close();
   }
 
   private void processCommand(String command) throws Exception {
 
-    try (Socket socket = new Socket(host, port);
-        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-        ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
-
-      System.out.println("Connection complete");
-
-      BoardDao boardDao = new BoardDaoProxy(in, out);
-      MemberDao memberDao = new MemberDaoProxy(in, out);
-      StuffDao stuffDao = new StuffDaoProxy(in, out);
-
-      HashMap<String, Command> commandMap = new HashMap<>();
-
-      commandMap.put("/board/list", new BoardListCommand(boardDao));
-      commandMap.put("/board/add", new BoardAddCommand(boardDao, prompt));
-      commandMap.put("/board/detail", new BoardDetailCommand(boardDao, prompt));
-      commandMap.put("/board/update", new BoardUpdateCommand(boardDao, prompt));
-      commandMap.put("/board/delete", new BoardDeleteCommand(boardDao, prompt));
-      commandMap.put("/member/list", new MemberListCommand(memberDao));
-      commandMap.put("/member/add", new MemberAddCommand(memberDao, prompt));
-      commandMap.put("/member/detail", new MemberDetailCommand(memberDao, prompt));
-      commandMap.put("/member/update", new MemberUpdateCommand(memberDao, prompt));
-      commandMap.put("/member/delete", new MemberDeleteCommand(memberDao, prompt));
-      commandMap.put("/stuff/list", new StuffListCommand(stuffDao));
-      commandMap.put("/stuff/add", new StuffAddCommand(stuffDao, prompt));
-      commandMap.put("/stuff/detail", new StuffDetailCommand(stuffDao, prompt));
-      commandMap.put("/stuff/update", new StuffUpdateCommand(stuffDao, prompt));
-      commandMap.put("/stuff/delete", new StuffDeleteCommand(stuffDao, prompt));
-
-      commandMap.put("shutdown", () -> {
-        try {
-          out.writeUTF(command);
-          out.flush();
-          System.out.println("Server : " + in.readUTF());
-          System.out.println("Bye");
-        } catch (Exception e) {
-        }
-      });
-
-      Command commandHandler = commandMap.get(command);
-      if (commandHandler == null) {
-        System.out.println("실행할 수 없는 명령입니다.");
-        return;
-      }
-      commandHandler.execute();
-    } catch (Exception e) {
-      System.out.print("[Socket or I/O stream] : ");
-      System.out.println("Invalid socket or I/O stream");
-      e.printStackTrace();
+    Command commandHandler = commandMap.get(command);
+    if (commandHandler == null) {
+      System.out.println("실행할 수 없는 명령입니다.");
+      return;
     }
+    commandHandler.execute();
   }
 
   private void printCommandHistory(Iterator<String> it) throws Exception {
