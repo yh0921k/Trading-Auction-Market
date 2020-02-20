@@ -108,44 +108,41 @@ public class ServerApp {
         ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream())) {
 
       System.out.println("Data I/O stream ready");
-      while (true) {
-        String request = in.readUTF().toLowerCase();
-        System.out.println("Receive complete");
-        System.out.printf("Client Message : [\"%s\"]\n", request);
 
-        switch (request) {
-          case "quit":
-            quit(out);
-            return 0;
-          case "shutdown":
-            quit(out);
-            return 1;
-        }
+      String request = in.readUTF().toLowerCase();
+      System.out.println("Receive complete");
+      System.out.printf("Client Message : [\"%s\"]\n", request);
 
-        Servlet servlet = servletMap.get(request);
-        if (servlet != null) {
-          try {
-            servlet.service(in, out);
-
-          } catch (Exception e) {
-            out.writeUTF("fail");
-            out.writeUTF(e.getMessage());
-            System.out.println("[servlet.service()] : " + e.getMessage());
-            e.printStackTrace();
-          }
-        } else {
-          notfound(out);
-        }
-        out.flush();
-        System.out.println("Send complete");
-        System.out.println("--------------------------------------------------");
+      if (request.equalsIgnoreCase("shutdown")) {
+        quit(out);
+        return 1;
       }
+
+      Servlet servlet = servletMap.get(request);
+      if (servlet != null) {
+        try {
+          servlet.service(in, out);
+
+        } catch (Exception e) {
+          out.writeUTF("fail");
+          out.writeUTF(e.getMessage());
+          System.out.println("[servlet.service()] : " + e.getMessage());
+          e.printStackTrace();
+        }
+      } else {
+        notfound(out);
+      }
+      out.flush();
+      System.out.println("Send complete");
+      return 0;
+
     } catch (Exception e) {
       System.out.printf("[processRequest()] : %s\n", e.getMessage());
       e.printStackTrace();
       return -1;
     }
   }
+
 
   private void quit(ObjectOutputStream out) throws IOException {
     out.writeUTF("ok");

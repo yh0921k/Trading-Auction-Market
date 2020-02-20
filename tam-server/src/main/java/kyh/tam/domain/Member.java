@@ -161,4 +161,9 @@ public class Member implements Serializable {
         this.getEmail(), this.getAddress(), this.getPassword(), this.getPhoto(), this.getTel(),
         this.getRegisteredDate());
   }
+
+  @Override
+  public String toString() {
+    return "[" + number + ", " + name + ", " + email + ", " + tel + ", " + registeredDate + "]";
+  }
 }

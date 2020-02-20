@@ -124,4 +124,9 @@ public class Stuff implements Serializable {
     return String.format("%d,%s,%s,%s,%s,%d", this.getNumber(), this.getName(), this.getState(),
         this.getSeller(), this.getCategory(), this.getPrice());
   }
+
+  @Override
+  public String toString() {
+    return "[" + number + ", " + name + ", " + state + ", " + seller + ", " + price + "]";
+  }
 }

@@ -110,4 +110,9 @@ public class Board implements Serializable {
     return String.format("%d,%s,%s,%d,%s", this.getNumber(), this.getTitle(), this.getWriteDate(),
         this.getViewCount(), this.getWriter());
   }
+
+  @Override
+  public String toString() {
+    return "[" + number + ", " + title + ", " + writeDate + ", " + viewCount + "]";
+  }
 }
