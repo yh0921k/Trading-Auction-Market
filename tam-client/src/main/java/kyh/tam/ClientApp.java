@@ -15,6 +15,7 @@ import kyh.tam.dao.BoardDao;
 import kyh.tam.dao.MemberDao;
 import kyh.tam.dao.StuffDao;
 import kyh.tam.dao.proxy.BoardDaoProxy;
+import kyh.tam.dao.proxy.DaoProxyHelper;
 import kyh.tam.dao.proxy.MemberDaoProxy;
 import kyh.tam.dao.proxy.StuffDaoProxy;
 import kyh.tam.handler.BoardAddCommand;
@@ -65,9 +66,10 @@ public class ClientApp {
     } catch (Exception e) {
     }
 
-    BoardDao boardDao = new BoardDaoProxy(host, port);
-    MemberDao memberDao = new MemberDaoProxy(host, port);
-    StuffDao stuffDao = new StuffDaoProxy(host, port);
+    DaoProxyHelper daoProxyHelper = new DaoProxyHelper(host, port);
+    BoardDao boardDao = new BoardDaoProxy(daoProxyHelper);
+    MemberDao memberDao = new MemberDaoProxy(daoProxyHelper);
+    StuffDao stuffDao = new StuffDaoProxy(daoProxyHelper);
 
     commandMap.put("/board/list", new BoardListCommand(boardDao));
     commandMap.put("/board/add", new BoardAddCommand(boardDao, prompt));
