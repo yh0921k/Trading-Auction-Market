@@ -89,10 +89,11 @@ public class ServerApp {
       while (true) {
         System.out.println("waiting for client to connect...");
         Socket connectedSocket = serverSocket.accept();
-        if (processRequest(connectedSocket) == 1) {
-          break;
-        }
-        System.out.println("--------------------------------------------------");
+        System.out.println("Client connection complete");
+        new Thread(() -> {
+          processRequest(connectedSocket);
+          System.out.println("--------------------------------------------------");
+        }).start();
       }
     } catch (Exception e) {
       System.out.println("[service()] : serverSocket error");
