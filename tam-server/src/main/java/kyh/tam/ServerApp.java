@@ -10,6 +10,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import kyh.tam.context.ApplicationContextListener;
 import kyh.tam.dao.BoardDao;
 import kyh.tam.dao.MemberDao;
@@ -39,6 +41,8 @@ public class ServerApp {
   Set<ApplicationContextListener> listeners = new LinkedHashSet<>();
   Map<String, Object> context = new LinkedHashMap<>();
   Map<String, Servlet> servletMap = new HashMap<>();
+
+  ExecutorService executorService = Executors.newCachedThreadPool();
 
   public void addApplicationContextListener(ApplicationContextListener listener) {
     listeners.add(listener);
@@ -90,16 +94,17 @@ public class ServerApp {
         System.out.println("waiting for client to connect...");
         Socket connectedSocket = serverSocket.accept();
         System.out.println("Client connection complete");
-        new Thread(() -> {
+        executorService.submit(() -> {
           processRequest(connectedSocket);
           System.out.println("--------------------------------------------------");
-        }).start();
+        });
       }
     } catch (Exception e) {
       System.out.println("[service()] : serverSocket error");
       e.printStackTrace();
     }
     notifyApplicationDestroyed();
+    executorService.shutdown();
     System.out.println("Bye");
   }
 
