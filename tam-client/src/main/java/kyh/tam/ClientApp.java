@@ -2,9 +2,9 @@ package kyh.tam;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
@@ -43,18 +43,20 @@ public class ClientApp {
   Deque<String> commandStack;
   Queue<String> commandQueue;
 
-  String host;
-  int port;
-
+  Connection con;
   HashMap<String, Command> commandMap = new HashMap<>();
 
-  public ClientApp() {
+  public ClientApp() throws ClassNotFoundException, SQLException {
     commandStack = new ArrayDeque<>();
     commandQueue = new LinkedList<>();
 
-    BoardDao boardDao = new BoardDaoImpl();
-    StuffDao stuffDao = new StuffDaoImpl();
-    MemberDao memberDao = new MemberDaoImpl();
+    Class.forName("org.mariadb.jdbc.Driver");
+    Connection con =
+        DriverManager.getConnection("jdbc:mariadb://localhost:3306/tamdb", "kyh", "1111");
+
+    BoardDao boardDao = new BoardDaoImpl(con);
+    StuffDao stuffDao = new StuffDaoImpl(con);
+    MemberDao memberDao = new MemberDaoImpl(con);
 
     commandMap.put("/board/list", new BoardListCommand(boardDao));
     commandMap.put("/board/add", new BoardAddCommand(boardDao, prompt));
@@ -71,19 +73,6 @@ public class ClientApp {
     commandMap.put("/stuff/detail", new StuffDetailCommand(stuffDao, prompt));
     commandMap.put("/stuff/update", new StuffUpdateCommand(stuffDao, prompt));
     commandMap.put("/stuff/delete", new StuffDeleteCommand(stuffDao, prompt));
-
-    commandMap.put("shutdown", () -> {
-
-      try (Socket socket = new Socket(host, port);
-          ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-          ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
-
-        out.writeUTF("shutdown");
-        out.flush();
-        System.out.println("Server : " + in.readUTF());
-      } catch (Exception e) {
-      }
-    });
   }
 
   public void service() throws Exception {
@@ -113,6 +102,11 @@ public class ClientApp {
     }
     System.out.println("--------------------------------------------------");
     br.close();
+    try {
+      con.close();
+    } catch (Exception e) {
+
+    }
   }
 
   private void processCommand(String command) throws Exception {
