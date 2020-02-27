@@ -17,11 +17,15 @@ public class StuffDeleteCommand implements Command {
     System.out.println("--------------------------------------------------");
     try {
       int number = prompt.inputInt("번호 : ");
-      stuffDao.delete(number);
-      System.out.println("Delete complete");
+      if (stuffDao.delete(number) > 0) {
+        System.out.println("Delete complete");
+      } else {
+        System.out.println("The number does not exist");
+      }
 
     } catch (Exception e) {
       System.out.println("[StuffDeleteCommand.java] : Delete failed");
+      e.printStackTrace();
     }
   }
 }

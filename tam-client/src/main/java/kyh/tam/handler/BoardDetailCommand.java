@@ -30,6 +30,7 @@ public class BoardDetailCommand implements Command {
 
     } catch (Exception e) {
       System.out.println("[BoardDetailCommand.java] : Read failed");
+      e.printStackTrace();
     }
   }
 }

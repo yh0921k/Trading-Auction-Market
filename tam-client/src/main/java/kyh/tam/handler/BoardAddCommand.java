@@ -1,6 +1,5 @@
 package kyh.tam.handler;
 
-import java.sql.Date;
 import kyh.tam.dao.BoardDao;
 import kyh.tam.domain.Board;
 import kyh.util.Prompt;
@@ -20,10 +19,7 @@ public class BoardAddCommand implements Command {
     System.out.println("--------------------------------------------------");
 
     Board board = new Board();
-    board.setNumber(prompt.inputInt("번호 : "));
     board.setTitle(prompt.inputString("내용 : "));
-    board.setWriteDate(new Date(System.currentTimeMillis()));
-    board.setViewCount(0);
 
     try {
       boardDao.insert(board);
@@ -31,6 +27,7 @@ public class BoardAddCommand implements Command {
 
     } catch (Exception e) {
       System.out.println("[BoardAddCommand.java] : Save failed");
+      e.printStackTrace();
     }
   }
 }

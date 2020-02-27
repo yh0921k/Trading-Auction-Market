@@ -17,7 +17,6 @@ public class StuffAddCommand implements Command {
   public void execute() throws Exception {
     System.out.println("--------------------------------------------------");
     Stuff stuff = new Stuff();
-    stuff.setNumber(prompt.inputInt("번호 : "));
     stuff.setName(prompt.inputString("물품명 : "));
     stuff.setCategory(prompt.inputString("분류 : "));
     stuff.setState(prompt.inputString("상태 : "));
@@ -30,6 +29,7 @@ public class StuffAddCommand implements Command {
 
     } catch (Exception e) {
       System.out.println("[StuffAddCommand.java] : Save failed");
+      e.printStackTrace();
     }
   }
 }

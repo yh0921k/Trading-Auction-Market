@@ -21,6 +21,7 @@ public class StuffListCommand implements Command {
 
     } catch (Exception e) {
       System.out.println("[StuffListCommand.java] : Read failed");
+      e.printStackTrace();
     }
   }
 }

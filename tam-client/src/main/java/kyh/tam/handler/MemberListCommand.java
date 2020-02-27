@@ -21,6 +21,7 @@ public class MemberListCommand implements Command {
 
     } catch (Exception e) {
       System.out.println("[MemberListCommand.java] : Read failed");
+      e.printStackTrace();
     }
   }
 }

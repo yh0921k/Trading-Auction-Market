@@ -14,10 +14,9 @@ import java.util.Queue;
 import kyh.tam.dao.BoardDao;
 import kyh.tam.dao.MemberDao;
 import kyh.tam.dao.StuffDao;
-import kyh.tam.dao.proxy.BoardDaoProxy;
-import kyh.tam.dao.proxy.DaoProxyHelper;
-import kyh.tam.dao.proxy.MemberDaoProxy;
-import kyh.tam.dao.proxy.StuffDaoProxy;
+import kyh.tam.dao.mariadb.BoardDaoImpl;
+import kyh.tam.dao.mariadb.MemberDaoImpl;
+import kyh.tam.dao.mariadb.StuffDaoImpl;
 import kyh.tam.handler.BoardAddCommand;
 import kyh.tam.handler.BoardDeleteCommand;
 import kyh.tam.handler.BoardDetailCommand;
@@ -53,23 +52,9 @@ public class ClientApp {
     commandStack = new ArrayDeque<>();
     commandQueue = new LinkedList<>();
 
-    try {
-      if ((host = prompt.inputString("Server IP(enter) : ")).equals("")) {
-        host = "127.0.0.1";
-      }
-      try {
-        port = prompt.inputInt("Port : ");
-      } catch (Exception e) {
-        port = 12345;
-      }
-
-    } catch (Exception e) {
-    }
-
-    DaoProxyHelper daoProxyHelper = new DaoProxyHelper(host, port);
-    BoardDao boardDao = new BoardDaoProxy(daoProxyHelper);
-    MemberDao memberDao = new MemberDaoProxy(daoProxyHelper);
-    StuffDao stuffDao = new StuffDaoProxy(daoProxyHelper);
+    BoardDao boardDao = new BoardDaoImpl();
+    StuffDao stuffDao = new StuffDaoImpl();
+    MemberDao memberDao = new MemberDaoImpl();
 
     commandMap.put("/board/list", new BoardListCommand(boardDao));
     commandMap.put("/board/add", new BoardAddCommand(boardDao, prompt));

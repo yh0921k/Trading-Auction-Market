@@ -29,6 +29,7 @@ public class MemberUpdateCommand implements Command {
 
       Member newMember = new Member();
       newMember.setNumber(oldMember.getNumber());
+      newMember.setRegisteredDate(oldMember.getRegisteredDate());
       newMember.setName(
           prompt.inputString(String.format("이름(%s) : ", oldMember.getName()), oldMember.getName()));
 
@@ -47,8 +48,6 @@ public class MemberUpdateCommand implements Command {
       newMember.setTel(
           prompt.inputString(String.format("연락처(%s) : ", oldMember.getTel()), oldMember.getTel()));
 
-      newMember.setRegisteredDate(oldMember.getRegisteredDate());
-
       if (oldMember.toString().equals(newMember.toString())) {
         System.out.println("Update cancel");
         return;
@@ -59,6 +58,7 @@ public class MemberUpdateCommand implements Command {
 
     } catch (Exception e) {
       System.out.println("[MemberUpdateCommand.java] : Update failed");
+      e.printStackTrace();
     }
   }
 }

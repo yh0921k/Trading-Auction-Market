@@ -17,11 +17,13 @@ public class BoardListCommand implements Command {
     System.out.println("--------------------------------------------------");
     try {
       List<Board> boards = boardDao.findAll();
+
       for (Board b : boards)
         System.out.println(b);
 
     } catch (Exception e) {
       System.out.println("[BoardListCommand.java] : Read failed");
+      e.printStackTrace();
     }
   }
 }

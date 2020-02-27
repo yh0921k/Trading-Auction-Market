@@ -33,6 +33,7 @@ public class MemberDetailCommand implements Command {
 
     } catch (Exception e) {
       System.out.println("[MemberDetailCommand.java] : Read failed");
+      e.printStackTrace();
     }
   }
 }

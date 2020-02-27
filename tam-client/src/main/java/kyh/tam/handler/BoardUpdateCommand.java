@@ -1,6 +1,5 @@
 package kyh.tam.handler;
 
-import java.sql.Date;
 import kyh.tam.dao.BoardDao;
 import kyh.tam.domain.Board;
 import kyh.util.Prompt;
@@ -31,12 +30,10 @@ public class BoardUpdateCommand implements Command {
 
       Board newBoard = new Board();
       newBoard.setNumber(oldBoard.getNumber());
-      newBoard.setViewCount(oldBoard.getViewCount());
-      newBoard.setWriteDate(new Date(System.currentTimeMillis()));
       newBoard.setTitle(
           prompt.inputString(String.format("제목(%s) : ", oldBoard.getTitle()), oldBoard.getTitle()));
 
-      if (newBoard.toString().equals(oldBoard.toString())) {
+      if (newBoard.getTitle().equals(oldBoard.getTitle())) {
         System.out.println("Update cancel");
         return;
       }
@@ -45,6 +42,7 @@ public class BoardUpdateCommand implements Command {
       System.out.println("Update complete");
     } catch (Exception e) {
       System.out.println("[BoardUpdateCommand.java] : Update failed");
+      e.printStackTrace();
     }
   }
 }

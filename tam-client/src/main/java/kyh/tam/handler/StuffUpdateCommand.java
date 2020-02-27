@@ -55,6 +55,7 @@ public class StuffUpdateCommand implements Command {
 
     } catch (Exception e) {
       System.out.println("[StuffUpdateCommand.java] : Update failed");
+      e.printStackTrace();
     }
   }
 }

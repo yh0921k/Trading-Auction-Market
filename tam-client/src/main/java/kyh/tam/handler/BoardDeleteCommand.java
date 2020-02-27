@@ -17,11 +17,15 @@ public class BoardDeleteCommand implements Command {
     System.out.println("--------------------------------------------------");
     try {
       int number = prompt.inputInt("번호 : ");
-      boardDao.delete(number);
-      System.out.println("Delete complete");
+      if (boardDao.delete(number) > 0) {
+        System.out.println("Delete complete");
+      } else {
+        System.out.println("The number does not exist");
+      }
 
     } catch (Exception e) {
       System.out.println("[BoardDeleteCommand.java] : Delete failed");
+      e.printStackTrace();
     }
   }
 }

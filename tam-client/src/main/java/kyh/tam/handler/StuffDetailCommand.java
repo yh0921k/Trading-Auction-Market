@@ -29,6 +29,7 @@ public class StuffDetailCommand implements Command {
 
     } catch (Exception e) {
       System.out.println("[StuffDetailCommand.java] : Read failed");
+      e.printStackTrace();
     }
   }
 }
