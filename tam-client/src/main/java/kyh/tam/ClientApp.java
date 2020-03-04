@@ -105,7 +105,7 @@ public class ClientApp {
         String response = in.readLine();
         if (response.equalsIgnoreCase("!end!"))
           break;
-        System.out.println("Server : " + response);
+        System.out.println(response);
 
       }
 
