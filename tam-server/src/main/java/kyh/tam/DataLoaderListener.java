@@ -1,25 +1,45 @@
 package kyh.tam;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.Map;
 import kyh.tam.context.ApplicationContextListener;
-import kyh.tam.dao.json.BoardJsonFileDao;
-import kyh.tam.dao.json.MemberJsonFileDao;
-import kyh.tam.dao.json.StuffJsonFileDao;
+import kyh.tam.dao.mariadb.BoardDaoImpl;
+import kyh.tam.dao.mariadb.MemberDaoImpl;
+import kyh.tam.dao.mariadb.StuffDaoImpl;
 
 public class DataLoaderListener implements ApplicationContextListener {
+
+  Connection con;
 
   @Override
   public void contextInitialized(Map<String, Object> context) throws Exception {
     System.out.println("--------------------------------------------------");
 
-    context.put("boardDao", new BoardJsonFileDao("./data/board.json"));
-    context.put("memberDao", new MemberJsonFileDao("./data/member.json"));
-    context.put("stuffDao", new StuffJsonFileDao("./data/stuff.json"));
+    try {
+      Class.forName("org.mariadb.jdbc.Driver");
+      con = DriverManager.getConnection("jdbc:mariadb://localhost:3306/tamdb", "kyh", "1111");
+
+      context.put("boardDao", new BoardDaoImpl(con));
+      context.put("stuffDao", new StuffDaoImpl(con));
+      context.put("memberDao", new MemberDaoImpl(con));
+
+    } catch (Exception e) {
+      System.out.printf("[contextInitialized()] : %s\n", e.getMessage());
+      e.printStackTrace();
+    }
+
     System.out.println("--------------------------------------------------");
   }
 
   @Override
   public void contextDestroyed(Map<String, Object> context) throws Exception {
+    try {
+      con.close();
+    } catch (Exception e) {
+      System.out.printf("[contextDestroyed()] : %s\n", e.getMessage());
+      e.printStackTrace();
+    }
     System.out.println("--------------------------------------------------");
   }
 }

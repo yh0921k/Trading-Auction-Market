@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -19,25 +18,13 @@ import kyh.tam.context.ApplicationContextListener;
 import kyh.tam.dao.BoardDao;
 import kyh.tam.dao.MemberDao;
 import kyh.tam.dao.StuffDao;
-import kyh.tam.dao.json.BoardJsonFileDao;
-import kyh.tam.dao.json.MemberJsonFileDao;
-import kyh.tam.dao.json.StuffJsonFileDao;
-import kyh.tam.servlet.BoardAddServlet;
-import kyh.tam.servlet.BoardDeleteServlet;
-import kyh.tam.servlet.BoardDetailServlet;
+import kyh.tam.dao.mariadb.BoardDaoImpl;
+import kyh.tam.dao.mariadb.MemberDaoImpl;
+import kyh.tam.dao.mariadb.StuffDaoImpl;
 import kyh.tam.servlet.BoardListServlet;
-import kyh.tam.servlet.BoardUpdateServlet;
-import kyh.tam.servlet.MemberAddServlet;
-import kyh.tam.servlet.MemberDeleteServlet;
-import kyh.tam.servlet.MemberDetailServlet;
 import kyh.tam.servlet.MemberListServlet;
-import kyh.tam.servlet.MemberUpdateServlet;
 import kyh.tam.servlet.Servlet;
-import kyh.tam.servlet.StuffAddServlet;
-import kyh.tam.servlet.StuffDeleteServlet;
-import kyh.tam.servlet.StuffDetailServlet;
 import kyh.tam.servlet.StuffListServlet;
-import kyh.tam.servlet.StuffUpdateServlet;
 
 public class ServerApp {
 
@@ -70,27 +57,27 @@ public class ServerApp {
   public void service() throws Exception {
     notifyApplicationInitialized();
 
-    BoardDao boardDao = (BoardJsonFileDao) context.get("boardDao");
-    MemberDao memberDao = (MemberJsonFileDao) context.get("memberDao");
-    StuffDao stuffDao = (StuffJsonFileDao) context.get("stuffDao");
+    BoardDao boardDao = (BoardDaoImpl) context.get("boardDao");
+    MemberDao memberDao = (MemberDaoImpl) context.get("memberDao");
+    StuffDao stuffDao = (StuffDaoImpl) context.get("stuffDao");
 
     servletMap.put("/board/list", new BoardListServlet(boardDao));
-    servletMap.put("/board/add", new BoardAddServlet(boardDao));
-    servletMap.put("/board/detail", new BoardDetailServlet(boardDao));
-    servletMap.put("/board/update", new BoardUpdateServlet(boardDao));
-    servletMap.put("/board/delete", new BoardDeleteServlet(boardDao));
+    // servletMap.put("/board/add", new BoardAddServlet(boardDao));
+    // servletMap.put("/board/detail", new BoardDetailServlet(boardDao));
+    // servletMap.put("/board/update", new BoardUpdateServlet(boardDao));
+    // servletMap.put("/board/delete", new BoardDeleteServlet(boardDao));
 
     servletMap.put("/stuff/list", new StuffListServlet(stuffDao));
-    servletMap.put("/stuff/add", new StuffAddServlet(stuffDao));
-    servletMap.put("/stuff/detail", new StuffDetailServlet(stuffDao));
-    servletMap.put("/stuff/update", new StuffUpdateServlet(stuffDao));
-    servletMap.put("/stuff/delete", new StuffDeleteServlet(stuffDao));
+    // servletMap.put("/stuff/add", new StuffAddServlet(stuffDao));
+    // servletMap.put("/stuff/detail", new StuffDetailServlet(stuffDao));
+    // servletMap.put("/stuff/update", new StuffUpdateServlet(stuffDao));
+    // servletMap.put("/stuff/delete", new StuffDeleteServlet(stuffDao));
 
     servletMap.put("/member/list", new MemberListServlet(memberDao));
-    servletMap.put("/member/add", new MemberAddServlet(memberDao));
-    servletMap.put("/member/detail", new MemberDetailServlet(memberDao));
-    servletMap.put("/member/update", new MemberUpdateServlet(memberDao));
-    servletMap.put("/member/delete", new MemberDeleteServlet(memberDao));
+    // servletMap.put("/member/add", new MemberAddServlet(memberDao));
+    // servletMap.put("/member/detail", new MemberDetailServlet(memberDao));
+    // servletMap.put("/member/update", new MemberUpdateServlet(memberDao));
+    // servletMap.put("/member/delete", new MemberDeleteServlet(memberDao));
 
     try (ServerSocket serverSocket = new ServerSocket(12345)) {
       while (true) {
@@ -124,20 +111,26 @@ public class ServerApp {
       System.out.println("Receive complete");
       System.out.printf("Client Message : [\"%s\"]\n", request);
 
-      out.write("Hello" + System.lineSeparator());
-      out.write("Nice to meet you" + System.lineSeparator());
-      out.write("!end!" + System.lineSeparator());
+      // if (request.equalsIgnoreCase("shutdown")) {
+      // quit(bw);
+      // return 1;
+      // }
 
-      /*
-       * if (request.equalsIgnoreCase("shutdown")) { quit(bw); return 1; }
-       *
-       * Servlet servlet = servletMap.get(request); if (servlet != null) { try { servlet.service(in,
-       * out);
-       *
-       * } catch (Exception e) { out.writeUTF("fail"); out.writeUTF(e.getMessage());
-       * System.out.println("[servlet.service()] : " + e.getMessage()); e.printStackTrace(); } }
-       * else { notfound(out); }
-       */
+      Servlet servlet = servletMap.get(request);
+      if (servlet != null) {
+        try {
+          servlet.service(in, out);
+
+        } catch (Exception e) {
+          out.write("Error occurs during request processing" + System.lineSeparator());
+          out.write(e.getMessage() + System.lineSeparator());
+          System.out.println("[servlet.service()] : " + e.getMessage());
+          e.printStackTrace();
+        }
+      } else {
+        notfound(out);
+      }
+      out.write("!end!" + System.lineSeparator());
       out.flush();
       System.out.println("Send complete");
       return 0;
@@ -149,15 +142,13 @@ public class ServerApp {
     }
   }
 
+  // private void quit(BufferedWriter bw) throws IOException {
+  // bw.write("ok" + System.lineSeparator());
+  // bw.flush();
+  // }
 
-  private void quit(BufferedWriter bw) throws IOException {
-    bw.write("ok" + System.lineSeparator());
-    bw.flush();
-  }
-
-  private void notfound(ObjectOutputStream out) throws IOException {
-    out.writeUTF("fail");
-    out.writeUTF("요청한 명령을 처리할 수 없습니다.");
+  private void notfound(BufferedWriter out) throws IOException {
+    out.write("Error occurs during request processing" + System.lineSeparator());
   }
 
   public static void main(String[] args) throws Exception {

@@ -1,8 +1,10 @@
 package kyh.tam.servlet;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.util.List;
 import kyh.tam.dao.BoardDao;
+import kyh.tam.domain.Board;
 
 public class BoardListServlet implements Servlet {
   BoardDao boardDao;
@@ -12,9 +14,11 @@ public class BoardListServlet implements Servlet {
   }
 
   @Override
-  public void service(ObjectInputStream in, ObjectOutputStream out) throws Exception {
-    out.writeUTF("ok");
-    out.reset();
-    out.writeObject(boardDao.findAll());
+  public void service(BufferedReader in, BufferedWriter out) throws Exception {
+    List<Board> boards = boardDao.findAll();
+    for (Board board : boards) {
+      out.write(String.format("%d, %s, %s, %d", board.getNumber(), board.getTitle(),
+          board.getWriteDate(), board.getViewCount()) + System.lineSeparator());
+    }
   }
 }

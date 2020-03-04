@@ -1,8 +1,10 @@
 package kyh.tam.servlet;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.util.List;
 import kyh.tam.dao.MemberDao;
+import kyh.tam.domain.Member;
 
 public class MemberListServlet implements Servlet {
   MemberDao memberDao;
@@ -12,9 +14,12 @@ public class MemberListServlet implements Servlet {
   }
 
   @Override
-  public void service(ObjectInputStream in, ObjectOutputStream out) throws Exception {
-    out.writeUTF("ok");
-    out.reset();
-    out.writeObject(memberDao.findAll());
+  public void service(BufferedReader in, BufferedWriter out) throws Exception {
+    List<Member> members = memberDao.findAll();
+    for (Member m : members) {
+      out.write(String.format("%d, %s, %s, %s, %s, %s, %s", m.getNumber(), m.getName(),
+          m.getEmail(), m.getAddress(), m.getPhoto(), m.getTel(), m.getRegisteredDate())
+          + System.lineSeparator());
+    }
   }
 }
