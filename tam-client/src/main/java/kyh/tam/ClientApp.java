@@ -1,38 +1,18 @@
 package kyh.tam;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.InputStreamReader;
-import java.sql.Connection;
-import java.sql.DriverManager;
+import java.io.OutputStreamWriter;
+import java.net.Socket;
 import java.sql.SQLException;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
-import kyh.tam.dao.BoardDao;
-import kyh.tam.dao.MemberDao;
-import kyh.tam.dao.StuffDao;
-import kyh.tam.dao.mariadb.BoardDaoImpl;
-import kyh.tam.dao.mariadb.MemberDaoImpl;
-import kyh.tam.dao.mariadb.StuffDaoImpl;
-import kyh.tam.handler.BoardAddCommand;
-import kyh.tam.handler.BoardDeleteCommand;
-import kyh.tam.handler.BoardDetailCommand;
-import kyh.tam.handler.BoardListCommand;
-import kyh.tam.handler.BoardUpdateCommand;
-import kyh.tam.handler.Command;
-import kyh.tam.handler.MemberAddCommand;
-import kyh.tam.handler.MemberDeleteCommand;
-import kyh.tam.handler.MemberDetailCommand;
-import kyh.tam.handler.MemberListCommand;
-import kyh.tam.handler.MemberUpdateCommand;
-import kyh.tam.handler.StuffAddCommand;
-import kyh.tam.handler.StuffDeleteCommand;
-import kyh.tam.handler.StuffDetailCommand;
-import kyh.tam.handler.StuffListCommand;
-import kyh.tam.handler.StuffUpdateCommand;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import kyh.util.Prompt;
 
 public class ClientApp {
@@ -43,36 +23,9 @@ public class ClientApp {
   Deque<String> commandStack;
   Queue<String> commandQueue;
 
-  Connection con;
-  HashMap<String, Command> commandMap = new HashMap<>();
-
   public ClientApp() throws ClassNotFoundException, SQLException {
     commandStack = new ArrayDeque<>();
     commandQueue = new LinkedList<>();
-
-    Class.forName("org.mariadb.jdbc.Driver");
-    Connection con =
-        DriverManager.getConnection("jdbc:mariadb://localhost:3306/tamdb", "kyh", "1111");
-
-    BoardDao boardDao = new BoardDaoImpl(con);
-    StuffDao stuffDao = new StuffDaoImpl(con);
-    MemberDao memberDao = new MemberDaoImpl(con);
-
-    commandMap.put("/board/list", new BoardListCommand(boardDao));
-    commandMap.put("/board/add", new BoardAddCommand(boardDao, prompt));
-    commandMap.put("/board/detail", new BoardDetailCommand(boardDao, prompt));
-    commandMap.put("/board/update", new BoardUpdateCommand(boardDao, prompt));
-    commandMap.put("/board/delete", new BoardDeleteCommand(boardDao, prompt));
-    commandMap.put("/member/list", new MemberListCommand(memberDao));
-    commandMap.put("/member/add", new MemberAddCommand(memberDao, prompt));
-    commandMap.put("/member/detail", new MemberDetailCommand(memberDao, prompt));
-    commandMap.put("/member/update", new MemberUpdateCommand(memberDao, prompt));
-    commandMap.put("/member/delete", new MemberDeleteCommand(memberDao, prompt));
-    commandMap.put("/stuff/list", new StuffListCommand(stuffDao));
-    commandMap.put("/stuff/add", new StuffAddCommand(stuffDao, prompt));
-    commandMap.put("/stuff/detail", new StuffDetailCommand(stuffDao, prompt));
-    commandMap.put("/stuff/update", new StuffUpdateCommand(stuffDao, prompt));
-    commandMap.put("/stuff/delete", new StuffDeleteCommand(stuffDao, prompt));
   }
 
   public void service() throws Exception {
@@ -102,21 +55,64 @@ public class ClientApp {
     }
     System.out.println("--------------------------------------------------");
     br.close();
-    try {
-      con.close();
-    } catch (Exception e) {
-
-    }
   }
 
   private void processCommand(String command) throws Exception {
+    String protocol = null;
+    String host = null;
+    int port = 0;
+    String servletPath = null;
 
-    Command commandHandler = commandMap.get(command);
-    if (commandHandler == null) {
-      System.out.println("실행할 수 없는 명령입니다.");
-      return;
+    try {
+      Pattern[] pattern = new Pattern[2];
+      pattern[0] = Pattern.compile("^([a-zA-Z]*)://([\\w\\d.]*):([0-9]{0,5})(.*)$");
+      pattern[1] = Pattern.compile("^([a-zA-Z]*)://([\\w\\d.]*)(.*)$");
+
+      Matcher matcher = null;
+      for (Pattern p : pattern) {
+        matcher = p.matcher(command);
+        if (matcher.find())
+          break;
+      }
+
+      protocol = matcher.group(1);
+      host = matcher.group(2);
+
+      if (matcher.groupCount() == 3) {
+        port = 12345;
+        servletPath = matcher.group(3);
+      } else {
+        port = Integer.parseInt(matcher.group(3));
+        servletPath = matcher.group(4);
+      }
+
+      if (!protocol.equals("tam"))
+        throw new Exception("Invalid protocol");
+
+    } catch (Exception e) {
+      System.out.printf("[processCommand()] : Invalid url format\n");
+      e.printStackTrace();
     }
-    commandHandler.execute();
+
+    try (Socket socket = new Socket(host, port);
+        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));) {
+
+      out.write(servletPath + System.lineSeparator());
+      out.flush();
+
+      while (true) {
+        String response = in.readLine();
+        if (response.equalsIgnoreCase("!end!"))
+          break;
+        System.out.println("Server : " + response);
+
+      }
+
+    } catch (Exception e) {
+      System.out.printf("[processCommand()] : Socket() or Data communication error\n");
+      e.printStackTrace();
+    }
   }
 
   private void printCommandHistory(Iterator<String> it) throws Exception {

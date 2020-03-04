@@ -1,8 +1,11 @@
 package kyh.tam;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
@@ -110,34 +113,31 @@ public class ServerApp {
 
   private int processRequest(Socket connectedSocket) {
     try (Socket clientSocket = connectedSocket;
-        ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
-        ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream())) {
+        BufferedReader in =
+            new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        BufferedWriter out =
+            new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));) {
 
       System.out.println("Data I/O stream ready");
 
-      String request = in.readUTF().toLowerCase();
+      String request = in.readLine();
       System.out.println("Receive complete");
       System.out.printf("Client Message : [\"%s\"]\n", request);
 
-      if (request.equalsIgnoreCase("shutdown")) {
-        quit(out);
-        return 1;
-      }
+      out.write("Hello" + System.lineSeparator());
+      out.write("Nice to meet you" + System.lineSeparator());
+      out.write("!end!" + System.lineSeparator());
 
-      Servlet servlet = servletMap.get(request);
-      if (servlet != null) {
-        try {
-          servlet.service(in, out);
-
-        } catch (Exception e) {
-          out.writeUTF("fail");
-          out.writeUTF(e.getMessage());
-          System.out.println("[servlet.service()] : " + e.getMessage());
-          e.printStackTrace();
-        }
-      } else {
-        notfound(out);
-      }
+      /*
+       * if (request.equalsIgnoreCase("shutdown")) { quit(bw); return 1; }
+       *
+       * Servlet servlet = servletMap.get(request); if (servlet != null) { try { servlet.service(in,
+       * out);
+       *
+       * } catch (Exception e) { out.writeUTF("fail"); out.writeUTF(e.getMessage());
+       * System.out.println("[servlet.service()] : " + e.getMessage()); e.printStackTrace(); } }
+       * else { notfound(out); }
+       */
       out.flush();
       System.out.println("Send complete");
       return 0;
@@ -150,9 +150,9 @@ public class ServerApp {
   }
 
 
-  private void quit(ObjectOutputStream out) throws IOException {
-    out.writeUTF("ok");
-    out.flush();
+  private void quit(BufferedWriter bw) throws IOException {
+    bw.write("ok" + System.lineSeparator());
+    bw.flush();
   }
 
   private void notfound(ObjectOutputStream out) throws IOException {
