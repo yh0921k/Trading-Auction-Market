@@ -103,10 +103,15 @@ public class ClientApp {
 
       while (true) {
         String response = in.readLine();
-        if (response.equalsIgnoreCase("!end!"))
+        if (response.equalsIgnoreCase("!end!")) {
           break;
-        System.out.println(response);
-
+        } else if (response.equalsIgnoreCase("!{}!")) {
+          String input = prompt.inputString("");
+          out.write(input + System.lineSeparator());
+          out.flush();
+        } else {
+          System.out.println(response);
+        }
       }
 
     } catch (Exception e) {

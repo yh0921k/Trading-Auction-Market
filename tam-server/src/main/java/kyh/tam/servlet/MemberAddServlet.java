@@ -1,7 +1,7 @@
 package kyh.tam.servlet;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import kyh.tam.dao.MemberDao;
 import kyh.tam.domain.Member;
 
@@ -13,21 +13,32 @@ public class MemberAddServlet implements Servlet {
   }
 
   @Override
-  public void service(ObjectInputStream in, ObjectOutputStream out) throws Exception {
-    try {
-      Member member = (Member) in.readObject();
+  public void service(BufferedReader in, BufferedWriter out) throws Exception {
+    Member member = new Member();
 
-      if (memberDao.insert(member) > 0) {
-        out.writeUTF("ok");
-      } else {
-        out.writeUTF("fail");
-        out.writeUTF("같은 번호의 회원이 있습니다.");
-      }
+    out.write("이름 : \n!{}!\n");
+    out.flush();
+    member.setName(in.readLine());
+    out.write("이메일 : \n!{}!\n");
+    out.flush();
+    member.setEmail(in.readLine());
+    out.write("주소 : \n!{}!\n");
+    out.flush();
+    member.setAddress(in.readLine());
+    out.write("암호 : \n!{}!\n");
+    out.flush();
+    member.setPassword(in.readLine());
+    out.write("사진 : \n!{}!\n");
+    out.flush();
+    member.setPhoto(in.readLine());
+    out.write("전화 : \n!{}!\n");
+    out.flush();
+    member.setTel(in.readLine());
 
-    } catch (Exception e) {
-      System.out.println("[/member/add] : send \"fail\" to client");
-      out.writeUTF("fail");
-      out.writeUTF(e.getMessage());
-    }
+    if (memberDao.insert(member) > 0)
+      out.write("Save complete" + System.lineSeparator());
+    else
+      out.write("Save failed" + System.lineSeparator());
+    out.flush();
   }
 }

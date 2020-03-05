@@ -19,5 +19,6 @@ public class StuffListServlet implements Servlet {
     for (Stuff s : stuffs)
       out.write(String.format("%d, %s, %s, %s, %s, %d", s.getNumber(), s.getName(), s.getState(),
           s.getSeller(), s.getCategory(), s.getPrice()) + System.lineSeparator());
+    out.flush();
   }
 }

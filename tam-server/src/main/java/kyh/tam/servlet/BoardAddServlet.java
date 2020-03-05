@@ -1,7 +1,7 @@
 package kyh.tam.servlet;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import kyh.tam.dao.BoardDao;
 import kyh.tam.domain.Board;
 
@@ -13,21 +13,18 @@ public class BoardAddServlet implements Servlet {
   }
 
   @Override
-  public void service(ObjectInputStream in, ObjectOutputStream out) throws Exception {
-    try {
-      Board board = (Board) in.readObject();
+  public void service(BufferedReader in, BufferedWriter out) throws Exception {
+    Board board = new Board();
 
-      if (boardDao.insert(board) > 0) {
-        out.writeUTF("ok");
-      } else {
-        out.writeUTF("fail");
-        out.writeUTF("같은 번호의 게시물이 있습니다.");
-      }
+    out.write("제목 : " + System.lineSeparator());
+    out.write("!{}!" + System.lineSeparator());
+    out.flush();
 
-    } catch (Exception e) {
-      System.out.println("[/board/add] : send \"fail\" to client");
-      out.writeUTF("fail");
-      out.writeUTF(e.getMessage());
-    }
+    board.setTitle(in.readLine());
+    if (boardDao.insert(board) > 0)
+      out.write("Save complete" + System.lineSeparator());
+    else
+      out.write("Save failed" + System.lineSeparator());
+    out.flush();
   }
 }

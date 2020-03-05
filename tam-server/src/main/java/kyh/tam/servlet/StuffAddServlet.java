@@ -1,7 +1,7 @@
 package kyh.tam.servlet;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import kyh.tam.dao.StuffDao;
 import kyh.tam.domain.Stuff;
 
@@ -13,21 +13,29 @@ public class StuffAddServlet implements Servlet {
   }
 
   @Override
-  public void service(ObjectInputStream in, ObjectOutputStream out) throws Exception {
-    try {
-      Stuff stuff = (Stuff) in.readObject();
+  public void service(BufferedReader in, BufferedWriter out) throws Exception {
+    Stuff stuff = new Stuff();
 
-      if (stuffDao.insert(stuff) > 0) {
-        out.writeUTF("ok");
-      } else {
-        out.writeUTF("fail");
-        out.writeUTF("같은 번호의 회원이 있습니다.");
-      }
+    out.write("물품명 : \n!{}!\n");
+    out.flush();
+    stuff.setName(in.readLine());
+    out.write("분류 : \n!{}!\n");
+    out.flush();
+    stuff.setCategory(in.readLine());
+    out.write("상태 : \n!{}!\n");
+    out.flush();
+    stuff.setState(in.readLine());
+    out.write("가격 : \n!{}!\n");
+    out.flush();
+    stuff.setPrice(Integer.parseInt(in.readLine()));
+    out.write("판매자 : \n!{}!\n");
+    out.flush();
+    stuff.setSeller(in.readLine());
 
-    } catch (Exception e) {
-      System.out.println("[/stuff/add] : send \"fail\" to client");
-      out.writeUTF("fail");
-      out.writeUTF(e.getMessage());
-    }
+    if (stuffDao.insert(stuff) > 0)
+      out.write("Save complete" + System.lineSeparator());
+    else
+      out.write("Save failed" + System.lineSeparator());
+    out.flush();
   }
 }

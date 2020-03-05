@@ -1,7 +1,7 @@
 package kyh.tam.servlet;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import kyh.tam.dao.BoardDao;
 import kyh.tam.domain.Board;
 
@@ -13,21 +13,32 @@ public class BoardUpdateServlet implements Servlet {
   }
 
   @Override
-  public void service(ObjectInputStream in, ObjectOutputStream out) throws Exception {
-    try {
-      Board board = (Board) in.readObject();
+  public void service(BufferedReader in, BufferedWriter out) throws Exception {
+    out.write("번호 : " + System.lineSeparator());
+    out.write("!{}!" + System.lineSeparator());
+    out.flush();
 
-      if (boardDao.update(board) > 0) {
-        out.writeUTF("ok");
-      } else {
-        out.writeUTF("fail");
-        out.writeUTF("해당 번호의 게시물이 없습니다.");
-      }
+    int number = Integer.parseInt(in.readLine());
 
-    } catch (Exception e) {
-      System.out.println("[/board/update] : send \"fail\" to client");
-      out.writeUTF("fail");
-      out.writeUTF(e.getMessage());
+    Board oldBoard = boardDao.findByNumber(number);
+    if (oldBoard == null) {
+      out.write("Update failed : invalid number" + System.lineSeparator());
+      out.flush();
+      return;
     }
+
+    out.write(String.format("제목(%s) : \n!{}!\n", oldBoard.getTitle()));
+    out.flush();
+
+    Board newBoard = new Board();
+    newBoard.setNumber(number);
+    newBoard.setTitle(in.readLine());
+
+    if (boardDao.update(newBoard) > 0) {
+      out.write("Update complete" + System.lineSeparator());
+    } else {
+      out.write("Update failed" + System.lineSeparator());
+    }
+    out.flush();
   }
 }

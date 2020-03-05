@@ -21,5 +21,6 @@ public class MemberListServlet implements Servlet {
           m.getEmail(), m.getAddress(), m.getPhoto(), m.getTel(), m.getRegisteredDate())
           + System.lineSeparator());
     }
+    out.flush();
   }
 }

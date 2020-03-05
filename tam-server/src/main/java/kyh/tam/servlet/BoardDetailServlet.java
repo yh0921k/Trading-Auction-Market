@@ -1,7 +1,7 @@
 package kyh.tam.servlet;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import kyh.tam.dao.BoardDao;
 import kyh.tam.domain.Board;
 
@@ -13,23 +13,23 @@ public class BoardDetailServlet implements Servlet {
   }
 
   @Override
-  public void service(ObjectInputStream in, ObjectOutputStream out) throws Exception {
-    try {
-      int number = in.readInt();
+  public void service(BufferedReader in, BufferedWriter out) throws Exception {
+    out.write("번호 : " + System.lineSeparator());
+    out.write("!{}!" + System.lineSeparator());
+    out.flush();
 
-      Board board = boardDao.findByNumber(number);
-      if (board != null) {
-        out.writeUTF("ok");
-        out.writeObject(board);
-      } else {
-        out.writeUTF("fail");
-        out.writeUTF("해당 번호의 게시물이 없습니다.");
-      }
+    int number = Integer.parseInt(in.readLine());
 
-    } catch (Exception e) {
-      System.out.println("[/board/detail] : send \"fail\" to client");
-      out.writeUTF("fail");
-      out.writeUTF(e.getMessage());
+    Board board = boardDao.findByNumber(number);
+    if (board != null) {
+      out.write("번호 : " + board.getNumber() + System.lineSeparator());
+      out.write("제목 : " + board.getTitle() + System.lineSeparator());
+      out.write("등록일 : " + board.getWriteDate() + System.lineSeparator());
+      out.write("조회수 : " + board.getViewCount() + System.lineSeparator());
+      out.write("작성자 : " + board.getWriter() + System.lineSeparator());
+    } else {
+      out.write("Read failed : invalid number" + System.lineSeparator());
     }
+    out.flush();
   }
 }

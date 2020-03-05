@@ -1,7 +1,7 @@
 package kyh.tam.servlet;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import kyh.tam.dao.MemberDao;
 import kyh.tam.domain.Member;
 
@@ -13,23 +13,26 @@ public class MemberDetailServlet implements Servlet {
   }
 
   @Override
-  public void service(ObjectInputStream in, ObjectOutputStream out) throws Exception {
-    try {
-      int number = in.readInt();
+  public void service(BufferedReader in, BufferedWriter out) throws Exception {
+    out.write("번호 : " + System.lineSeparator());
+    out.write("!{}!" + System.lineSeparator());
+    out.flush();
 
-      Member member = memberDao.findByNumber(number);
-      if (member != null) {
-        out.writeUTF("ok");
-        out.writeObject(member);
-      } else {
-        out.writeUTF("fail");
-        out.writeUTF("해당 번호의 회원이 없습니다.");
-      }
+    int number = Integer.parseInt(in.readLine());
 
-    } catch (Exception e) {
-      System.out.println("[/member/detail] : send \"fail\" to client");
-      out.writeUTF("fail");
-      out.writeUTF(e.getMessage());
+    Member member = memberDao.findByNumber(number);
+    if (member != null) {
+      out.write("번호 : " + member.getNumber() + System.lineSeparator());
+      out.write("이름 : " + member.getName() + System.lineSeparator());
+      out.write("메일 : " + member.getEmail() + System.lineSeparator());
+      out.write("주소 : " + member.getAddress() + System.lineSeparator());
+      out.write("암호 : " + member.getPassword() + System.lineSeparator());
+      out.write("사진 : " + member.getPhoto() + System.lineSeparator());
+      out.write("전화 : " + member.getTel() + System.lineSeparator());
+      out.write("등록일 : " + member.getRegisteredDate() + System.lineSeparator());
+    } else {
+      out.write("Read failed : invalid number" + System.lineSeparator());
     }
+    out.flush();
   }
 }

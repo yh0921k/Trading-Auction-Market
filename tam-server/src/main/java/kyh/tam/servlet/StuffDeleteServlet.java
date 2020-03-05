@@ -1,7 +1,7 @@
 package kyh.tam.servlet;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import kyh.tam.dao.StuffDao;
 
 public class StuffDeleteServlet implements Servlet {
@@ -12,20 +12,18 @@ public class StuffDeleteServlet implements Servlet {
   }
 
   @Override
-  public void service(ObjectInputStream in, ObjectOutputStream out) throws Exception {
-    try {
-      int number = in.readInt();
+  public void service(BufferedReader in, BufferedWriter out) throws Exception {
+    out.write("번호 : " + System.lineSeparator());
+    out.write("!{}!" + System.lineSeparator());
+    out.flush();
 
-      if (stuffDao.delete(number) > 0) {
-        out.writeUTF("ok");
-      } else {
-        out.writeUTF("fail");
-        out.writeUTF("해당 번호의 물품이 없습니다.");
-      }
-    } catch (Exception e) {
-      System.out.println("[/stuff/delete] : send \"fail\" to client");
-      out.writeUTF("fail");
-      out.writeUTF(e.getMessage());
+    int number = Integer.parseInt(in.readLine());
+
+    if (stuffDao.delete(number) > 0) {
+      out.write("Delete complete" + System.lineSeparator());
+    } else {
+      out.write("Delete failed" + System.lineSeparator());
     }
+    out.flush();
   }
 }

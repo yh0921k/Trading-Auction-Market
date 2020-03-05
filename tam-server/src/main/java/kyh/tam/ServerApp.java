@@ -21,10 +21,22 @@ import kyh.tam.dao.StuffDao;
 import kyh.tam.dao.mariadb.BoardDaoImpl;
 import kyh.tam.dao.mariadb.MemberDaoImpl;
 import kyh.tam.dao.mariadb.StuffDaoImpl;
+import kyh.tam.servlet.BoardAddServlet;
+import kyh.tam.servlet.BoardDeleteServlet;
+import kyh.tam.servlet.BoardDetailServlet;
 import kyh.tam.servlet.BoardListServlet;
+import kyh.tam.servlet.BoardUpdateServlet;
+import kyh.tam.servlet.MemberAddServlet;
+import kyh.tam.servlet.MemberDeleteServlet;
+import kyh.tam.servlet.MemberDetailServlet;
 import kyh.tam.servlet.MemberListServlet;
+import kyh.tam.servlet.MemberUpdateServlet;
 import kyh.tam.servlet.Servlet;
+import kyh.tam.servlet.StuffAddServlet;
+import kyh.tam.servlet.StuffDeleteServlet;
+import kyh.tam.servlet.StuffDetailServlet;
 import kyh.tam.servlet.StuffListServlet;
+import kyh.tam.servlet.StuffUpdateServlet;
 
 public class ServerApp {
 
@@ -62,22 +74,22 @@ public class ServerApp {
     StuffDao stuffDao = (StuffDaoImpl) context.get("stuffDao");
 
     servletMap.put("/board/list", new BoardListServlet(boardDao));
-    // servletMap.put("/board/add", new BoardAddServlet(boardDao));
-    // servletMap.put("/board/detail", new BoardDetailServlet(boardDao));
-    // servletMap.put("/board/update", new BoardUpdateServlet(boardDao));
-    // servletMap.put("/board/delete", new BoardDeleteServlet(boardDao));
+    servletMap.put("/board/add", new BoardAddServlet(boardDao));
+    servletMap.put("/board/detail", new BoardDetailServlet(boardDao));
+    servletMap.put("/board/update", new BoardUpdateServlet(boardDao));
+    servletMap.put("/board/delete", new BoardDeleteServlet(boardDao));
 
     servletMap.put("/stuff/list", new StuffListServlet(stuffDao));
-    // servletMap.put("/stuff/add", new StuffAddServlet(stuffDao));
-    // servletMap.put("/stuff/detail", new StuffDetailServlet(stuffDao));
-    // servletMap.put("/stuff/update", new StuffUpdateServlet(stuffDao));
-    // servletMap.put("/stuff/delete", new StuffDeleteServlet(stuffDao));
+    servletMap.put("/stuff/add", new StuffAddServlet(stuffDao));
+    servletMap.put("/stuff/detail", new StuffDetailServlet(stuffDao));
+    servletMap.put("/stuff/update", new StuffUpdateServlet(stuffDao));
+    servletMap.put("/stuff/delete", new StuffDeleteServlet(stuffDao));
 
     servletMap.put("/member/list", new MemberListServlet(memberDao));
-    // servletMap.put("/member/add", new MemberAddServlet(memberDao));
-    // servletMap.put("/member/detail", new MemberDetailServlet(memberDao));
-    // servletMap.put("/member/update", new MemberUpdateServlet(memberDao));
-    // servletMap.put("/member/delete", new MemberDeleteServlet(memberDao));
+    servletMap.put("/member/add", new MemberAddServlet(memberDao));
+    servletMap.put("/member/detail", new MemberDetailServlet(memberDao));
+    servletMap.put("/member/update", new MemberUpdateServlet(memberDao));
+    servletMap.put("/member/delete", new MemberDeleteServlet(memberDao));
 
     try (ServerSocket serverSocket = new ServerSocket(12345)) {
       while (true) {

@@ -20,5 +20,6 @@ public class BoardListServlet implements Servlet {
       out.write(String.format("%d, %s, %s, %d", board.getNumber(), board.getTitle(),
           board.getWriteDate(), board.getViewCount()) + System.lineSeparator());
     }
+    out.flush();
   }
 }
