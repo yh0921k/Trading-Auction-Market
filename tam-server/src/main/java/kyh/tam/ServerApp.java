@@ -46,6 +46,7 @@ public class ServerApp {
   Map<String, Servlet> servletMap = new HashMap<>();
 
   ExecutorService executorService = Executors.newCachedThreadPool();
+  boolean shutdown = false;
 
   public void addApplicationContextListener(ApplicationContextListener listener) {
     listeners.add(listener);
@@ -102,17 +103,30 @@ public class ServerApp {
           processRequest(connectedSocket);
           System.out.println("--------------------------------------------------");
         });
+
+        if (shutdown)
+          break;
       }
     } catch (Exception e) {
       System.out.println("[service()] : serverSocket error");
       e.printStackTrace();
     }
-    notifyApplicationDestroyed();
+
     executorService.shutdown();
+    while (true) {
+      if (executorService.isTerminated())
+        break;
+      try {
+        Thread.sleep(500);
+      } catch (Exception e) {
+
+      }
+    }
+    notifyApplicationDestroyed();
     System.out.println("Bye");
   }
 
-  private int processRequest(Socket connectedSocket) {
+  private void processRequest(Socket connectedSocket) {
     try (Socket clientSocket = connectedSocket;
         BufferedReader in =
             new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -125,10 +139,10 @@ public class ServerApp {
       System.out.println("Receive complete");
       System.out.printf("Client Message : [\"%s\"]\n", request);
 
-      // if (request.equalsIgnoreCase("shutdown")) {
-      // quit(bw);
-      // return 1;
-      // }
+      if (request.equalsIgnoreCase("/shutdown")) {
+        quit(out);
+        return;
+      }
 
       Servlet servlet = servletMap.get(request);
       if (servlet != null) {
@@ -147,22 +161,23 @@ public class ServerApp {
       out.write("!end!" + System.lineSeparator());
       out.flush();
       System.out.println("Send complete");
-      return 0;
 
     } catch (Exception e) {
       System.out.printf("[processRequest()] : %s\n", e.getMessage());
       e.printStackTrace();
-      return -1;
     }
   }
 
-  // private void quit(BufferedWriter bw) throws IOException {
-  // bw.write("ok" + System.lineSeparator());
-  // bw.flush();
-  // }
+  private void quit(BufferedWriter out) throws IOException {
+    shutdown = true;
+    out.write("Server : OK" + System.lineSeparator());
+    out.write("!end!");
+    out.flush();
+  }
 
   private void notfound(BufferedWriter out) throws IOException {
     out.write("Error occurs during request processing" + System.lineSeparator());
+    out.flush();
   }
 
   public static void main(String[] args) throws Exception {

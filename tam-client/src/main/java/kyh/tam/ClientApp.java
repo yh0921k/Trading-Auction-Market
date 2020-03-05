@@ -45,6 +45,7 @@ public class ClientApp {
         printCommandHistory(commandQueue.iterator());
         continue;
       } else if (command.equalsIgnoreCase("quit")) {
+        System.out.println("Bye");
         break;
       }
 
@@ -52,6 +53,10 @@ public class ClientApp {
       commandQueue.offer(command);
 
       processCommand(command);
+      if (command.endsWith("/shutdown")) {
+        processCommand(command);
+        break;
+      }
     }
     System.out.println("--------------------------------------------------");
     br.close();
