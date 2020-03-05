@@ -30,6 +30,7 @@ import kyh.tam.servlet.MemberAddServlet;
 import kyh.tam.servlet.MemberDeleteServlet;
 import kyh.tam.servlet.MemberDetailServlet;
 import kyh.tam.servlet.MemberListServlet;
+import kyh.tam.servlet.MemberSearchServlet;
 import kyh.tam.servlet.MemberUpdateServlet;
 import kyh.tam.servlet.Servlet;
 import kyh.tam.servlet.StuffAddServlet;
@@ -90,6 +91,7 @@ public class ServerApp {
     servletMap.put("/member/detail", new MemberDetailServlet(memberDao));
     servletMap.put("/member/update", new MemberUpdateServlet(memberDao));
     servletMap.put("/member/delete", new MemberDeleteServlet(memberDao));
+    servletMap.put("/member/search", new MemberSearchServlet(memberDao));
 
     try (ServerSocket serverSocket = new ServerSocket(12345)) {
       while (true) {

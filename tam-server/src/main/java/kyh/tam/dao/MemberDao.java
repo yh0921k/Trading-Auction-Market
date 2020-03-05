@@ -10,6 +10,10 @@ public interface MemberDao {
 
   public Member findByNumber(int number) throws Exception;
 
+  default List<Member> findByKeyword(String keyword) throws Exception {
+    return null;
+  }
+
   public int update(Member member) throws Exception;
 
   public int delete(int number) throws Exception;

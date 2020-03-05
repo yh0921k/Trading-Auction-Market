@@ -89,4 +89,29 @@ public class MemberDaoImpl implements MemberDao {
       return stmt.executeUpdate("delete from tam_member where member_id=" + number);
     }
   }
+
+  @Override
+  public List<Member> findByKeyword(String keyword) throws Exception {
+    try (Statement stmt = con.createStatement();) {
+      String query = String.format(
+          "select member_id, name, email, addr, pwd, tel, photo " + "from tam_member "
+              + "where name like '%%%s%%' or email like '%%%s%%' or tel like '%%%s%%'",
+          keyword, keyword, keyword);
+      ResultSet rs = stmt.executeQuery(query);
+      ArrayList<Member> list = new ArrayList<>();
+      while (rs.next()) {
+        Member member = new Member();
+        member.setNumber(rs.getInt("member_id"));
+        member.setName(rs.getString("name"));
+        member.setEmail(rs.getString("email"));
+        member.setAddress(rs.getString("addr"));
+        member.setPassword(rs.getString("pwd"));
+        member.setTel(rs.getString("tel"));
+        member.setPhoto(rs.getString("photo"));
+        list.add(member);
+      }
+      rs.close();
+      return list;
+    }
+  }
 }
