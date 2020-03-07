@@ -6,6 +6,7 @@ import java.util.Map;
 import kyh.tam.context.ApplicationContextListener;
 import kyh.tam.dao.mariadb.BoardDaoImpl;
 import kyh.tam.dao.mariadb.MemberDaoImpl;
+import kyh.tam.dao.mariadb.PhotoBoardDaoImpl;
 import kyh.tam.dao.mariadb.StuffDaoImpl;
 
 public class DataLoaderListener implements ApplicationContextListener {
@@ -23,6 +24,7 @@ public class DataLoaderListener implements ApplicationContextListener {
       context.put("boardDao", new BoardDaoImpl(con));
       context.put("stuffDao", new StuffDaoImpl(con));
       context.put("memberDao", new MemberDaoImpl(con));
+      context.put("photoBoardDao", new PhotoBoardDaoImpl(con));
 
     } catch (Exception e) {
       System.out.printf("[contextInitialized()] : %s\n", e.getMessage());

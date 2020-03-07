@@ -17,6 +17,7 @@ import java.util.concurrent.Executors;
 import kyh.tam.context.ApplicationContextListener;
 import kyh.tam.dao.BoardDao;
 import kyh.tam.dao.MemberDao;
+import kyh.tam.dao.PhotoBoardDao;
 import kyh.tam.dao.StuffDao;
 import kyh.tam.dao.mariadb.BoardDaoImpl;
 import kyh.tam.dao.mariadb.MemberDaoImpl;
@@ -32,6 +33,11 @@ import kyh.tam.servlet.MemberDetailServlet;
 import kyh.tam.servlet.MemberListServlet;
 import kyh.tam.servlet.MemberSearchServlet;
 import kyh.tam.servlet.MemberUpdateServlet;
+import kyh.tam.servlet.PhotoBoardAddServlet;
+import kyh.tam.servlet.PhotoBoardDeleteServlet;
+import kyh.tam.servlet.PhotoBoardDetailServlet;
+import kyh.tam.servlet.PhotoBoardListServlet;
+import kyh.tam.servlet.PhotoBoardUpdateServlet;
 import kyh.tam.servlet.Servlet;
 import kyh.tam.servlet.StuffAddServlet;
 import kyh.tam.servlet.StuffDeleteServlet;
@@ -74,6 +80,7 @@ public class ServerApp {
     BoardDao boardDao = (BoardDaoImpl) context.get("boardDao");
     MemberDao memberDao = (MemberDaoImpl) context.get("memberDao");
     StuffDao stuffDao = (StuffDaoImpl) context.get("stuffDao");
+    PhotoBoardDao photoBoardDao = (PhotoBoardDao) context.get("photoBoardDao");
 
     servletMap.put("/board/list", new BoardListServlet(boardDao));
     servletMap.put("/board/add", new BoardAddServlet(boardDao));
@@ -93,6 +100,12 @@ public class ServerApp {
     servletMap.put("/member/update", new MemberUpdateServlet(memberDao));
     servletMap.put("/member/delete", new MemberDeleteServlet(memberDao));
     servletMap.put("/member/search", new MemberSearchServlet(memberDao));
+
+    servletMap.put("/photoboard/list", new PhotoBoardListServlet(photoBoardDao, stuffDao));
+    servletMap.put("/photoboard/detail", new PhotoBoardDetailServlet(photoBoardDao));
+    servletMap.put("/photoboard/add", new PhotoBoardAddServlet(photoBoardDao));
+    servletMap.put("/photoboard/update", new PhotoBoardUpdateServlet(photoBoardDao));
+    servletMap.put("/photoboard/delete", new PhotoBoardDeleteServlet(photoBoardDao));
 
     try (ServerSocket serverSocket = new ServerSocket(12345)) {
       while (true) {
