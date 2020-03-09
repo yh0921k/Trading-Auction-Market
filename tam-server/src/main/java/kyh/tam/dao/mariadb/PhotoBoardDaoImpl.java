@@ -22,7 +22,14 @@ public class PhotoBoardDaoImpl implements PhotoBoardDao {
     try (Statement stmt = con.createStatement();) {
       String query = String.format("insert into tam_photo(titl, stuff_id) values('%s', %d)",
           photoBoard.getTitle(), photoBoard.getStuff().getNumber());
-      return stmt.executeUpdate(query);
+      int result = stmt.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
+
+      try (ResultSet generatedKeySet = stmt.getGeneratedKeys();) {
+        generatedKeySet.next();
+        photoBoard.setNumber(generatedKeySet.getInt(1));
+      }
+
+      return result;
     }
   }
 

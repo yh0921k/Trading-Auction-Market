@@ -18,6 +18,7 @@ import kyh.tam.context.ApplicationContextListener;
 import kyh.tam.dao.BoardDao;
 import kyh.tam.dao.MemberDao;
 import kyh.tam.dao.PhotoBoardDao;
+import kyh.tam.dao.PhotoFileDao;
 import kyh.tam.dao.StuffDao;
 import kyh.tam.dao.mariadb.BoardDaoImpl;
 import kyh.tam.dao.mariadb.MemberDaoImpl;
@@ -81,6 +82,7 @@ public class ServerApp {
     MemberDao memberDao = (MemberDaoImpl) context.get("memberDao");
     StuffDao stuffDao = (StuffDaoImpl) context.get("stuffDao");
     PhotoBoardDao photoBoardDao = (PhotoBoardDao) context.get("photoBoardDao");
+    PhotoFileDao photoFileDao = (PhotoFileDao) context.get("photoFileDao");
 
     servletMap.put("/board/list", new BoardListServlet(boardDao));
     servletMap.put("/board/add", new BoardAddServlet(boardDao));
@@ -102,10 +104,11 @@ public class ServerApp {
     servletMap.put("/member/search", new MemberSearchServlet(memberDao));
 
     servletMap.put("/photoboard/list", new PhotoBoardListServlet(photoBoardDao, stuffDao));
-    servletMap.put("/photoboard/detail", new PhotoBoardDetailServlet(photoBoardDao));
-    servletMap.put("/photoboard/add", new PhotoBoardAddServlet(photoBoardDao));
-    servletMap.put("/photoboard/update", new PhotoBoardUpdateServlet(photoBoardDao));
-    servletMap.put("/photoboard/delete", new PhotoBoardDeleteServlet(photoBoardDao));
+    servletMap.put("/photoboard/detail", new PhotoBoardDetailServlet(photoBoardDao, photoFileDao));
+    servletMap.put("/photoboard/add",
+        new PhotoBoardAddServlet(photoBoardDao, stuffDao, photoFileDao));
+    servletMap.put("/photoboard/update", new PhotoBoardUpdateServlet(photoBoardDao, photoFileDao));
+    servletMap.put("/photoboard/delete", new PhotoBoardDeleteServlet(photoBoardDao, photoFileDao));
 
     try (ServerSocket serverSocket = new ServerSocket(12345)) {
       while (true) {

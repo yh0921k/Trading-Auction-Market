@@ -2,15 +2,20 @@ package kyh.tam.servlet;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.util.List;
 import kyh.tam.dao.PhotoBoardDao;
+import kyh.tam.dao.PhotoFileDao;
 import kyh.tam.domain.PhotoBoard;
+import kyh.tam.domain.PhotoFile;
 
 public class PhotoBoardDetailServlet implements Servlet {
 
   PhotoBoardDao photoBoardDao;
+  PhotoFileDao photoFileDao;
 
-  public PhotoBoardDetailServlet(PhotoBoardDao photoBoardDao) {
+  public PhotoBoardDetailServlet(PhotoBoardDao photoBoardDao, PhotoFileDao photoFileDao) {
     this.photoBoardDao = photoBoardDao;
+    this.photoFileDao = photoFileDao;
   }
 
   @Override
@@ -29,6 +34,13 @@ public class PhotoBoardDetailServlet implements Servlet {
       out.write(String.format("조회수 : %s%s", photoBoard.getViewCount(), System.lineSeparator()));
       out.write(
           String.format("물품명 : %s%s", photoBoard.getStuff().getName(), System.lineSeparator()));
+      out.write("사진 파일 : " + System.lineSeparator());
+
+      List<PhotoFile> photoFiles = photoFileDao.findAll(photoBoard.getNumber());
+      for (PhotoFile photoFile : photoFiles) {
+        out.write(String.format(">> %s%s", photoFile.getFilepath(), System.lineSeparator()));
+      }
+
     } else {
       out.write("Read failed : invalid number" + System.lineSeparator());
     }
