@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import kyh.tam.dao.MemberDao;
 import kyh.tam.domain.Member;
+import kyh.tam.util.Prompt;
 
 public class MemberUpdateServlet implements Servlet {
   MemberDao memberDao;
@@ -14,12 +15,7 @@ public class MemberUpdateServlet implements Servlet {
 
   @Override
   public void service(BufferedReader in, BufferedWriter out) throws Exception {
-    out.write("번호 : " + System.lineSeparator());
-    out.write("!{}!" + System.lineSeparator());
-    out.flush();
-
-    int number = Integer.parseInt(in.readLine());
-
+    int number = Prompt.getInt(in, out, "번호 : ");
     Member oldMember = memberDao.findByNumber(number);
     if (oldMember == null) {
       out.write("Update failed : invalid number" + System.lineSeparator());
@@ -29,24 +25,18 @@ public class MemberUpdateServlet implements Servlet {
 
     Member newMember = new Member();
     newMember.setNumber(oldMember.getNumber());
-    out.write(String.format("이름(%s) : \n!{}!\n", oldMember.getName()));
-    out.flush();
-    newMember.setName(in.readLine());
-    out.write(String.format("이메일(%s) : \n!{}!\n", oldMember.getEmail()));
-    out.flush();
-    newMember.setEmail(in.readLine());
-    out.write(String.format("주소(%s) : \n!{}!\n", oldMember.getAddress()));
-    out.flush();
-    newMember.setAddress(in.readLine());
-    out.write(String.format("암호(%s) : \n!{}!\n", oldMember.getPassword()));
-    out.flush();
-    newMember.setPassword(in.readLine());
-    out.write(String.format("사진(%s) : \n!{}!\n", oldMember.getPhoto()));
-    out.flush();
-    newMember.setPhoto(in.readLine());
-    out.write(String.format("전화(%s) : \n!{}!\n", oldMember.getTel()));
-    out.flush();
-    newMember.setTel(in.readLine());
+    newMember.setName(Prompt.getString(in, out, String.format("이름(%s) : ", oldMember.getName()),
+        oldMember.getName()));
+    newMember.setEmail(Prompt.getString(in, out, String.format("이메일(%s) : ", oldMember.getEmail()),
+        oldMember.getEmail()));
+    newMember.setAddress(Prompt.getString(in, out,
+        String.format("주소(%s) : ", oldMember.getAddress()), oldMember.getAddress()));
+    newMember.setPassword(Prompt.getString(in, out,
+        String.format("암호(%s) : ", oldMember.getPassword()), oldMember.getPassword()));
+    newMember.setPhoto(Prompt.getString(in, out, String.format("사진(%s) : ", oldMember.getPhoto()),
+        oldMember.getPhoto()));
+    newMember.setTel(Prompt.getString(in, out, String.format("전화(%s) : ", oldMember.getTel()),
+        oldMember.getTel()));
 
     if (memberDao.update(newMember) > 0) {
       out.write("Update complete" + System.lineSeparator());

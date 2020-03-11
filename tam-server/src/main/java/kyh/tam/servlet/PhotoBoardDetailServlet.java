@@ -7,6 +7,7 @@ import kyh.tam.dao.PhotoBoardDao;
 import kyh.tam.dao.PhotoFileDao;
 import kyh.tam.domain.PhotoBoard;
 import kyh.tam.domain.PhotoFile;
+import kyh.tam.util.Prompt;
 
 public class PhotoBoardDetailServlet implements Servlet {
 
@@ -20,11 +21,7 @@ public class PhotoBoardDetailServlet implements Servlet {
 
   @Override
   public void service(BufferedReader in, BufferedWriter out) throws Exception {
-    out.write("사진 번호 : " + System.lineSeparator());
-    out.write("!{}!" + System.lineSeparator());
-    out.flush();
-
-    int number = Integer.parseInt(in.readLine());
+    int number = Prompt.getInt(in, out, "사진 번호 : ");
     PhotoBoard photoBoard = photoBoardDao.findByNo(number);
     if (photoBoard != null) {
       out.write(String.format("번호 : %d%s", photoBoard.getNumber(), System.lineSeparator()));

@@ -17,9 +17,8 @@ public class MemberListServlet implements Servlet {
   public void service(BufferedReader in, BufferedWriter out) throws Exception {
     List<Member> members = memberDao.findAll();
     for (Member m : members) {
-      out.write(String.format("%d, %s, %s, %s, %s, %s, %s", m.getNumber(), m.getName(),
-          m.getEmail(), m.getAddress(), m.getPhoto(), m.getTel(), m.getRegisteredDate())
-          + System.lineSeparator());
+      out.write(String.format("%d, %s, %s, %s, %s, %s", m.getNumber(), m.getName(), m.getEmail(),
+          m.getAddress(), m.getPhoto(), m.getTel()) + System.lineSeparator());
     }
     out.flush();
   }

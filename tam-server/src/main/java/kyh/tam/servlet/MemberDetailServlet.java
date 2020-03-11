@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import kyh.tam.dao.MemberDao;
 import kyh.tam.domain.Member;
+import kyh.tam.util.Prompt;
 
 public class MemberDetailServlet implements Servlet {
   MemberDao memberDao;
@@ -14,12 +15,7 @@ public class MemberDetailServlet implements Servlet {
 
   @Override
   public void service(BufferedReader in, BufferedWriter out) throws Exception {
-    out.write("번호 : " + System.lineSeparator());
-    out.write("!{}!" + System.lineSeparator());
-    out.flush();
-
-    int number = Integer.parseInt(in.readLine());
-
+    int number = Prompt.getInt(in, out, "번호 : ");
     Member member = memberDao.findByNumber(number);
     if (member != null) {
       out.write("번호 : " + member.getNumber() + System.lineSeparator());

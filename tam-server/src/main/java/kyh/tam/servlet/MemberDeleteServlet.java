@@ -3,6 +3,7 @@ package kyh.tam.servlet;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import kyh.tam.dao.MemberDao;
+import kyh.tam.util.Prompt;
 
 public class MemberDeleteServlet implements Servlet {
   MemberDao memberDao;
@@ -13,12 +14,7 @@ public class MemberDeleteServlet implements Servlet {
 
   @Override
   public void service(BufferedReader in, BufferedWriter out) throws Exception {
-    out.write("번호 : " + System.lineSeparator());
-    out.write("!{}!" + System.lineSeparator());
-    out.flush();
-
-    int number = Integer.parseInt(in.readLine());
-
+    int number = Prompt.getInt(in, out, "번호 : ");
     if (memberDao.delete(number) > 0) {
       out.write("Delete complete" + System.lineSeparator());
     } else {

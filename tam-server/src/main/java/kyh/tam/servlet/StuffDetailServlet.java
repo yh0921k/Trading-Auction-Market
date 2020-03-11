@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import kyh.tam.dao.StuffDao;
 import kyh.tam.domain.Stuff;
+import kyh.tam.util.Prompt;
 
 public class StuffDetailServlet implements Servlet {
   StuffDao stuffDao;
@@ -14,12 +15,7 @@ public class StuffDetailServlet implements Servlet {
 
   @Override
   public void service(BufferedReader in, BufferedWriter out) throws Exception {
-    out.write("번호 : " + System.lineSeparator());
-    out.write("!{}!" + System.lineSeparator());
-    out.flush();
-
-    int number = Integer.parseInt(in.readLine());
-
+    int number = Prompt.getInt(in, out, "번호 : ");
     Stuff stuff = stuffDao.findByNumber(number);
     if (stuff != null) {
       out.write("번호 : " + stuff.getNumber() + System.lineSeparator());

@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import kyh.tam.dao.StuffDao;
 import kyh.tam.domain.Stuff;
+import kyh.tam.util.Prompt;
 
 public class StuffAddServlet implements Servlet {
   StuffDao stuffDao;
@@ -15,22 +16,11 @@ public class StuffAddServlet implements Servlet {
   @Override
   public void service(BufferedReader in, BufferedWriter out) throws Exception {
     Stuff stuff = new Stuff();
-
-    out.write("물품명 : \n!{}!\n");
-    out.flush();
-    stuff.setName(in.readLine());
-    out.write("분류 : \n!{}!\n");
-    out.flush();
-    stuff.setCategory(in.readLine());
-    out.write("상태 : \n!{}!\n");
-    out.flush();
-    stuff.setState(in.readLine());
-    out.write("가격 : \n!{}!\n");
-    out.flush();
-    stuff.setPrice(Integer.parseInt(in.readLine()));
-    out.write("판매자 : \n!{}!\n");
-    out.flush();
-    stuff.setSeller(in.readLine());
+    stuff.setName(Prompt.getString(in, out, "물품명 : "));
+    stuff.setCategory(Prompt.getString(in, out, "분류 : "));
+    stuff.setState(Prompt.getString(in, out, "상태 : "));
+    stuff.setPrice(Prompt.getInt(in, out, "가격 : "));
+    stuff.setSeller(Prompt.getString(in, out, "판매자 : "));
 
     if (stuffDao.insert(stuff) > 0)
       out.write("Save complete" + System.lineSeparator());

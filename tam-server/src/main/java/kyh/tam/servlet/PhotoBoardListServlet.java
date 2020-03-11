@@ -7,6 +7,7 @@ import kyh.tam.dao.PhotoBoardDao;
 import kyh.tam.dao.StuffDao;
 import kyh.tam.domain.PhotoBoard;
 import kyh.tam.domain.Stuff;
+import kyh.tam.util.Prompt;
 
 public class PhotoBoardListServlet implements Servlet {
 
@@ -20,11 +21,7 @@ public class PhotoBoardListServlet implements Servlet {
 
   @Override
   public void service(BufferedReader in, BufferedWriter out) throws Exception {
-    out.write("물품 번호 : " + System.lineSeparator());
-    out.write("!{}!" + System.lineSeparator());
-    out.flush();
-
-    int stuffNumber = Integer.parseInt(in.readLine());
+    int stuffNumber = Prompt.getInt(in, out, "물품 번호 : ");
     Stuff stuff = stuffDao.findByNumber(stuffNumber);
     if (stuff == null) {
       out.write("Search failed : invalid number" + System.lineSeparator());
