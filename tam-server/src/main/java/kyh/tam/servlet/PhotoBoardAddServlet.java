@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import kyh.tam.DataLoaderListener;
 import kyh.tam.dao.PhotoBoardDao;
 import kyh.tam.dao.PhotoFileDao;
 import kyh.tam.dao.StuffDao;
@@ -38,23 +39,31 @@ public class PhotoBoardAddServlet implements Servlet {
       out.flush();
       return;
     }
-    photoBoard.setStuff(stuff);
 
+    photoBoard.setStuff(stuff);
+    DataLoaderListener.con.setAutoCommit(false);
     try {
-      if (photoBoardDao.insert(photoBoard) > 0) {
-        List<PhotoFile> photoFiles = inputPhotoFiles(in, out);
-        for (PhotoFile photoFile : photoFiles) {
-          photoFile.setBoardNumber(photoBoard.getNumber());
-          photoFileDao.insert(photoFile);
-        }
-        out.write("Save complete" + System.lineSeparator());
+      if (photoBoardDao.insert(photoBoard) == 0) {
+        throw new Exception("[PhotoBoardAddServlet.java] : photoBoardDao.insert() failed");
       }
+      List<PhotoFile> photoFiles = inputPhotoFiles(in, out);
+      for (PhotoFile photoFile : photoFiles) {
+        photoFile.setBoardNumber(photoBoard.getNumber());
+        photoFileDao.insert(photoFile);
+      }
+      DataLoaderListener.con.commit();
+      out.write("Save complete" + System.lineSeparator());
+
     } catch (Exception e) {
+      DataLoaderListener.con.rollback();
       out.write("Save failed" + System.lineSeparator());
       System.out.println("[PhotoBoardAddServlet.java]" + e.getMessage());
       e.printStackTrace();
+
+    } finally {
+      out.flush();
+      DataLoaderListener.con.setAutoCommit(true);
     }
-    out.flush();
   }
 
   private List<PhotoFile> inputPhotoFiles(BufferedReader in, BufferedWriter out)

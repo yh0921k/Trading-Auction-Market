@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import kyh.tam.DataLoaderListener;
 import kyh.tam.dao.PhotoBoardDao;
 import kyh.tam.dao.PhotoFileDao;
 import kyh.tam.domain.PhotoBoard;
@@ -36,7 +37,11 @@ public class PhotoBoardUpdateServlet implements Servlet {
     newPhotoBoard.setTitle(Prompt.getString(in, out,
         String.format("사진 게시글 제목(%s) : ", oldPhotoBoard.getTitle()), oldPhotoBoard.getTitle()));
 
-    if (photoBoardDao.update(newPhotoBoard) > 0) {
+    DataLoaderListener.con.setAutoCommit(false);
+    try {
+      if (photoBoardDao.update(newPhotoBoard) == 0) {
+        throw new Exception("[PhotoBoardUpdateServlet.java] : photoBoardDao.update() failed");
+      }
       printPhotoFiles(out, number);
 
       out.write("사진은 일부만 변경할 수 없으며, 전체를 새로 등록해야 합니다." + System.lineSeparator());
@@ -50,12 +55,19 @@ public class PhotoBoardUpdateServlet implements Servlet {
           photoFileDao.insert(photoFile);
         }
       }
-
+      DataLoaderListener.con.commit();
       out.write("Update complete" + System.lineSeparator());
-    } else {
+
+    } catch (Exception e) {
+      DataLoaderListener.con.rollback();
       out.write("Update failed" + System.lineSeparator());
+      System.out.println("[PhotoBoardUpdateServlet.java]" + e.getMessage());
+      e.printStackTrace();
+
+    } finally {
+      out.flush();
+      DataLoaderListener.con.setAutoCommit(true);
     }
-    out.flush();
   }
 
   private void printPhotoFiles(BufferedWriter out, int boardNumber) throws Exception {
