@@ -1,7 +1,6 @@
 package kyh.tam;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.util.Map;
 import kyh.tam.context.ApplicationContextListener;
 import kyh.tam.dao.mariadb.BoardDaoImpl;
@@ -19,14 +18,15 @@ public class DataLoaderListener implements ApplicationContextListener {
     System.out.println("--------------------------------------------------");
 
     try {
-      Class.forName("org.mariadb.jdbc.Driver");
-      con = DriverManager.getConnection("jdbc:mariadb://localhost:3306/tamdb", "kyh", "1111");
+      String jdbcUrl = "jdbc:mariadb://localhost:3306/tamdb";
+      String username = "kyh";
+      String password = "1111";
 
-      context.put("boardDao", new BoardDaoImpl(con));
-      context.put("stuffDao", new StuffDaoImpl(con));
-      context.put("memberDao", new MemberDaoImpl(con));
-      context.put("photoBoardDao", new PhotoBoardDaoImpl(con));
-      context.put("photoFileDao", new PhotoFileDaoImpl(con));
+      context.put("boardDao", new BoardDaoImpl(jdbcUrl, username, password));
+      context.put("stuffDao", new StuffDaoImpl(jdbcUrl, username, password));
+      context.put("memberDao", new MemberDaoImpl(jdbcUrl, username, password));
+      context.put("photoBoardDao", new PhotoBoardDaoImpl(jdbcUrl, username, password));
+      context.put("photoFileDao", new PhotoFileDaoImpl(jdbcUrl, username, password));
 
     } catch (Exception e) {
       System.out.printf("[contextInitialized()] : %s\n", e.getMessage());

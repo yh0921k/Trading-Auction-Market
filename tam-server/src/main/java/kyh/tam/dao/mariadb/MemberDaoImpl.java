@@ -1,6 +1,7 @@
 package kyh.tam.dao.mariadb;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -10,15 +11,20 @@ import kyh.tam.domain.Member;
 
 public class MemberDaoImpl implements MemberDao {
 
-  Connection con;
+  String jdbcUrl;
+  String username;
+  String password;
 
-  public MemberDaoImpl(Connection con) {
-    this.con = con;
+  public MemberDaoImpl(String jdbcUrl, String username, String password) {
+    this.jdbcUrl = jdbcUrl;
+    this.username = username;
+    this.password = password;
   }
 
   @Override
   public int insert(Member member) throws Exception {
-    try (Statement stmt = con.createStatement();) {
+    try (Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+        Statement stmt = con.createStatement();) {
       String query = String.format(
           "insert into tam_member(name, email, pwd, addr, tel, photo) values('%s', '%s', '%s', '%s', '%s', '%s')",
           member.getName(), member.getEmail(), member.getPassword(), member.getAddress(),
@@ -29,7 +35,8 @@ public class MemberDaoImpl implements MemberDao {
 
   @Override
   public List<Member> findAll() throws Exception {
-    try (Statement stmt = con.createStatement();
+    try (Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+        Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(
             "select member_id, name, email, pwd, addr, tel, photo from tam_member");) {
 
@@ -51,7 +58,8 @@ public class MemberDaoImpl implements MemberDao {
 
   @Override
   public Member findByNumber(int number) throws Exception {
-    try (Statement stmt = con.createStatement();
+    try (Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+        Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(
             "select member_id, name, email, pwd, addr, tel, photo, cdt from tam_member where member_id="
                 + number);) {
@@ -74,7 +82,8 @@ public class MemberDaoImpl implements MemberDao {
 
   @Override
   public int update(Member member) throws Exception {
-    try (Statement stmt = con.createStatement();) {
+    try (Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+        Statement stmt = con.createStatement();) {
       String query = String.format(
           "update tam_member set name='%s', email='%s', pwd='%s', addr='%s', tel='%s', photo='%s' where member_id=%d",
           member.getName(), member.getEmail(), member.getPassword(), member.getAddress(),
@@ -85,14 +94,16 @@ public class MemberDaoImpl implements MemberDao {
 
   @Override
   public int delete(int number) throws Exception {
-    try (Statement stmt = con.createStatement();) {
+    try (Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+        Statement stmt = con.createStatement();) {
       return stmt.executeUpdate("delete from tam_member where member_id=" + number);
     }
   }
 
   @Override
   public List<Member> findByKeyword(String keyword) throws Exception {
-    try (Statement stmt = con.createStatement();) {
+    try (Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+        Statement stmt = con.createStatement();) {
       String query = String.format(
           "select member_id, name, email, addr, pwd, tel, photo " + "from tam_member "
               + "where name like '%%%s%%' or email like '%%%s%%' or tel like '%%%s%%'",

@@ -5,7 +5,6 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import kyh.tam.DataLoaderListener;
 import kyh.tam.dao.PhotoBoardDao;
 import kyh.tam.dao.PhotoFileDao;
 import kyh.tam.dao.StuffDao;
@@ -41,7 +40,6 @@ public class PhotoBoardAddServlet implements Servlet {
     }
 
     photoBoard.setStuff(stuff);
-    DataLoaderListener.con.setAutoCommit(false);
     try {
       if (photoBoardDao.insert(photoBoard) == 0) {
         throw new Exception("[PhotoBoardAddServlet.java] : photoBoardDao.insert() failed");
@@ -51,18 +49,15 @@ public class PhotoBoardAddServlet implements Servlet {
         photoFile.setBoardNumber(photoBoard.getNumber());
         photoFileDao.insert(photoFile);
       }
-      DataLoaderListener.con.commit();
       out.write("Save complete" + System.lineSeparator());
 
     } catch (Exception e) {
-      DataLoaderListener.con.rollback();
       out.write("Save failed" + System.lineSeparator());
       System.out.println("[PhotoBoardAddServlet.java]" + e.getMessage());
       e.printStackTrace();
 
     } finally {
       out.flush();
-      DataLoaderListener.con.setAutoCommit(true);
     }
   }
 
