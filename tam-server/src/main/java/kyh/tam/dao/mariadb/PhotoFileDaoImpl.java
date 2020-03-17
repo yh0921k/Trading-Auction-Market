@@ -1,29 +1,25 @@
 package kyh.tam.dao.mariadb;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import kyh.tam.dao.PhotoFileDao;
 import kyh.tam.domain.PhotoFile;
+import kyh.tam.util.ConnectionFactory;
 
 public class PhotoFileDaoImpl implements PhotoFileDao {
 
-  String jdbcUrl;
-  String username;
-  String password;
+  ConnectionFactory connectionFactory;
 
-  public PhotoFileDaoImpl(String jdbcUrl, String username, String password) {
-    this.jdbcUrl = jdbcUrl;
-    this.username = username;
-    this.password = password;
+  public PhotoFileDaoImpl(ConnectionFactory connectionFactory) {
+    this.connectionFactory = connectionFactory;
   }
 
   @Override
   public int insert(PhotoFile photoFile) throws Exception {
-    try (Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+    try (Connection con = connectionFactory.getConnection();
         Statement stmt = con.createStatement();) {
       String query =
           String.format("insert into tam_photo_file(photo_id, file_path) values(%d, '%s')",
@@ -34,7 +30,7 @@ public class PhotoFileDaoImpl implements PhotoFileDao {
 
   @Override
   public List<PhotoFile> findAll(int boardNumber) throws Exception {
-    try (Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+    try (Connection con = connectionFactory.getConnection();
         Statement stmt = con.createStatement();) {
 
       String query = String.format(
@@ -65,7 +61,7 @@ public class PhotoFileDaoImpl implements PhotoFileDao {
 
   @Override
   public int deleteAll(int boardNumber) throws Exception {
-    try (Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+    try (Connection con = connectionFactory.getConnection();
         Statement stmt = con.createStatement();) {
       return stmt.executeUpdate("delete from tam_photo_file where photo_id=" + boardNumber);
     }

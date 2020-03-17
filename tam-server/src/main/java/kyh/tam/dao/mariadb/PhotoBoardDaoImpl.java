@@ -1,7 +1,6 @@
 package kyh.tam.dao.mariadb;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -9,22 +8,19 @@ import java.util.List;
 import kyh.tam.dao.PhotoBoardDao;
 import kyh.tam.domain.PhotoBoard;
 import kyh.tam.domain.Stuff;
+import kyh.tam.util.ConnectionFactory;
 
 public class PhotoBoardDaoImpl implements PhotoBoardDao {
 
-  String jdbcUrl;
-  String username;
-  String password;
+  ConnectionFactory connectionFactory;
 
-  public PhotoBoardDaoImpl(String jdbcUrl, String username, String password) {
-    this.jdbcUrl = jdbcUrl;
-    this.username = username;
-    this.password = password;
+  public PhotoBoardDaoImpl(ConnectionFactory connectionFactory) {
+    this.connectionFactory = connectionFactory;
   }
 
   @Override
   public int insert(PhotoBoard photoBoard) throws Exception {
-    try (Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+    try (Connection con = connectionFactory.getConnection();
         Statement stmt = con.createStatement();) {
       String query = String.format("insert into tam_photo(titl, stuff_id) values('%s', %d)",
           photoBoard.getTitle(), photoBoard.getStuff().getNumber());
@@ -41,7 +37,7 @@ public class PhotoBoardDaoImpl implements PhotoBoardDao {
 
   @Override
   public List<PhotoBoard> findAllByStuffNumber(int stuffNumber) throws Exception {
-    try (Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+    try (Connection con = connectionFactory.getConnection();
         Statement stmt = con.createStatement();) {
       String query = String.format("select photo_id, titl, cdt, stuff_id, vw_cnt "
           + "from tam_photo where stuff_id=%d order by photo_id asc", stuffNumber);
@@ -63,7 +59,7 @@ public class PhotoBoardDaoImpl implements PhotoBoardDao {
 
   @Override
   public PhotoBoard findByNo(int number) throws Exception {
-    try (Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+    try (Connection con = connectionFactory.getConnection();
         Statement stmt = con.createStatement();) {
       String query = String.format(
           "select p.photo_id, p.titl, p.cdt, p.vw_cnt, s.stuff_id, s.name stuff_name "
@@ -91,7 +87,7 @@ public class PhotoBoardDaoImpl implements PhotoBoardDao {
 
   @Override
   public int update(PhotoBoard photoBoard) throws Exception {
-    try (Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+    try (Connection con = connectionFactory.getConnection();
         Statement stmt = con.createStatement();) {
       String query = String.format("update tam_photo set titl='%s' where photo_id=%d",
           photoBoard.getTitle(), photoBoard.getNumber());
@@ -101,7 +97,7 @@ public class PhotoBoardDaoImpl implements PhotoBoardDao {
 
   @Override
   public int delete(int number) throws Exception {
-    try (Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+    try (Connection con = connectionFactory.getConnection();
         Statement stmt = con.createStatement();) {
       String query = String.format("delete from tam_photo where photo_id=%d", number);
       return stmt.executeUpdate(query);

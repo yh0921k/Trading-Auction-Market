@@ -1,29 +1,25 @@
 package kyh.tam.dao.mariadb;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import kyh.tam.dao.StuffDao;
 import kyh.tam.domain.Stuff;
+import kyh.tam.util.ConnectionFactory;
 
 public class StuffDaoImpl implements StuffDao {
 
-  String jdbcUrl;
-  String username;
-  String password;
+  ConnectionFactory connectionFactory;
 
-  public StuffDaoImpl(String jdbcUrl, String username, String password) {
-    this.jdbcUrl = jdbcUrl;
-    this.username = username;
-    this.password = password;
+  public StuffDaoImpl(ConnectionFactory connectionFactory) {
+    this.connectionFactory = connectionFactory;
   }
 
   @Override
   public int insert(Stuff stuff) throws Exception {
-    try (Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+    try (Connection con = connectionFactory.getConnection();
         Statement stmt = con.createStatement();) {
       String query = String.format(
           "insert into tam_stuff(name, state, seller, category, price) values('%s', '%s', '%s', '%s', %d)",
@@ -35,7 +31,7 @@ public class StuffDaoImpl implements StuffDao {
 
   @Override
   public List<Stuff> findAll() throws Exception {
-    try (Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+    try (Connection con = connectionFactory.getConnection();
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(
             "select stuff_id, name, state, seller, category, price from tam_stuff");) {
@@ -57,7 +53,7 @@ public class StuffDaoImpl implements StuffDao {
 
   @Override
   public Stuff findByNumber(int number) throws Exception {
-    try (Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+    try (Connection con = connectionFactory.getConnection();
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(
             "select stuff_id, name, state, seller, category, price from tam_stuff where stuff_id="
@@ -79,7 +75,7 @@ public class StuffDaoImpl implements StuffDao {
 
   @Override
   public int update(Stuff stuff) throws Exception {
-    try (Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+    try (Connection con = connectionFactory.getConnection();
         Statement stmt = con.createStatement();) {
       String query = String.format(
           "update tam_stuff set name='%s', state='%s', seller='%s', category='%s', price=%d where stuff_id=%d",
@@ -91,7 +87,7 @@ public class StuffDaoImpl implements StuffDao {
 
   @Override
   public int delete(int number) throws Exception {
-    try (Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+    try (Connection con = connectionFactory.getConnection();
         Statement stmt = con.createStatement();) {
       return stmt.executeUpdate("delete from tam_stuff where stuff_id=" + number);
     }

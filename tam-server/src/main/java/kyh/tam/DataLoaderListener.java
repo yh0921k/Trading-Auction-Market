@@ -8,6 +8,7 @@ import kyh.tam.dao.mariadb.MemberDaoImpl;
 import kyh.tam.dao.mariadb.PhotoBoardDaoImpl;
 import kyh.tam.dao.mariadb.PhotoFileDaoImpl;
 import kyh.tam.dao.mariadb.StuffDaoImpl;
+import kyh.tam.util.ConnectionFactory;
 
 public class DataLoaderListener implements ApplicationContextListener {
 
@@ -22,11 +23,13 @@ public class DataLoaderListener implements ApplicationContextListener {
       String username = "kyh";
       String password = "1111";
 
-      context.put("boardDao", new BoardDaoImpl(jdbcUrl, username, password));
-      context.put("stuffDao", new StuffDaoImpl(jdbcUrl, username, password));
-      context.put("memberDao", new MemberDaoImpl(jdbcUrl, username, password));
-      context.put("photoBoardDao", new PhotoBoardDaoImpl(jdbcUrl, username, password));
-      context.put("photoFileDao", new PhotoFileDaoImpl(jdbcUrl, username, password));
+      ConnectionFactory connectionFactory = new ConnectionFactory(jdbcUrl, username, password);
+
+      context.put("boardDao", new BoardDaoImpl(connectionFactory));
+      context.put("stuffDao", new StuffDaoImpl(connectionFactory));
+      context.put("memberDao", new MemberDaoImpl(connectionFactory));
+      context.put("photoBoardDao", new PhotoBoardDaoImpl(connectionFactory));
+      context.put("photoFileDao", new PhotoFileDaoImpl(connectionFactory));
 
     } catch (Exception e) {
       System.out.printf("[contextInitialized()] : %s\n", e.getMessage());
@@ -39,7 +42,8 @@ public class DataLoaderListener implements ApplicationContextListener {
   @Override
   public void contextDestroyed(Map<String, Object> context) throws Exception {
     try {
-      con.close();
+      if (con != null)
+        con.close();
     } catch (Exception e) {
       System.out.printf("[contextDestroyed()] : %s\n", e.getMessage());
       e.printStackTrace();
