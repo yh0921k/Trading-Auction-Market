@@ -45,6 +45,7 @@ import kyh.tam.servlet.StuffDeleteServlet;
 import kyh.tam.servlet.StuffDetailServlet;
 import kyh.tam.servlet.StuffListServlet;
 import kyh.tam.servlet.StuffUpdateServlet;
+import kyh.tam.sql.ConnectionProxy;
 import kyh.tam.util.ConnectionFactory;
 
 public class ServerApp {
@@ -120,7 +121,14 @@ public class ServerApp {
         System.out.println("Client connection complete");
         executorService.submit(() -> {
           processRequest(connectedSocket);
-          connectionFactory.removeConnection();
+          ConnectionProxy con = (ConnectionProxy) connectionFactory.removeConnection();
+          if (con != null) {
+            try {
+              con.realClose();
+            } catch (Exception e) {
+              System.out.println("[ServerApp.java] : ConnectionProxy object called realClose()");
+            }
+          }
           System.out.println("--------------------------------------------------");
         });
 

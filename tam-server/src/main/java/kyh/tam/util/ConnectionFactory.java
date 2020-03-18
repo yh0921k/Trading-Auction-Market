@@ -3,6 +3,7 @@ package kyh.tam.util;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import kyh.tam.sql.ConnectionProxy;
 
 public class ConnectionFactory {
   String jdbcUrl;
@@ -24,16 +25,18 @@ public class ConnectionFactory {
       return con;
     }
 
-    con = DriverManager.getConnection(jdbcUrl, username, password);
+    con = new ConnectionProxy(DriverManager.getConnection(jdbcUrl, username, password));
     System.out.println("Return new connection");
     connectionLocal.set(con);
     return con;
   }
 
-  public void removeConnection() {
+  public Connection removeConnection() {
     Connection con = connectionLocal.get();
     if (con != null) {
       connectionLocal.remove();
+      System.out.println("Removed connection object stored in thread");
     }
+    return con;
   }
 }
