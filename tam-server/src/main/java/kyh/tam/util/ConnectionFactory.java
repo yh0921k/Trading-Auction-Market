@@ -9,6 +9,8 @@ public class ConnectionFactory {
   String username;
   String password;
 
+  ThreadLocal<Connection> connectionLocal = new ThreadLocal<>();
+
   public ConnectionFactory(String jdbcUrl, String username, String password) {
     this.jdbcUrl = jdbcUrl;
     this.username = username;
@@ -16,6 +18,22 @@ public class ConnectionFactory {
   }
 
   public Connection getConnection() throws SQLException {
-    return DriverManager.getConnection(jdbcUrl, username, password);
+    Connection con = connectionLocal.get();
+    if (con != null) {
+      System.out.println("Return connection object from connectionLocal");
+      return con;
+    }
+
+    con = DriverManager.getConnection(jdbcUrl, username, password);
+    System.out.println("Return new connection");
+    connectionLocal.set(con);
+    return con;
+  }
+
+  public void removeConnection() {
+    Connection con = connectionLocal.get();
+    if (con != null) {
+      connectionLocal.remove();
+    }
   }
 }

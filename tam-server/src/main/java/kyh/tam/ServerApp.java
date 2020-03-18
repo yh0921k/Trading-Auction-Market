@@ -45,6 +45,7 @@ import kyh.tam.servlet.StuffDeleteServlet;
 import kyh.tam.servlet.StuffDetailServlet;
 import kyh.tam.servlet.StuffListServlet;
 import kyh.tam.servlet.StuffUpdateServlet;
+import kyh.tam.util.ConnectionFactory;
 
 public class ServerApp {
 
@@ -77,6 +78,8 @@ public class ServerApp {
 
   public void service() throws Exception {
     notifyApplicationInitialized();
+
+    ConnectionFactory connectionFactory = (ConnectionFactory) context.get("connectionFactory");
 
     BoardDao boardDao = (BoardDaoImpl) context.get("boardDao");
     MemberDao memberDao = (MemberDaoImpl) context.get("memberDao");
@@ -117,6 +120,7 @@ public class ServerApp {
         System.out.println("Client connection complete");
         executorService.submit(() -> {
           processRequest(connectedSocket);
+          connectionFactory.removeConnection();
           System.out.println("--------------------------------------------------");
         });
 

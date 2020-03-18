@@ -24,6 +24,7 @@ public class DataLoaderListener implements ApplicationContextListener {
       String password = "1111";
 
       ConnectionFactory connectionFactory = new ConnectionFactory(jdbcUrl, username, password);
+      context.put("connectionFactory", connectionFactory);
 
       context.put("boardDao", new BoardDaoImpl(connectionFactory));
       context.put("stuffDao", new StuffDaoImpl(connectionFactory));
