@@ -110,9 +110,11 @@ public class ServerApp {
     servletMap.put("/photoboard/list", new PhotoBoardListServlet(photoBoardDao, stuffDao));
     servletMap.put("/photoboard/detail", new PhotoBoardDetailServlet(photoBoardDao, photoFileDao));
     servletMap.put("/photoboard/add",
-        new PhotoBoardAddServlet(photoBoardDao, stuffDao, photoFileDao));
-    servletMap.put("/photoboard/update", new PhotoBoardUpdateServlet(photoBoardDao, photoFileDao));
-    servletMap.put("/photoboard/delete", new PhotoBoardDeleteServlet(photoBoardDao, photoFileDao));
+        new PhotoBoardAddServlet(photoBoardDao, stuffDao, photoFileDao, connectionFactory));
+    servletMap.put("/photoboard/update",
+        new PhotoBoardUpdateServlet(photoBoardDao, photoFileDao, connectionFactory));
+    servletMap.put("/photoboard/delete",
+        new PhotoBoardDeleteServlet(photoBoardDao, photoFileDao, connectionFactory));
 
     try (ServerSocket serverSocket = new ServerSocket(12345)) {
       while (true) {
