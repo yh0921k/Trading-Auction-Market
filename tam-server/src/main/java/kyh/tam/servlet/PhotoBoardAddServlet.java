@@ -3,7 +3,6 @@ package kyh.tam.servlet;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import kyh.tam.dao.PhotoBoardDao;
@@ -12,7 +11,7 @@ import kyh.tam.dao.StuffDao;
 import kyh.tam.domain.PhotoBoard;
 import kyh.tam.domain.PhotoFile;
 import kyh.tam.domain.Stuff;
-import kyh.tam.util.ConnectionFactory;
+import kyh.tam.sql.PlatformTransactionManager;
 import kyh.tam.util.Prompt;
 
 public class PhotoBoardAddServlet implements Servlet {
@@ -20,14 +19,14 @@ public class PhotoBoardAddServlet implements Servlet {
   PhotoBoardDao photoBoardDao;
   StuffDao stuffDao;
   PhotoFileDao photoFileDao;
-  ConnectionFactory connectionFactory;
+  PlatformTransactionManager txManager;
 
   public PhotoBoardAddServlet(PhotoBoardDao photoBoardDao, StuffDao stuffDao,
-      PhotoFileDao photoFileDao, ConnectionFactory connectionFactory) {
+      PhotoFileDao photoFileDao, PlatformTransactionManager txManager) {
     this.photoBoardDao = photoBoardDao;
     this.stuffDao = stuffDao;
     this.photoFileDao = photoFileDao;
-    this.connectionFactory = connectionFactory;
+    this.txManager = txManager;
   }
 
   @Override
@@ -44,8 +43,7 @@ public class PhotoBoardAddServlet implements Servlet {
     }
 
     photoBoard.setStuff(stuff);
-    Connection con = connectionFactory.getConnection();
-    con.setAutoCommit(false);
+    txManager.beginTransaction();
     try {
       if (photoBoardDao.insert(photoBoard) == 0) {
         throw new Exception("[PhotoBoardAddServlet.java] : photoBoardDao.insert() failed");
@@ -55,17 +53,16 @@ public class PhotoBoardAddServlet implements Servlet {
         photoFile.setBoardNumber(photoBoard.getNumber());
         photoFileDao.insert(photoFile);
       }
-      con.commit();
+      txManager.commit();
       out.write("Save complete" + System.lineSeparator());
 
     } catch (Exception e) {
-      con.rollback();
+      txManager.rollback();
       out.write("Save failed" + System.lineSeparator());
       System.out.println("[PhotoBoardAddServlet.java]" + e.getMessage());
       e.printStackTrace();
 
     } finally {
-      con.setAutoCommit(true);
       out.flush();
     }
   }

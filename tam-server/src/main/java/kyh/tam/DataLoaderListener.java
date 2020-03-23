@@ -8,6 +8,7 @@ import kyh.tam.dao.mariadb.MemberDaoImpl;
 import kyh.tam.dao.mariadb.PhotoBoardDaoImpl;
 import kyh.tam.dao.mariadb.PhotoFileDaoImpl;
 import kyh.tam.dao.mariadb.StuffDaoImpl;
+import kyh.tam.sql.PlatformTransactionManager;
 import kyh.tam.util.ConnectionFactory;
 
 public class DataLoaderListener implements ApplicationContextListener {
@@ -25,6 +26,9 @@ public class DataLoaderListener implements ApplicationContextListener {
 
       ConnectionFactory connectionFactory = new ConnectionFactory(jdbcUrl, username, password);
       context.put("connectionFactory", connectionFactory);
+
+      PlatformTransactionManager txManager = new PlatformTransactionManager(connectionFactory);
+      context.put("txManager", txManager);
 
       context.put("boardDao", new BoardDaoImpl(connectionFactory));
       context.put("stuffDao", new StuffDaoImpl(connectionFactory));

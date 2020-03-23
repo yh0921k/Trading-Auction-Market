@@ -46,6 +46,7 @@ import kyh.tam.servlet.StuffDetailServlet;
 import kyh.tam.servlet.StuffListServlet;
 import kyh.tam.servlet.StuffUpdateServlet;
 import kyh.tam.sql.ConnectionProxy;
+import kyh.tam.sql.PlatformTransactionManager;
 import kyh.tam.util.ConnectionFactory;
 
 public class ServerApp {
@@ -81,6 +82,7 @@ public class ServerApp {
     notifyApplicationInitialized();
 
     ConnectionFactory connectionFactory = (ConnectionFactory) context.get("connectionFactory");
+    PlatformTransactionManager txManager = (PlatformTransactionManager) context.get("txManager");
 
     BoardDao boardDao = (BoardDaoImpl) context.get("boardDao");
     MemberDao memberDao = (MemberDaoImpl) context.get("memberDao");
@@ -110,11 +112,11 @@ public class ServerApp {
     servletMap.put("/photoboard/list", new PhotoBoardListServlet(photoBoardDao, stuffDao));
     servletMap.put("/photoboard/detail", new PhotoBoardDetailServlet(photoBoardDao, photoFileDao));
     servletMap.put("/photoboard/add",
-        new PhotoBoardAddServlet(photoBoardDao, stuffDao, photoFileDao, connectionFactory));
+        new PhotoBoardAddServlet(photoBoardDao, stuffDao, photoFileDao, txManager));
     servletMap.put("/photoboard/update",
-        new PhotoBoardUpdateServlet(photoBoardDao, photoFileDao, connectionFactory));
+        new PhotoBoardUpdateServlet(photoBoardDao, photoFileDao, txManager));
     servletMap.put("/photoboard/delete",
-        new PhotoBoardDeleteServlet(photoBoardDao, photoFileDao, connectionFactory));
+        new PhotoBoardDeleteServlet(photoBoardDao, photoFileDao, txManager));
 
     try (ServerSocket serverSocket = new ServerSocket(12345)) {
       while (true) {

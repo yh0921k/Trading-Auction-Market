@@ -3,27 +3,26 @@ package kyh.tam.servlet;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import kyh.tam.dao.PhotoBoardDao;
 import kyh.tam.dao.PhotoFileDao;
 import kyh.tam.domain.PhotoBoard;
 import kyh.tam.domain.PhotoFile;
-import kyh.tam.util.ConnectionFactory;
+import kyh.tam.sql.PlatformTransactionManager;
 import kyh.tam.util.Prompt;
 
 public class PhotoBoardUpdateServlet implements Servlet {
 
   PhotoBoardDao photoBoardDao;
   PhotoFileDao photoFileDao;
-  ConnectionFactory connectionFactory;
+  PlatformTransactionManager txManager;
 
   public PhotoBoardUpdateServlet(PhotoBoardDao photoBoardDao, PhotoFileDao photoFileDao,
-      ConnectionFactory connectionFactory) {
+      PlatformTransactionManager txManager) {
     this.photoBoardDao = photoBoardDao;
     this.photoFileDao = photoFileDao;
-    this.connectionFactory = connectionFactory;
+    this.txManager = txManager;
   }
 
   @Override
@@ -41,8 +40,7 @@ public class PhotoBoardUpdateServlet implements Servlet {
     newPhotoBoard.setTitle(Prompt.getString(in, out,
         String.format("사진 게시글 제목(%s) : ", oldPhotoBoard.getTitle()), oldPhotoBoard.getTitle()));
 
-    Connection con = connectionFactory.getConnection();
-    con.setAutoCommit(false);
+    txManager.beginTransaction();
     try {
       if (photoBoardDao.update(newPhotoBoard) == 0) {
         throw new Exception("[PhotoBoardUpdateServlet.java] : photoBoardDao.update() failed");
@@ -60,17 +58,16 @@ public class PhotoBoardUpdateServlet implements Servlet {
           photoFileDao.insert(photoFile);
         }
       }
-      con.commit();
+      txManager.commit();
       out.write("Update complete" + System.lineSeparator());
 
     } catch (Exception e) {
-      con.rollback();
+      txManager.rollback();
       out.write("Update failed" + System.lineSeparator());
       System.out.println("[PhotoBoardUpdateServlet.java]" + e.getMessage());
       e.printStackTrace();
 
     } finally {
-      con.setAutoCommit(true);
       out.flush();
     }
   }
