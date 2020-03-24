@@ -7,20 +7,19 @@ import java.util.ArrayList;
 import java.util.List;
 import kyh.tam.dao.BoardDao;
 import kyh.tam.domain.Board;
-import kyh.tam.util.ConnectionFactory;
+import kyh.tam.util.DataSource;
 
 public class BoardDaoImpl implements BoardDao {
 
-  ConnectionFactory connectionFactory;
+  DataSource dataSource;
 
-  public BoardDaoImpl(ConnectionFactory connectionFactory) {
-    this.connectionFactory = connectionFactory;
+  public BoardDaoImpl(DataSource dataSource) {
+    this.dataSource = dataSource;
   }
 
   @Override
   public int insert(Board board) throws Exception {
-    try (Connection con = connectionFactory.getConnection();
-        Statement stmt = con.createStatement();) {
+    try (Connection con = dataSource.getConnection(); Statement stmt = con.createStatement();) {
       String query = String.format("insert into tam_board(conts) values('%s')", board.getTitle());
       return stmt.executeUpdate(query);
     }
@@ -28,7 +27,7 @@ public class BoardDaoImpl implements BoardDao {
 
   @Override
   public List<Board> findAll() throws Exception {
-    try (Connection con = connectionFactory.getConnection();
+    try (Connection con = dataSource.getConnection();
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery("select board_id, conts, cdt, vw_cnt from tam_board");) {
 
@@ -47,7 +46,7 @@ public class BoardDaoImpl implements BoardDao {
 
   @Override
   public Board findByNumber(int number) throws Exception {
-    try (Connection con = connectionFactory.getConnection();
+    try (Connection con = dataSource.getConnection();
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(
             "select board_id, conts, cdt, vw_cnt from tam_board where board_id=" + number);) {
@@ -66,8 +65,7 @@ public class BoardDaoImpl implements BoardDao {
 
   @Override
   public int update(Board board) throws Exception {
-    try (Connection con = connectionFactory.getConnection();
-        Statement stmt = con.createStatement();) {
+    try (Connection con = dataSource.getConnection(); Statement stmt = con.createStatement();) {
       String query = String.format("update tam_board set conts='%s' where board_id=%d",
           board.getTitle(), board.getNumber());
       return stmt.executeUpdate(query);
@@ -76,8 +74,7 @@ public class BoardDaoImpl implements BoardDao {
 
   @Override
   public int delete(int number) throws Exception {
-    try (Connection con = connectionFactory.getConnection();
-        Statement stmt = con.createStatement();) {
+    try (Connection con = dataSource.getConnection(); Statement stmt = con.createStatement();) {
       return stmt.executeUpdate("delete from tam_board where board_id=" + number);
     }
   }

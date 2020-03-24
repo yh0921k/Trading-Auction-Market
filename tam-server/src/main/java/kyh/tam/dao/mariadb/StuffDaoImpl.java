@@ -7,20 +7,19 @@ import java.util.ArrayList;
 import java.util.List;
 import kyh.tam.dao.StuffDao;
 import kyh.tam.domain.Stuff;
-import kyh.tam.util.ConnectionFactory;
+import kyh.tam.util.DataSource;
 
 public class StuffDaoImpl implements StuffDao {
 
-  ConnectionFactory connectionFactory;
+  DataSource dataSource;
 
-  public StuffDaoImpl(ConnectionFactory connectionFactory) {
-    this.connectionFactory = connectionFactory;
+  public StuffDaoImpl(DataSource dataSource) {
+    this.dataSource = dataSource;
   }
 
   @Override
   public int insert(Stuff stuff) throws Exception {
-    try (Connection con = connectionFactory.getConnection();
-        Statement stmt = con.createStatement();) {
+    try (Connection con = dataSource.getConnection(); Statement stmt = con.createStatement();) {
       String query = String.format(
           "insert into tam_stuff(name, state, seller, category, price) values('%s', '%s', '%s', '%s', %d)",
           stuff.getName(), stuff.getState(), stuff.getSeller(), stuff.getCategory(),
@@ -31,7 +30,7 @@ public class StuffDaoImpl implements StuffDao {
 
   @Override
   public List<Stuff> findAll() throws Exception {
-    try (Connection con = connectionFactory.getConnection();
+    try (Connection con = dataSource.getConnection();
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(
             "select stuff_id, name, state, seller, category, price from tam_stuff");) {
@@ -53,7 +52,7 @@ public class StuffDaoImpl implements StuffDao {
 
   @Override
   public Stuff findByNumber(int number) throws Exception {
-    try (Connection con = connectionFactory.getConnection();
+    try (Connection con = dataSource.getConnection();
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(
             "select stuff_id, name, state, seller, category, price from tam_stuff where stuff_id="
@@ -75,8 +74,7 @@ public class StuffDaoImpl implements StuffDao {
 
   @Override
   public int update(Stuff stuff) throws Exception {
-    try (Connection con = connectionFactory.getConnection();
-        Statement stmt = con.createStatement();) {
+    try (Connection con = dataSource.getConnection(); Statement stmt = con.createStatement();) {
       String query = String.format(
           "update tam_stuff set name='%s', state='%s', seller='%s', category='%s', price=%d where stuff_id=%d",
           stuff.getName(), stuff.getState(), stuff.getSeller(), stuff.getCategory(),
@@ -87,8 +85,7 @@ public class StuffDaoImpl implements StuffDao {
 
   @Override
   public int delete(int number) throws Exception {
-    try (Connection con = connectionFactory.getConnection();
-        Statement stmt = con.createStatement();) {
+    try (Connection con = dataSource.getConnection(); Statement stmt = con.createStatement();) {
       return stmt.executeUpdate("delete from tam_stuff where stuff_id=" + number);
     }
   }

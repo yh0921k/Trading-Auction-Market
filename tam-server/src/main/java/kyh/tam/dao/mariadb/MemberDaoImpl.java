@@ -7,20 +7,19 @@ import java.util.ArrayList;
 import java.util.List;
 import kyh.tam.dao.MemberDao;
 import kyh.tam.domain.Member;
-import kyh.tam.util.ConnectionFactory;
+import kyh.tam.util.DataSource;
 
 public class MemberDaoImpl implements MemberDao {
 
-  ConnectionFactory connectionFactory;
+  DataSource dataSource;
 
-  public MemberDaoImpl(ConnectionFactory connectionFactory) {
-    this.connectionFactory = connectionFactory;
+  public MemberDaoImpl(DataSource dataSource) {
+    this.dataSource = dataSource;
   }
 
   @Override
   public int insert(Member member) throws Exception {
-    try (Connection con = connectionFactory.getConnection();
-        Statement stmt = con.createStatement();) {
+    try (Connection con = dataSource.getConnection(); Statement stmt = con.createStatement();) {
       String query = String.format(
           "insert into tam_member(name, email, pwd, addr, tel, photo) values('%s', '%s', '%s', '%s', '%s', '%s')",
           member.getName(), member.getEmail(), member.getPassword(), member.getAddress(),
@@ -31,7 +30,7 @@ public class MemberDaoImpl implements MemberDao {
 
   @Override
   public List<Member> findAll() throws Exception {
-    try (Connection con = connectionFactory.getConnection();
+    try (Connection con = dataSource.getConnection();
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(
             "select member_id, name, email, pwd, addr, tel, photo from tam_member");) {
@@ -54,7 +53,7 @@ public class MemberDaoImpl implements MemberDao {
 
   @Override
   public Member findByNumber(int number) throws Exception {
-    try (Connection con = connectionFactory.getConnection();
+    try (Connection con = dataSource.getConnection();
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(
             "select member_id, name, email, pwd, addr, tel, photo, cdt from tam_member where member_id="
@@ -78,8 +77,7 @@ public class MemberDaoImpl implements MemberDao {
 
   @Override
   public int update(Member member) throws Exception {
-    try (Connection con = connectionFactory.getConnection();
-        Statement stmt = con.createStatement();) {
+    try (Connection con = dataSource.getConnection(); Statement stmt = con.createStatement();) {
       String query = String.format(
           "update tam_member set name='%s', email='%s', pwd='%s', addr='%s', tel='%s', photo='%s' where member_id=%d",
           member.getName(), member.getEmail(), member.getPassword(), member.getAddress(),
@@ -90,16 +88,14 @@ public class MemberDaoImpl implements MemberDao {
 
   @Override
   public int delete(int number) throws Exception {
-    try (Connection con = connectionFactory.getConnection();
-        Statement stmt = con.createStatement();) {
+    try (Connection con = dataSource.getConnection(); Statement stmt = con.createStatement();) {
       return stmt.executeUpdate("delete from tam_member where member_id=" + number);
     }
   }
 
   @Override
   public List<Member> findByKeyword(String keyword) throws Exception {
-    try (Connection con = connectionFactory.getConnection();
-        Statement stmt = con.createStatement();) {
+    try (Connection con = dataSource.getConnection(); Statement stmt = con.createStatement();) {
       String query = String.format(
           "select member_id, name, email, addr, pwd, tel, photo " + "from tam_member "
               + "where name like '%%%s%%' or email like '%%%s%%' or tel like '%%%s%%'",

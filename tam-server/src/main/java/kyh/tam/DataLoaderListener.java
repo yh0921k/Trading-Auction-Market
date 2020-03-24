@@ -9,7 +9,7 @@ import kyh.tam.dao.mariadb.PhotoBoardDaoImpl;
 import kyh.tam.dao.mariadb.PhotoFileDaoImpl;
 import kyh.tam.dao.mariadb.StuffDaoImpl;
 import kyh.tam.sql.PlatformTransactionManager;
-import kyh.tam.util.ConnectionFactory;
+import kyh.tam.util.DataSource;
 
 public class DataLoaderListener implements ApplicationContextListener {
 
@@ -24,35 +24,29 @@ public class DataLoaderListener implements ApplicationContextListener {
       String username = "kyh";
       String password = "1111";
 
-      ConnectionFactory connectionFactory = new ConnectionFactory(jdbcUrl, username, password);
-      context.put("connectionFactory", connectionFactory);
+      DataSource dataSource = new DataSource(jdbcUrl, username, password);
+      context.put("dataSource", dataSource);
 
-      PlatformTransactionManager txManager = new PlatformTransactionManager(connectionFactory);
+      PlatformTransactionManager txManager = new PlatformTransactionManager(dataSource);
       context.put("txManager", txManager);
 
-      context.put("boardDao", new BoardDaoImpl(connectionFactory));
-      context.put("stuffDao", new StuffDaoImpl(connectionFactory));
-      context.put("memberDao", new MemberDaoImpl(connectionFactory));
-      context.put("photoBoardDao", new PhotoBoardDaoImpl(connectionFactory));
-      context.put("photoFileDao", new PhotoFileDaoImpl(connectionFactory));
+      context.put("boardDao", new BoardDaoImpl(dataSource));
+      context.put("stuffDao", new StuffDaoImpl(dataSource));
+      context.put("memberDao", new MemberDaoImpl(dataSource));
+      context.put("photoBoardDao", new PhotoBoardDaoImpl(dataSource));
+      context.put("photoFileDao", new PhotoFileDaoImpl(dataSource));
 
     } catch (Exception e) {
       System.out.printf("[contextInitialized()] : %s\n", e.getMessage());
       e.printStackTrace();
     }
-
     System.out.println("--------------------------------------------------");
   }
 
   @Override
   public void contextDestroyed(Map<String, Object> context) throws Exception {
-    try {
-      if (con != null)
-        con.close();
-    } catch (Exception e) {
-      System.out.printf("[contextDestroyed()] : %s\n", e.getMessage());
-      e.printStackTrace();
-    }
+    DataSource dataSource = (DataSource) context.get("dataSource");
+    dataSource.clean();
     System.out.println("--------------------------------------------------");
   }
 }

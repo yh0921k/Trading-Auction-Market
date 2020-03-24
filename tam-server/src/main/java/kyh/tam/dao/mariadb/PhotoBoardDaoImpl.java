@@ -8,20 +8,19 @@ import java.util.List;
 import kyh.tam.dao.PhotoBoardDao;
 import kyh.tam.domain.PhotoBoard;
 import kyh.tam.domain.Stuff;
-import kyh.tam.util.ConnectionFactory;
+import kyh.tam.util.DataSource;
 
 public class PhotoBoardDaoImpl implements PhotoBoardDao {
 
-  ConnectionFactory connectionFactory;
+  DataSource dataSource;
 
-  public PhotoBoardDaoImpl(ConnectionFactory connectionFactory) {
-    this.connectionFactory = connectionFactory;
+  public PhotoBoardDaoImpl(DataSource dataSource) {
+    this.dataSource = dataSource;
   }
 
   @Override
   public int insert(PhotoBoard photoBoard) throws Exception {
-    try (Connection con = connectionFactory.getConnection();
-        Statement stmt = con.createStatement();) {
+    try (Connection con = dataSource.getConnection(); Statement stmt = con.createStatement();) {
       String query = String.format("insert into tam_photo(titl, stuff_id) values('%s', %d)",
           photoBoard.getTitle(), photoBoard.getStuff().getNumber());
       int result = stmt.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
@@ -37,8 +36,7 @@ public class PhotoBoardDaoImpl implements PhotoBoardDao {
 
   @Override
   public List<PhotoBoard> findAllByStuffNumber(int stuffNumber) throws Exception {
-    try (Connection con = connectionFactory.getConnection();
-        Statement stmt = con.createStatement();) {
+    try (Connection con = dataSource.getConnection(); Statement stmt = con.createStatement();) {
       String query = String.format("select photo_id, titl, cdt, stuff_id, vw_cnt "
           + "from tam_photo where stuff_id=%d order by photo_id asc", stuffNumber);
       ResultSet rs = stmt.executeQuery(query);
@@ -59,8 +57,7 @@ public class PhotoBoardDaoImpl implements PhotoBoardDao {
 
   @Override
   public PhotoBoard findByNo(int number) throws Exception {
-    try (Connection con = connectionFactory.getConnection();
-        Statement stmt = con.createStatement();) {
+    try (Connection con = dataSource.getConnection(); Statement stmt = con.createStatement();) {
       String query = String.format(
           "select p.photo_id, p.titl, p.cdt, p.vw_cnt, s.stuff_id, s.name stuff_name "
               + "from tam_photo p inner join tam_stuff s on p.stuff_id=s.stuff_id where photo_id=%d",
@@ -87,8 +84,7 @@ public class PhotoBoardDaoImpl implements PhotoBoardDao {
 
   @Override
   public int update(PhotoBoard photoBoard) throws Exception {
-    try (Connection con = connectionFactory.getConnection();
-        Statement stmt = con.createStatement();) {
+    try (Connection con = dataSource.getConnection(); Statement stmt = con.createStatement();) {
       String query = String.format("update tam_photo set titl='%s' where photo_id=%d",
           photoBoard.getTitle(), photoBoard.getNumber());
       return stmt.executeUpdate(query);
@@ -97,8 +93,7 @@ public class PhotoBoardDaoImpl implements PhotoBoardDao {
 
   @Override
   public int delete(int number) throws Exception {
-    try (Connection con = connectionFactory.getConnection();
-        Statement stmt = con.createStatement();) {
+    try (Connection con = dataSource.getConnection(); Statement stmt = con.createStatement();) {
       String query = String.format("delete from tam_photo where photo_id=%d", number);
       return stmt.executeUpdate(query);
     }
