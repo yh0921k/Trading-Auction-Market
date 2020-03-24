@@ -5,43 +5,39 @@ import java.io.BufferedWriter;
 import kyh.tam.dao.PhotoBoardDao;
 import kyh.tam.dao.PhotoFileDao;
 import kyh.tam.sql.PlatformTransactionManager;
+import kyh.tam.sql.TransactionCallback;
+import kyh.tam.sql.TransactionTemplate;
 import kyh.tam.util.Prompt;
 
 public class PhotoBoardDeleteServlet implements Servlet {
 
   PhotoBoardDao photoBoardDao;
   PhotoFileDao photoFileDao;
-  PlatformTransactionManager txManager;
+  TransactionTemplate transactionTemplate;
 
   public PhotoBoardDeleteServlet(PhotoBoardDao photoBoardDao, PhotoFileDao photoFileDao,
       PlatformTransactionManager txManager) {
     this.photoBoardDao = photoBoardDao;
     this.photoFileDao = photoFileDao;
-    this.txManager = txManager;
+    this.transactionTemplate = new TransactionTemplate(txManager);
   }
 
   @Override
   public void service(BufferedReader in, BufferedWriter out) throws Exception {
     int number = Prompt.getInt(in, out, "사진 번호 : ");
 
-    txManager.beginTransaction();
-    try {
-      photoFileDao.deleteAll(number);
-      if (photoBoardDao.delete(number) == 0) {
-        out.write("Delete failed" + System.lineSeparator());
-        throw new Exception("[PhotoBoardDeleteServlet.java] : photoBoardDao.delete() failed");
+    transactionTemplate.execute(new TransactionCallback() {
+      @Override
+      public Object doInTransaction() throws Exception {
+        photoFileDao.deleteAll(number);
+        if (photoBoardDao.delete(number) == 0) {
+          out.write("Delete failed" + System.lineSeparator());
+          throw new Exception("[PhotoBoardDeleteServlet.java] : photoBoardDao.delete() failed");
+        }
+        out.write("Delete complete" + System.lineSeparator());
+        out.flush();
+        return null;
       }
-      txManager.commit();
-      out.write("Delete complete" + System.lineSeparator());
-
-    } catch (Exception e) {
-      txManager.rollback();
-      out.write("Delete failed" + System.lineSeparator());
-      System.out.println("[PhotoBoardDeleteServlet.java]" + e.getMessage());
-      e.printStackTrace();
-
-    } finally {
-      out.flush();
-    }
+    });
   }
 }

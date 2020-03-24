@@ -12,6 +12,8 @@ import kyh.tam.domain.PhotoBoard;
 import kyh.tam.domain.PhotoFile;
 import kyh.tam.domain.Stuff;
 import kyh.tam.sql.PlatformTransactionManager;
+import kyh.tam.sql.TransactionCallback;
+import kyh.tam.sql.TransactionTemplate;
 import kyh.tam.util.Prompt;
 
 public class PhotoBoardAddServlet implements Servlet {
@@ -19,14 +21,14 @@ public class PhotoBoardAddServlet implements Servlet {
   PhotoBoardDao photoBoardDao;
   StuffDao stuffDao;
   PhotoFileDao photoFileDao;
-  PlatformTransactionManager txManager;
+  TransactionTemplate transactionTemplate;
 
   public PhotoBoardAddServlet(PhotoBoardDao photoBoardDao, StuffDao stuffDao,
       PhotoFileDao photoFileDao, PlatformTransactionManager txManager) {
     this.photoBoardDao = photoBoardDao;
     this.stuffDao = stuffDao;
     this.photoFileDao = photoFileDao;
-    this.txManager = txManager;
+    this.transactionTemplate = new TransactionTemplate(txManager);
   }
 
   @Override
@@ -43,28 +45,22 @@ public class PhotoBoardAddServlet implements Servlet {
     }
 
     photoBoard.setStuff(stuff);
-    txManager.beginTransaction();
-    try {
-      if (photoBoardDao.insert(photoBoard) == 0) {
-        throw new Exception("[PhotoBoardAddServlet.java] : photoBoardDao.insert() failed");
+    transactionTemplate.execute(new TransactionCallback() {
+      @Override
+      public Object doInTransaction() throws Exception {
+        if (photoBoardDao.insert(photoBoard) == 0) {
+          throw new Exception("[PhotoBoardAddServlet.java] : photoBoardDao.insert() failed");
+        }
+        List<PhotoFile> photoFiles = inputPhotoFiles(in, out);
+        for (PhotoFile photoFile : photoFiles) {
+          photoFile.setBoardNumber(photoBoard.getNumber());
+          photoFileDao.insert(photoFile);
+        }
+        out.write("Save complete" + System.lineSeparator());
+        out.flush();
+        return null;
       }
-      List<PhotoFile> photoFiles = inputPhotoFiles(in, out);
-      for (PhotoFile photoFile : photoFiles) {
-        photoFile.setBoardNumber(photoBoard.getNumber());
-        photoFileDao.insert(photoFile);
-      }
-      txManager.commit();
-      out.write("Save complete" + System.lineSeparator());
-
-    } catch (Exception e) {
-      txManager.rollback();
-      out.write("Save failed" + System.lineSeparator());
-      System.out.println("[PhotoBoardAddServlet.java]" + e.getMessage());
-      e.printStackTrace();
-
-    } finally {
-      out.flush();
-    }
+    });
   }
 
   private List<PhotoFile> inputPhotoFiles(BufferedReader in, BufferedWriter out)

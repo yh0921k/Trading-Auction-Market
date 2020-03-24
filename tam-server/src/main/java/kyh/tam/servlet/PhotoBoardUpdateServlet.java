@@ -10,19 +10,21 @@ import kyh.tam.dao.PhotoFileDao;
 import kyh.tam.domain.PhotoBoard;
 import kyh.tam.domain.PhotoFile;
 import kyh.tam.sql.PlatformTransactionManager;
+import kyh.tam.sql.TransactionCallback;
+import kyh.tam.sql.TransactionTemplate;
 import kyh.tam.util.Prompt;
 
 public class PhotoBoardUpdateServlet implements Servlet {
 
   PhotoBoardDao photoBoardDao;
   PhotoFileDao photoFileDao;
-  PlatformTransactionManager txManager;
+  TransactionTemplate transactionTemplate;
 
   public PhotoBoardUpdateServlet(PhotoBoardDao photoBoardDao, PhotoFileDao photoFileDao,
       PlatformTransactionManager txManager) {
     this.photoBoardDao = photoBoardDao;
     this.photoFileDao = photoFileDao;
-    this.txManager = txManager;
+    this.transactionTemplate = new TransactionTemplate(txManager);
   }
 
   @Override
@@ -40,36 +42,30 @@ public class PhotoBoardUpdateServlet implements Servlet {
     newPhotoBoard.setTitle(Prompt.getString(in, out,
         String.format("사진 게시글 제목(%s) : ", oldPhotoBoard.getTitle()), oldPhotoBoard.getTitle()));
 
-    txManager.beginTransaction();
-    try {
-      if (photoBoardDao.update(newPhotoBoard) == 0) {
-        throw new Exception("[PhotoBoardUpdateServlet.java] : photoBoardDao.update() failed");
-      }
-      printPhotoFiles(out, number);
-
-      out.write("사진은 일부만 변경할 수 없으며, 전체를 새로 등록해야 합니다." + System.lineSeparator());
-      String response = Prompt.getString(in, out, "사진을 변경하시겠습니까?(Y/n)");
-      if (response.equalsIgnoreCase("y")) {
-        photoFileDao.deleteAll(number);
-
-        List<PhotoFile> photoFiles = inputPhotoFiles(in, out);
-        for (PhotoFile photoFile : photoFiles) {
-          photoFile.setBoardNumber(number);
-          photoFileDao.insert(photoFile);
+    transactionTemplate.execute(new TransactionCallback() {
+      @Override
+      public Object doInTransaction() throws Exception {
+        if (photoBoardDao.update(newPhotoBoard) == 0) {
+          throw new Exception("[PhotoBoardUpdateServlet.java] : photoBoardDao.update() failed");
         }
+        printPhotoFiles(out, number);
+
+        out.write("사진은 일부만 변경할 수 없으며, 전체를 새로 등록해야 합니다." + System.lineSeparator());
+        String response = Prompt.getString(in, out, "사진을 변경하시겠습니까?(Y/n)");
+        if (response.equalsIgnoreCase("y")) {
+          photoFileDao.deleteAll(number);
+
+          List<PhotoFile> photoFiles = inputPhotoFiles(in, out);
+          for (PhotoFile photoFile : photoFiles) {
+            photoFile.setBoardNumber(number);
+            photoFileDao.insert(photoFile);
+          }
+        }
+        out.write("Update complete" + System.lineSeparator());
+        out.flush();
+        return null;
       }
-      txManager.commit();
-      out.write("Update complete" + System.lineSeparator());
-
-    } catch (Exception e) {
-      txManager.rollback();
-      out.write("Update failed" + System.lineSeparator());
-      System.out.println("[PhotoBoardUpdateServlet.java]" + e.getMessage());
-      e.printStackTrace();
-
-    } finally {
-      out.flush();
-    }
+    });
   }
 
   private void printPhotoFiles(BufferedWriter out, int boardNumber) throws Exception {
