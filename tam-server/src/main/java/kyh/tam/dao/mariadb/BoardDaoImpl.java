@@ -1,8 +1,8 @@
 package kyh.tam.dao.mariadb;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import kyh.tam.dao.BoardDao;
@@ -19,17 +19,19 @@ public class BoardDaoImpl implements BoardDao {
 
   @Override
   public int insert(Board board) throws Exception {
-    try (Connection con = dataSource.getConnection(); Statement stmt = con.createStatement();) {
-      String query = String.format("insert into tam_board(conts) values('%s')", board.getTitle());
-      return stmt.executeUpdate(query);
+    try (Connection con = dataSource.getConnection();
+        PreparedStatement stmt = con.prepareStatement("insert into tam_board(conts) values(?)");) {
+      stmt.setString(1, board.getTitle());
+      return stmt.executeUpdate();
     }
   }
 
   @Override
   public List<Board> findAll() throws Exception {
     try (Connection con = dataSource.getConnection();
-        Statement stmt = con.createStatement();
-        ResultSet rs = stmt.executeQuery("select board_id, conts, cdt, vw_cnt from tam_board");) {
+        PreparedStatement stmt =
+            con.prepareStatement("select board_id, conts, cdt, vw_cnt from tam_board");
+        ResultSet rs = stmt.executeQuery();) {
 
       ArrayList<Board> list = new ArrayList<>();
       while (rs.next()) {
@@ -47,17 +49,18 @@ public class BoardDaoImpl implements BoardDao {
   @Override
   public Board findByNumber(int number) throws Exception {
     try (Connection con = dataSource.getConnection();
-        Statement stmt = con.createStatement();
-        ResultSet rs = stmt.executeQuery(
-            "select board_id, conts, cdt, vw_cnt from tam_board where board_id=" + number);) {
-
-      if (rs.next()) {
-        Board board = new Board();
-        board.setNumber(rs.getInt("board_id"));
-        board.setTitle(rs.getString("conts"));
-        board.setWriteDate(rs.getDate("cdt"));
-        board.setViewCount(rs.getInt("vw_cnt"));
-        return board;
+        PreparedStatement stmt = con.prepareStatement(
+            "select board_id, conts, cdt, vw_cnt from tam_board where board_id=?");) {
+      stmt.setInt(1, number);
+      try (ResultSet rs = stmt.executeQuery();) {
+        if (rs.next()) {
+          Board board = new Board();
+          board.setNumber(rs.getInt("board_id"));
+          board.setTitle(rs.getString("conts"));
+          board.setWriteDate(rs.getDate("cdt"));
+          board.setViewCount(rs.getInt("vw_cnt"));
+          return board;
+        }
       }
       return null;
     }
@@ -65,17 +68,21 @@ public class BoardDaoImpl implements BoardDao {
 
   @Override
   public int update(Board board) throws Exception {
-    try (Connection con = dataSource.getConnection(); Statement stmt = con.createStatement();) {
-      String query = String.format("update tam_board set conts='%s' where board_id=%d",
-          board.getTitle(), board.getNumber());
-      return stmt.executeUpdate(query);
+    try (Connection con = dataSource.getConnection();
+        PreparedStatement stmt =
+            con.prepareStatement("update tam_board set conts=? where board_id=?");) {
+      stmt.setString(1, board.getTitle());
+      stmt.setInt(2, board.getNumber());
+      return stmt.executeUpdate();
     }
   }
 
   @Override
   public int delete(int number) throws Exception {
-    try (Connection con = dataSource.getConnection(); Statement stmt = con.createStatement();) {
-      return stmt.executeUpdate("delete from tam_board where board_id=" + number);
+    try (Connection con = dataSource.getConnection();
+        PreparedStatement stmt = con.prepareStatement("delete from tam_board where board_id=?");) {
+      stmt.setInt(1, number);
+      return stmt.executeUpdate();
     }
   }
 }

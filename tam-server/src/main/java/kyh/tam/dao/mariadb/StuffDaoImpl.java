@@ -1,8 +1,8 @@
 package kyh.tam.dao.mariadb;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import kyh.tam.dao.StuffDao;
@@ -19,21 +19,24 @@ public class StuffDaoImpl implements StuffDao {
 
   @Override
   public int insert(Stuff stuff) throws Exception {
-    try (Connection con = dataSource.getConnection(); Statement stmt = con.createStatement();) {
-      String query = String.format(
-          "insert into tam_stuff(name, state, seller, category, price) values('%s', '%s', '%s', '%s', %d)",
-          stuff.getName(), stuff.getState(), stuff.getSeller(), stuff.getCategory(),
-          stuff.getPrice());
-      return stmt.executeUpdate(query);
+    try (Connection con = dataSource.getConnection();
+        PreparedStatement stmt = con.prepareStatement(
+            "insert into tam_stuff(name, state, seller, category, price) values(?, ?, ?, ?, ?)");) {
+      stmt.setString(1, stuff.getName());
+      stmt.setString(2, stuff.getState());
+      stmt.setString(3, stuff.getSeller());
+      stmt.setString(4, stuff.getCategory());
+      stmt.setInt(5, stuff.getPrice());
+      return stmt.executeUpdate();
     }
   }
 
   @Override
   public List<Stuff> findAll() throws Exception {
     try (Connection con = dataSource.getConnection();
-        Statement stmt = con.createStatement();
-        ResultSet rs = stmt.executeQuery(
-            "select stuff_id, name, state, seller, category, price from tam_stuff");) {
+        PreparedStatement stmt = con.prepareStatement(
+            "select stuff_id, name, state, seller, category, price from tam_stuff");
+        ResultSet rs = stmt.executeQuery();) {
 
       ArrayList<Stuff> list = new ArrayList<>();
       while (rs.next()) {
@@ -53,20 +56,20 @@ public class StuffDaoImpl implements StuffDao {
   @Override
   public Stuff findByNumber(int number) throws Exception {
     try (Connection con = dataSource.getConnection();
-        Statement stmt = con.createStatement();
-        ResultSet rs = stmt.executeQuery(
-            "select stuff_id, name, state, seller, category, price from tam_stuff where stuff_id="
-                + number);) {
-
-      if (rs.next()) {
-        Stuff stuff = new Stuff();
-        stuff.setNumber(rs.getInt("stuff_id"));
-        stuff.setName(rs.getString("name"));
-        stuff.setState(rs.getString("state"));
-        stuff.setSeller(rs.getString("seller"));
-        stuff.setCategory(rs.getString("category"));
-        stuff.setPrice(rs.getInt("price"));
-        return stuff;
+        PreparedStatement stmt = con.prepareStatement(
+            "select stuff_id, name, state, seller, category, price from tam_stuff where stuff_id=?");) {
+      stmt.setInt(1, number);
+      try (ResultSet rs = stmt.executeQuery();) {
+        if (rs.next()) {
+          Stuff stuff = new Stuff();
+          stuff.setNumber(rs.getInt("stuff_id"));
+          stuff.setName(rs.getString("name"));
+          stuff.setState(rs.getString("state"));
+          stuff.setSeller(rs.getString("seller"));
+          stuff.setCategory(rs.getString("category"));
+          stuff.setPrice(rs.getInt("price"));
+          return stuff;
+        }
       }
       return null;
     }
@@ -74,19 +77,25 @@ public class StuffDaoImpl implements StuffDao {
 
   @Override
   public int update(Stuff stuff) throws Exception {
-    try (Connection con = dataSource.getConnection(); Statement stmt = con.createStatement();) {
-      String query = String.format(
-          "update tam_stuff set name='%s', state='%s', seller='%s', category='%s', price=%d where stuff_id=%d",
-          stuff.getName(), stuff.getState(), stuff.getSeller(), stuff.getCategory(),
-          stuff.getPrice(), stuff.getNumber());
-      return stmt.executeUpdate(query);
+    try (Connection con = dataSource.getConnection();
+        PreparedStatement stmt = con.prepareStatement(
+            "update tam_stuff set name=?, state=?, seller=?, category=?, price=? where stuff_id=?");) {
+      stmt.setString(1, stuff.getName());
+      stmt.setString(2, stuff.getState());
+      stmt.setString(3, stuff.getSeller());
+      stmt.setString(4, stuff.getCategory());
+      stmt.setInt(5, stuff.getPrice());
+      stmt.setInt(6, stuff.getNumber());
+      return stmt.executeUpdate();
     }
   }
 
   @Override
   public int delete(int number) throws Exception {
-    try (Connection con = dataSource.getConnection(); Statement stmt = con.createStatement();) {
-      return stmt.executeUpdate("delete from tam_stuff where stuff_id=" + number);
+    try (Connection con = dataSource.getConnection();
+        PreparedStatement stmt = con.prepareStatement("delete from tam_stuff where stuff_id=?");) {
+      stmt.setInt(1, number);
+      return stmt.executeUpdate();
     }
   }
 }
