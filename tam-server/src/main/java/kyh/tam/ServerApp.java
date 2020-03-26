@@ -32,6 +32,7 @@ import kyh.tam.servlet.MemberAddServlet;
 import kyh.tam.servlet.MemberDeleteServlet;
 import kyh.tam.servlet.MemberDetailServlet;
 import kyh.tam.servlet.MemberListServlet;
+import kyh.tam.servlet.MemberLoginServlet;
 import kyh.tam.servlet.MemberSearchServlet;
 import kyh.tam.servlet.MemberUpdateServlet;
 import kyh.tam.servlet.PhotoBoardAddServlet;
@@ -107,6 +108,7 @@ public class ServerApp {
     servletMap.put("/member/update", new MemberUpdateServlet(memberDao));
     servletMap.put("/member/delete", new MemberDeleteServlet(memberDao));
     servletMap.put("/member/search", new MemberSearchServlet(memberDao));
+    servletMap.put("/auth/login", new MemberLoginServlet(memberDao));
 
     servletMap.put("/photoboard/list", new PhotoBoardListServlet(photoBoardDao, stuffDao));
     servletMap.put("/photoboard/detail", new PhotoBoardDetailServlet(photoBoardDao, photoFileDao));
@@ -175,7 +177,6 @@ public class ServerApp {
 
         } catch (Exception e) {
           out.write("Error occurs during request processing" + System.lineSeparator());
-          out.write(e.getMessage() + System.lineSeparator());
           System.out.println("[servlet.service()] : " + e.getMessage());
           e.printStackTrace();
         }

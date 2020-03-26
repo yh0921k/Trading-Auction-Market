@@ -17,5 +17,9 @@ public interface MemberDao {
   public int update(Member member) throws Exception;
 
   public int delete(int number) throws Exception;
+
+  default Member findByEmailAndPassword(String email, String password) throws Exception {
+    return null;
+  }
 }
 

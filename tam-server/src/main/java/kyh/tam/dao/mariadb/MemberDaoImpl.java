@@ -21,7 +21,7 @@ public class MemberDaoImpl implements MemberDao {
   public int insert(Member member) throws Exception {
     try (Connection con = dataSource.getConnection(); Statement stmt = con.createStatement();) {
       String query = String.format(
-          "insert into tam_member(name, email, pwd, addr, tel, photo) values('%s', '%s', '%s', '%s', '%s', '%s')",
+          "insert into tam_member(name, email, pwd, addr, tel, photo) values('%s', '%s', password('%s'), '%s', '%s', '%s')",
           member.getName(), member.getEmail(), member.getPassword(), member.getAddress(),
           member.getTel(), member.getPhoto());
       return stmt.executeUpdate(query);
@@ -79,7 +79,7 @@ public class MemberDaoImpl implements MemberDao {
   public int update(Member member) throws Exception {
     try (Connection con = dataSource.getConnection(); Statement stmt = con.createStatement();) {
       String query = String.format(
-          "update tam_member set name='%s', email='%s', pwd='%s', addr='%s', tel='%s', photo='%s' where member_id=%d",
+          "update tam_member set name='%s', email='%s', pwd=password('%s'), addr='%s', tel='%s', photo='%s' where member_id=%d",
           member.getName(), member.getEmail(), member.getPassword(), member.getAddress(),
           member.getTel(), member.getPhoto(), member.getNumber());
       return stmt.executeUpdate(query);
@@ -115,6 +115,27 @@ public class MemberDaoImpl implements MemberDao {
       }
       rs.close();
       return list;
+    }
+  }
+
+  @Override
+  public Member findByEmailAndPassword(String email, String password) throws Exception {
+    try (Connection con = dataSource.getConnection(); Statement stmt = con.createStatement();) {
+
+      String query = String.format("select member_id, name, email, pwd, tel, photo from tam_member"
+          + " where email like '%s' and pwd like password('%s')", email, password);
+      ResultSet rs = stmt.executeQuery(query);
+      if (rs.next()) {
+        Member member = new Member();
+        member.setNumber(rs.getInt("member_id"));
+        member.setName(rs.getString("name"));
+        member.setEmail(rs.getString("email"));
+        member.setPassword(rs.getString("pwd"));
+        member.setTel(rs.getString("tel"));
+        member.setPhoto(rs.getString("photo"));
+        return member;
+      }
+      return null;
     }
   }
 }
