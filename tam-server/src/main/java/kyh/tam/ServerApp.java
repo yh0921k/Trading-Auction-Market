@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import org.apache.ibatis.session.SqlSessionFactory;
 import kyh.tam.context.ApplicationContextListener;
 import kyh.tam.dao.BoardDao;
 import kyh.tam.dao.MemberDao;
@@ -47,7 +48,7 @@ import kyh.tam.servlet.StuffDetailServlet;
 import kyh.tam.servlet.StuffListServlet;
 import kyh.tam.servlet.StuffUpdateServlet;
 import kyh.tam.sql.PlatformTransactionManager;
-import kyh.tam.util.DataSource;
+import kyh.tam.sql.SqlSessionFactoryProxy;
 
 public class ServerApp {
 
@@ -81,7 +82,7 @@ public class ServerApp {
   public void service() throws Exception {
     notifyApplicationInitialized();
 
-    DataSource dataSource = (DataSource) context.get("dataSource");
+    SqlSessionFactory sqlSessionFactory = (SqlSessionFactory) context.get("sqlSessionFactory");
     PlatformTransactionManager txManager = (PlatformTransactionManager) context.get("txManager");
 
     BoardDao boardDao = (BoardDaoImpl) context.get("boardDao");
@@ -126,7 +127,7 @@ public class ServerApp {
         System.out.println("Client connection complete");
         executorService.submit(() -> {
           processRequest(connectedSocket);
-          dataSource.removeConnection();
+          ((SqlSessionFactoryProxy) sqlSessionFactory).closeSession();
           System.out.println("--------------------------------------------------");
         });
 

@@ -18,7 +18,6 @@ public class PhotoFileDaoImpl implements PhotoFileDao {
   public int insert(PhotoFile photoFile) throws Exception {
     try (SqlSession sqlSession = sqlSessionFactory.openSession();) {
       int count = sqlSession.insert("PhotoFileMapper.insertPhotoFile", photoFile);
-      sqlSession.commit();
       return count;
     }
   }
@@ -34,7 +33,6 @@ public class PhotoFileDaoImpl implements PhotoFileDao {
   public int deleteAll(int boardNumber) throws Exception {
     try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
       int count = sqlSession.delete("PhotoFileMapper.deletePhotoFile", boardNumber);
-      sqlSession.commit();
       return count;
     }
   }

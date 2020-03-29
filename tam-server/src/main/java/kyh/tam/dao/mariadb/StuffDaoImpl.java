@@ -18,7 +18,6 @@ public class StuffDaoImpl implements StuffDao {
   public int insert(Stuff stuff) throws Exception {
     try (SqlSession sqlSession = sqlSessionFactory.openSession();) {
       int count = sqlSession.insert("StuffMapper.insertStuff", stuff);
-      sqlSession.commit();
       return count;
     }
   }
@@ -41,7 +40,6 @@ public class StuffDaoImpl implements StuffDao {
   public int update(Stuff stuff) throws Exception {
     try (SqlSession sqlSession = sqlSessionFactory.openSession();) {
       int count = sqlSession.update("StuffMapper.updateStuff", stuff);
-      sqlSession.commit();
       return count;
     }
   }
@@ -50,7 +48,6 @@ public class StuffDaoImpl implements StuffDao {
   public int delete(int number) throws Exception {
     try (SqlSession sqlSession = sqlSessionFactory.openSession();) {
       int count = sqlSession.delete("StuffMapper.deleteStuff", number);
-      sqlSession.commit();
       return count;
     }
   }
