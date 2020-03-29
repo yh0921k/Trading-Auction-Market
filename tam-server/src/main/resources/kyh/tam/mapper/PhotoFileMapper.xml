@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="PhotoFileMapper">
+
+ <resultMap type="PhotoFile" id="PhotoFileMap">
+   <id     column="photo_file_id" property="number"/>    
+   <result column="file_path"    property="filepath"/>
+   <result column="photo_id"      property="boardNumber"/>
+ </resultMap> 
+
+  <select id="selectPhotoFile" resultMap="PhotoFileMap" parameterType="int">
+    select photo_file_id, photo_id, file_path 
+    from tam_photo_file 
+    where photo_id=#{boardNumber} 
+    order by photo_file_id asc
+  </select>
+
+  <select id="insertPhotoFile" parameterType="PhotoFile">
+    insert into tam_photo_file(photo_id, file_path) 
+    values(#{boardNumber}, #{filepath})
+  </select>
+
+  <delete id="deletePhotoFile" parameterType="int">
+    delete from tam_photo_file 
+    where photo_id=#{boardNumber}
+  </delete>
+</mapper>

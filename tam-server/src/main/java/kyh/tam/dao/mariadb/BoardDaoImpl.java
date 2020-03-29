@@ -1,88 +1,57 @@
 package kyh.tam.dao.mariadb;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.List;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 import kyh.tam.dao.BoardDao;
 import kyh.tam.domain.Board;
-import kyh.tam.util.DataSource;
 
 public class BoardDaoImpl implements BoardDao {
 
-  DataSource dataSource;
+  SqlSessionFactory sqlSessionFactory;
 
-  public BoardDaoImpl(DataSource dataSource) {
-    this.dataSource = dataSource;
+  public BoardDaoImpl(SqlSessionFactory sqlSessionFactory) {
+    this.sqlSessionFactory = sqlSessionFactory;
   }
 
   @Override
   public int insert(Board board) throws Exception {
-    try (Connection con = dataSource.getConnection();
-        PreparedStatement stmt = con.prepareStatement("insert into tam_board(conts) values(?)");) {
-      stmt.setString(1, board.getTitle());
-      return stmt.executeUpdate();
+    try (SqlSession sqlSession = sqlSessionFactory.openSession();) {
+      int count = sqlSession.insert("BoardMapper.insertBoard", board);
+      sqlSession.commit();
+      return count;
     }
   }
 
   @Override
   public List<Board> findAll() throws Exception {
-    try (Connection con = dataSource.getConnection();
-        PreparedStatement stmt =
-            con.prepareStatement("select board_id, conts, cdt, vw_cnt from tam_board");
-        ResultSet rs = stmt.executeQuery();) {
-
-      ArrayList<Board> list = new ArrayList<>();
-      while (rs.next()) {
-        Board board = new Board();
-        board.setNumber(rs.getInt("board_id"));
-        board.setTitle(rs.getString("conts"));
-        board.setWriteDate(rs.getDate("cdt"));
-        board.setViewCount(rs.getInt("vw_cnt"));
-        list.add(board);
-      }
-      return list;
+    try (SqlSession sqlSession = sqlSessionFactory.openSession();) {
+      return sqlSession.selectList("BoardMapper.selectBoard");
     }
   }
 
   @Override
   public Board findByNumber(int number) throws Exception {
-    try (Connection con = dataSource.getConnection();
-        PreparedStatement stmt = con.prepareStatement(
-            "select board_id, conts, cdt, vw_cnt from tam_board where board_id=?");) {
-      stmt.setInt(1, number);
-      try (ResultSet rs = stmt.executeQuery();) {
-        if (rs.next()) {
-          Board board = new Board();
-          board.setNumber(rs.getInt("board_id"));
-          board.setTitle(rs.getString("conts"));
-          board.setWriteDate(rs.getDate("cdt"));
-          board.setViewCount(rs.getInt("vw_cnt"));
-          return board;
-        }
-      }
-      return null;
+    try (SqlSession sqlSession = sqlSessionFactory.openSession();) {
+      return sqlSession.selectOne("BoardMapper.selectDetail", number);
     }
   }
 
   @Override
   public int update(Board board) throws Exception {
-    try (Connection con = dataSource.getConnection();
-        PreparedStatement stmt =
-            con.prepareStatement("update tam_board set conts=? where board_id=?");) {
-      stmt.setString(1, board.getTitle());
-      stmt.setInt(2, board.getNumber());
-      return stmt.executeUpdate();
+    try (SqlSession sqlSession = sqlSessionFactory.openSession();) {
+      int count = sqlSession.update("BoardMapper.updateBoard", board);
+      sqlSession.commit();
+      return count;
     }
   }
 
   @Override
   public int delete(int number) throws Exception {
-    try (Connection con = dataSource.getConnection();
-        PreparedStatement stmt = con.prepareStatement("delete from tam_board where board_id=?");) {
-      stmt.setInt(1, number);
-      return stmt.executeUpdate();
+    try (SqlSession sqlSession = sqlSessionFactory.openSession();) {
+      int count = sqlSession.delete("BoardMapper.deleteBoard", number);
+      sqlSession.commit();
+      return count;
     }
   }
 }

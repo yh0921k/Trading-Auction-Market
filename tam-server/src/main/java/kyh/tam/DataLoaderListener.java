@@ -1,7 +1,11 @@
 package kyh.tam;
 
+import java.io.InputStream;
 import java.sql.Connection;
 import java.util.Map;
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import kyh.tam.context.ApplicationContextListener;
 import kyh.tam.dao.mariadb.BoardDaoImpl;
 import kyh.tam.dao.mariadb.MemberDaoImpl;
@@ -27,14 +31,17 @@ public class DataLoaderListener implements ApplicationContextListener {
       DataSource dataSource = new DataSource(jdbcUrl, username, password);
       context.put("dataSource", dataSource);
 
+      InputStream inputStream = Resources.getResourceAsStream("kyh/tam/conf/mybatis-config.xml");
+      SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+
       PlatformTransactionManager txManager = new PlatformTransactionManager(dataSource);
       context.put("txManager", txManager);
 
-      context.put("boardDao", new BoardDaoImpl(dataSource));
-      context.put("stuffDao", new StuffDaoImpl(dataSource));
-      context.put("memberDao", new MemberDaoImpl(dataSource));
-      context.put("photoBoardDao", new PhotoBoardDaoImpl(dataSource));
-      context.put("photoFileDao", new PhotoFileDaoImpl(dataSource));
+      context.put("boardDao", new BoardDaoImpl(sqlSessionFactory));
+      context.put("stuffDao", new StuffDaoImpl(sqlSessionFactory));
+      context.put("memberDao", new MemberDaoImpl(sqlSessionFactory));
+      context.put("photoBoardDao", new PhotoBoardDaoImpl(sqlSessionFactory));
+      context.put("photoFileDao", new PhotoFileDaoImpl(sqlSessionFactory));
 
     } catch (Exception e) {
       System.out.printf("[contextInitialized()] : %s\n", e.getMessage());

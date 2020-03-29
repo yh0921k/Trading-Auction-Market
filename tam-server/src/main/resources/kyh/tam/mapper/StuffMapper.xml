@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="StuffMapper">
+
+  <resultMap type="Stuff" id="StuffMap">
+    <id column="stuff_id" property="number"/>
+    <result column="name" property="name"/>
+    <result column="state" property="state"/>
+    <result column="seller" property="seller"/>
+    <result column="category" property="category"/>
+    <result column="price" property="price"/>
+  </resultMap>
+  
+  <select id="selectStuff" resultMap="StuffMap">
+    select stuff_id, name, state, seller, category, price  
+    from tam_stuff 
+    order by stuff_id desc
+  </select>
+
+  <insert id="insertStuff" parameterType="Stuff">
+    insert into tam_stuff(name, state, seller, category, price) 
+    values(#{name}, #{state}, #{seller}, #{category}, #{price})
+  </insert>
+
+  <select id="selectDetail" resultMap="StuffMap" parameterType="int">
+    select stuff_id, name, state, seller, category, price 
+    from tam_stuff 
+    where stuff_id=#{number}
+  </select>
+
+  <update id="updateStuff" parameterType="Stuff">
+    update tam_stuff 
+    set name=#{name}, state=#{state}, seller=#{seller}, category=#{category}, price=#{price} 
+    where stuff_id=#{number}
+  </update>
+
+  <delete id="deleteStuff" parameterType="int">
+    delete from tam_stuff 
+    where stuff_id=#{number}
+  </delete>
+</mapper>

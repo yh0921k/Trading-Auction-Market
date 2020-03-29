@@ -2,6 +2,7 @@ package kyh.tam.domain;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.List;
 
 public class PhotoBoard implements Serializable {
   private static final long serialVersionUID = 1L;
@@ -10,12 +11,22 @@ public class PhotoBoard implements Serializable {
   String title;
   int viewCount;
   Date registeredDate;
+
   Stuff stuff;
+  List<PhotoFile> files;
 
   @Override
   public String toString() {
-    return "PhotoBoard [number=" + number + ", title=" + title + ", registeredDate="
-        + registeredDate + ", viewCount=" + viewCount + ", stuff=" + stuff + "]";
+    return "PhotoBoard [number=" + number + ", title=" + title + ", viewCount=" + viewCount
+        + ", registeredDate=" + registeredDate + ", stuff=" + stuff + ", files=" + files + "]";
+  }
+
+  public List<PhotoFile> getFiles() {
+    return files;
+  }
+
+  public void setFiles(List<PhotoFile> files) {
+    this.files = files;
   }
 
   @Override

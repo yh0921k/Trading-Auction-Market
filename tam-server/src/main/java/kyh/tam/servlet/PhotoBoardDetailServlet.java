@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.util.List;
 import kyh.tam.dao.PhotoBoardDao;
-import kyh.tam.dao.PhotoFileDao;
 import kyh.tam.domain.PhotoBoard;
 import kyh.tam.domain.PhotoFile;
 import kyh.tam.util.Prompt;
@@ -12,11 +11,9 @@ import kyh.tam.util.Prompt;
 public class PhotoBoardDetailServlet implements Servlet {
 
   PhotoBoardDao photoBoardDao;
-  PhotoFileDao photoFileDao;
 
-  public PhotoBoardDetailServlet(PhotoBoardDao photoBoardDao, PhotoFileDao photoFileDao) {
+  public PhotoBoardDetailServlet(PhotoBoardDao photoBoardDao) {
     this.photoBoardDao = photoBoardDao;
-    this.photoFileDao = photoFileDao;
   }
 
   @Override
@@ -33,7 +30,7 @@ public class PhotoBoardDetailServlet implements Servlet {
           String.format("물품명 : %s%s", photoBoard.getStuff().getName(), System.lineSeparator()));
       out.write("사진 파일 : " + System.lineSeparator());
 
-      List<PhotoFile> photoFiles = photoFileDao.findAll(photoBoard.getNumber());
+      List<PhotoFile> photoFiles = photoBoard.getFiles();
       for (PhotoFile photoFile : photoFiles) {
         out.write(String.format(">> %s%s", photoFile.getFilepath(), System.lineSeparator()));
       }
